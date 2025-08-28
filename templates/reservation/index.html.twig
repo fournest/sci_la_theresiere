@@ -9,7 +9,7 @@
         <thead>
             <tr>
                 {# <th>Id</th> #}
-                <th>DateResa</th>
+                <th>DateResaDebut</th>
                 {# <th>UserId</th> #}
                 <th>DossierResa</th>
                 <th>Acompte</th>
@@ -22,7 +22,7 @@
         {% for reservation in reservations %}
             <tr>
                 <td>{{ reservation.id }}</td>
-                <td>{{ reservation.dateResa ? reservation.dateResa|date('Y-m-d') : '' }}</td>
+                <td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('Y-m-d') : '' }}</td>
                 {# <td>{{ reservation.utilisateurId }}</td> #}
                 <td>{{ reservation.dossierResa }}</td>
                 <td>{{ reservation.acompte ? 'Yes' : 'No' }}</td>

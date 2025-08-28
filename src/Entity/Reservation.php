@@ -17,7 +17,7 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $dateResa = null;
+    private ?\DateTime $dateResaDebut = null;
 
     #[ORM\Column]
     private ?int $utilisateurId = null;
@@ -53,14 +53,14 @@ class Reservation
         return $this->id;
     }
 
-    public function getDateResa(): ?\DateTime
+    public function getDateResaDebut(): ?\DateTime
     {
-        return $this->dateResa;
+        return $this->dateResaDebut;
     }
 
-    public function setDateResa(\DateTime $dateResa): static
+    public function setDateResaDebut(\DateTime $dateResaDebut): static
     {
-        $this->dateResa = $dateResa;
+        $this->dateResaDebut = $dateResaDebut;
 
         return $this;
     }
