@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ACCUEIL{% endblock %}
+
+{% block body %}
+<div class="hero-section">
+        <div class="hero-content">
+            <h1>Titre percutant pour votre site</h1>
+            <p>"La Salle de la Thérèsière : un cadre élégant et fonctionnel pour tous vos événements, privés et professionnels."</p>
+            <button><a href="{{ path('app_reservation_index') }}">Réservation</a></button>
+        </div>
+    </div>
+
+
+{% endblock %}

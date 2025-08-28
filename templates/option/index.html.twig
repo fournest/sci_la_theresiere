@@ -1,14 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Option index{% endblock %}
+{% block title %}Options{% endblock %}
 
 {% block body %}
-    <h1>Option index</h1>
+    <h1>Options</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
+                {# <th>Id</th> #}
                 <th>Nom</th>
                 <th>actions</th>
             </tr>
@@ -16,20 +16,20 @@
         <tbody>
         {% for option in options %}
             <tr>
-                <td>{{ option.id }}</td>
+                {# <td>{{ option.id }}</td> #}
                 <td>{{ option.nom }}</td>
                 <td>
-                    <a href="{{ path('app_option_show', {'id': option.id}) }}">show</a>
-                    <a href="{{ path('app_option_edit', {'id': option.id}) }}">edit</a>
+                    <a href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a>
+                    <a href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="3">no records found</td>
+                <td colspan="3">Aucune option trouvée</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_option_new') }}">Create new</a>
+    <button><a href="{{ path('app_option_new') }}">Créez une option ici</a></button>
 {% endblock %}

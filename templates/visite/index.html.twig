@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Visite index{% endblock %}
+{% block title %}Visite de la Salle{% endblock %}
 
 {% block body %}
-    <h1>Visite index</h1>
+    <h1>Visite de la Salle</h1>
 
     <table class="table">
         <thead>
@@ -23,17 +23,17 @@
                 {# <td>{{ visite.utilisateurId }}</td> #}
                 <td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('Y-m-d') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_visite_show', {'id': visite.id}) }}">show</a>
-                    <a href="{{ path('app_visite_edit', {'id': visite.id}) }}">edit</a>
+                    <a href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
+                    <a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5">no records found</td>
+                <td colspan="5">Aucune visite trouvée</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_visite_new') }}">Create new</a>
+    <a href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a>
 {% endblock %}

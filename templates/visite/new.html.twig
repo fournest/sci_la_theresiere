@@ -1,11 +1,11 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Visite{% endblock %}
+{% block title %}Venez visiter la salle.{% endblock %}
 
 {% block body %}
-    <h1>Create new Visite</h1>
+    <h1>Réservez votre visite.</h1>
 
     {{ include('visite/_form.html.twig') }}
 
-    <a href="{{ path('app_visite_index') }}">back to list</a>
+    <a href="{{ path('app_visite_index') }}">Retour à la liste</a>
 {% endblock %}

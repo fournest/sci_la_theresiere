@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reservation index{% endblock %}
+{% block title %}Réservations{% endblock %}
 
 {% block body %}
-    <h1>Reservation index</h1>
+    <h1>Réservations</h1>
 
     <table class="table">
         <thead>
             <tr>
                 {# <th>Id</th> #}
                 <th>DateResa</th>
-                {# <th>UtilisateurId</th> #}
+                {# <th>UserId</th> #}
                 <th>DossierResa</th>
                 <th>Acompte</th>
                 <th>Caution</th>
@@ -29,17 +29,17 @@
                 <td>{{ reservation.caution ? 'Yes' : 'No' }}</td>
                 {# <td>{{ reservation.categorieId }}</td> #}
                 <td>
-                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">show</a>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">edit</a>
+                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="8">no records found</td>
+                <td colspan="8">Aucune réservation trouvée</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_reservation_new') }}">Create new</a>
+    <a href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
 {% endblock %}

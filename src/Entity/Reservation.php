@@ -40,6 +40,9 @@ class Reservation
     #[ORM\ManyToMany(targetEntity: Option::class, inversedBy: 'reservations')]
     private Collection $options;
 
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    private ?\DateTime $dateResaFin = null;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
@@ -142,6 +145,18 @@ class Reservation
     public function removeOption(Option $option): static
     {
         $this->options->removeElement($option);
+
+        return $this;
+    }
+
+    public function getDateResaFin(): ?\DateTime
+    {
+        return $this->dateResaFin;
+    }
+
+    public function setDateResaFin(\DateTime $dateResaFin): static
+    {
+        $this->dateResaFin = $dateResaFin;
 
         return $this;
     }

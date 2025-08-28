@@ -1,0 +1,280 @@
+/* 
+couleurs principales :
+rose poudré #DDB6BE 
+Violet Prune #562D59
+Bleu-gris foncé #526E7F
+
+polices principales :
+Ovo titres principaux et entête de section
+Playball sous-titres, citations décoratives et signatures
+Roboto Paragraphes et contenu principal
+*/
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    color: #526E7F;
+
+}
+
+p {
+    text-align: center;
+    color: #526E7F;
+    font-size: 50px;
+    padding: 15px;
+}
+
+
+header {
+
+    background-color:#562D59 ;
+    height: 200px;
+}
+.logo-container {
+    display: flex;
+    background-size: cover;
+    padding: 15px;
+    /* margin: 15px; */
+    border-radius: 8px;
+    width: 150px;
+    height: 150px;
+    color:#526E7F ;
+}
+
+.titre {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    width: 500px;
+    height: 150px;
+}
+.navbar {
+    display: flex; /* Arranges the buttons in a row */
+    justify-content: space-evenly; /* Centers the buttons horizontally */
+    align-items: center; /* Vertically aligns the content */
+    background-color:#562D59; /* A dark, professional background color */
+    padding: 10px 20px; /* Adds space inside the navbar */
+    border-radius: 8px; /* Slightly rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
+}
+
+/* Styling for the buttons themselves */
+.navbar button {
+    background-color: #DDB6BE ; /* Makes the button background transparent */
+    border: none; /* Removes the default button border */
+    cursor: pointer; /* Changes the mouse cursor to a pointer on hover */
+    margin: 0 10px; /* Adds space between the buttons */
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.2s; /* Smooth transition for hover effects */
+}
+
+/* Styling for the links inside the buttons */
+.navbar button a {
+    color:#526E7F; /* Light, readable text color */
+    text-decoration: none; /* Removes the underline from the links */
+    font-family: 'Arial', sans-serif; /* A clean, common font */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 15px; /* Adds padding for a larger clickable area */
+    display: block; /* Makes the link fill the button's space */
+}
+
+/* Hover and active effects for the buttons */
+.navbar button:hover {
+    transform: translateY(-2px); /* Lifts the button slightly on hover */
+}
+
+.navbar button a:hover {
+    color: #3498db; /* Changes text color on hover for visual feedback */
+}
+
+.navbar button a:active {
+    transform: scale(0.95); /* Slightly shrinks the button when clicked */
+}
+
+.table {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 1rem;
+  background-color: #DDB6BE;
+  border-collapse: collapse; /* Assure que les bordures des cellules adjacentes se chevauchent */
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6; /* Crée une bordure entre les lignes */
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6; /* Une bordure plus épaisse pour le bas de l'en-tête */
+}
+
+.table tbody + tbody {
+  border-top: 2px solid #dee2e6;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05); /* Ajoute un fond rayé pour les lignes impaires */
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 0, 0, 0.075); /* Change la couleur de fond au survol de la souris */
+}
+
+/* Styling for the buttons themselves */
+button {
+    background-color: #DDB6BE ; /* Makes the button background transparent */
+    border: none; /* Removes the default button border */
+    cursor: pointer; /* Changes the mouse cursor to a pointer on hover */
+    margin: 0 10px; /* Adds space between the buttons */
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.2s; /* Smooth transition for hover effects */
+}
+
+/* Styling for the links inside the buttons */
+button a {
+    color:#526E7F; /* Light, readable text color */
+    text-decoration: none; /* Removes the underline from the links */
+    font-family: 'Arial', sans-serif; /* A clean, common font */
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 15px; /* Adds padding for a larger clickable area */
+    display: block; /* Makes the link fill the button's space */
+}
+
+/* Hover and active effects for the buttons */
+button:hover {
+    transform: translateY(-2px); /* Lifts the button slightly on hover */
+}
+
+button a:hover {
+    color: #3498db; /* Changes text color on hover for visual feedback */
+}
+
+button a:active {
+    transform: scale(0.95); /* Slightly shrinks the button when clicked */
+}
+
+
+/* --- Conteneur du formulaire --- */
+.form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #562D59;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #DDB6BE;
+}
+
+
+
+/* --- Labels des champs --- */
+label {
+    display: block;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    color: #526E7F;
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+/* --- Champs de saisie (input) --- */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    /* font-family: 'Roboto', sans-serif; */
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #562D59;
+    outline: none;
+    box-shadow: 0 0 5px rgba(86, 45, 89, 0.5);
+}
+
+/* --- Checkbox spécifique (Conditions d'utilisation) --- */
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-check input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.form-check label {
+    margin-bottom: 0;
+    font-weight: 400;
+    color: #333;
+}
+
+/* --- Bouton d'envoi --- */
+button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 50px;
+    background-color: #DDB6BE;
+    color:#526E7F;
+    /* font-family: 'Playball', cursive; */
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #DDB6BE;
+    transform: translateY(-2px);
+    color: #526E7F;
+}
+
+/* --- Messages d'erreur --- */
+.invalid-feedback {
+    color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+/* --- Amélioration de l'apparence des messages d'erreur de Symfony --- */
+.form-error-icon {
+    display: none;
+}
+
+.form-error-message {
+    color: #dc3545;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.hero-section {
+    display: flex;
+    justify-content: center;
+    background-image: url(../img/grange1.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 50%;
+    height: 75vh;
+}
