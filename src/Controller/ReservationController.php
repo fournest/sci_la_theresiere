@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Reservation;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
@@ -26,6 +27,13 @@ final class ReservationController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reservation = new Reservation();
+         $currentUser = $this->getUser();
+        if ($currentUser) {
+            $reservation->setUser($currentUser);
+        } else {
+            $this->addFlash('error', 'Vous devez être connecté pour créer une réservation.');
+            return $this->redirectToRoute('app_login'); 
+        }
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
@@ -71,7 +79,7 @@ final class ReservationController extends AbstractController
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$reservation->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($reservation);
             $entityManager->flush();
         }

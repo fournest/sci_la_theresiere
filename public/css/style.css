@@ -1,15 +1,3 @@
-/* 
-couleurs principales :
-rose poudré #DDB6BE 
-Violet Prune #562D59
-Bleu-gris foncé #526E7F
-
-polices principales :
-Ovo titres principaux et entête de section
-Playball sous-titres, citations décoratives et signatures
-Roboto Paragraphes et contenu principal
-*/
-
 * {
     box-sizing: border-box;
     padding: 0;
@@ -19,8 +7,10 @@ Roboto Paragraphes et contenu principal
 h1 {
     text-align: center;
     color: #526E7F;
+    margin-bottom: 20px;
 
 }
+
 
 p {
     text-align: center;
@@ -32,9 +22,94 @@ p {
 
 header {
 
-    background-color:#562D59 ;
-    height: 200px;
+    background-color: #562D59;
+    height: 300px;
+    padding: 2rem 1rem;
 }
+
+footer {
+    background-color: #562D59;
+    height: 300px;
+    padding: 2rem 1rem;
+}
+
+.footer-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    /* max-width: 1200px; */
+    margin: 0 auto;
+}
+
+/* Section de la carte */
+.map-container {
+    flex-grow: 1;
+    margin: 1rem 2rem;
+    max-width: 400px;
+    border: 2px solid #DDB6BE;
+}
+
+/* Section de navigation du pied de page */
+.footer-nav {
+    margin-left: 2rem;
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 200px;
+    display: block;
+}
+
+.footer-contact-info {
+
+    width: 100%;
+    height: 200px;
+    display: block;
+}
+
+.footer-contact-info a {
+    color: #526E7F;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-contact-info a:hover {
+    color: #DDB6BE;
+    text-decoration: underline;
+}
+
+.table td button {
+    background-color: #562D59;
+    border: none;
+    cursor: pointer;
+    margin: 0 10px;
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.table td button a {
+    color: #526E7F;
+    text-decoration: none;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 15px;
+    display: block;
+}
+
+.table td button:hover {
+    transform: translateY(-2px);
+}
+
+.table td button a:hover {
+    color: #DDB6BE;
+}
+
+.table td button a:active {
+    transform: scale(0.95);
+}
+
 .logo-container {
     display: flex;
     background-size: cover;
@@ -43,7 +118,7 @@ header {
     border-radius: 8px;
     width: 150px;
     height: 150px;
-    color:#526E7F ;
+    color: #526E7F;
 }
 
 .titre {
@@ -54,114 +129,160 @@ header {
     width: 500px;
     height: 150px;
 }
+
 .navbar {
-    display: flex; /* Arranges the buttons in a row */
-    justify-content: space-evenly; /* Centers the buttons horizontally */
-    align-items: center; /* Vertically aligns the content */
-    background-color:#562D59; /* A dark, professional background color */
-    padding: 10px 20px; /* Adds space inside the navbar */
-    border-radius: 8px; /* Slightly rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow for depth */
-}
-
-/* Styling for the buttons themselves */
-.navbar button {
-    background-color: #DDB6BE ; /* Makes the button background transparent */
-    border: none; /* Removes the default button border */
-    cursor: pointer; /* Changes the mouse cursor to a pointer on hover */
-    margin: 0 10px; /* Adds space between the buttons */
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    background-color: #562D59;
+    padding: 10px 20px;
     border-radius: 8px;
-    transition: transform 0.2s, background-color 0.2s; /* Smooth transition for hover effects */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Styling for the links inside the buttons */
+.navbar button {
+    background-color: #DDB6BE;
+    border: none;
+    cursor: pointer;
+    margin: 0 10px;
+    border-radius: 8px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
 .navbar button a {
-    color:#526E7F; /* Light, readable text color */
-    text-decoration: none; /* Removes the underline from the links */
-    font-family: 'Arial', sans-serif; /* A clean, common font */
+    color: #526E7F;
+    text-decoration: none;
+    font-family: 'Arial', sans-serif;
     font-size: 16px;
     font-weight: bold;
-    padding: 10px 15px; /* Adds padding for a larger clickable area */
-    display: block; /* Makes the link fill the button's space */
+    padding: 10px 15px;
+    display: block;
 }
 
-/* Hover and active effects for the buttons */
 .navbar button:hover {
-    transform: translateY(-2px); /* Lifts the button slightly on hover */
+    transform: translateY(-2px);
 }
 
 .navbar button a:hover {
-    color: #3498db; /* Changes text color on hover for visual feedback */
+    color: #562D59;
 }
 
 .navbar button a:active {
-    transform: scale(0.95); /* Slightly shrinks the button when clicked */
+    transform: scale(0.95);
 }
 
 .table {
-  width: 100%;
-  max-width: 100%;
-  margin-bottom: 1rem;
-  background-color: #DDB6BE;
-  border-collapse: collapse; /* Assure que les bordures des cellules adjacentes se chevauchent */
+    width: 80%;
+    margin-top: 20px;
+    background-color: #DDB6BE;
+    border-collapse: collapse;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .table th,
 .table td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6; /* Crée une bordure entre les lignes */
+    padding: 12px 15px;
+    text-align: left;
+    border-top: 1px solid #562D59;
+
 }
 
-.table thead th {
-  vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6; /* Une bordure plus épaisse pour le bas de l'en-tête */
+.table thead tr {
+    background-color: #DDB6BE;
+    color: #526E7F;
 }
 
-.table tbody + tbody {
-  border-top: 2px solid #dee2e6;
+.table tbody tr:nth-child(even) {
+    background-color: #DDB6BE;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05); /* Ajoute un fond rayé pour les lignes impaires */
+.table tbody tr:hover {
+    background-color: #DDB6BE;
+    transition: background-color 0.3s ease;
 }
 
-.table-hover tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.075); /* Change la couleur de fond au survol de la souris */
+.table td a {
+    color: #526E7F;
+    text-decoration: none;
+    margin-right: 10px;
+    transition: color 0.3s ease;
 }
 
-/* Styling for the buttons themselves */
+.table td a:hover {
+    color: #526E7F;
+    text-decoration: underline;
+}
+
+.table td:last-child {
+    white-space: nowrap;
+}
+
+.no-reservation {
+    text-align: center;
+    font-style: italic;
+    color: #526E7F;
+    padding: 20px;
+}
+
+.add-link {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #562D59;
+    color: #DDB6BE;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    /* 
+    couleurs principales :
+    rose poudré #DDB6BE 
+    Violet Prune #562D59
+    Bleu-gris foncé #526E7F
+    
+    polices principales :
+    Ovo titres principaux et entête de section
+    Playball sous-titres, citations décoratives et signatures
+    Roboto Paragraphes et contenu principal
+    */
+    transition: background-color 0.3s ease;
+}
+
+.add-link:hover {
+    background-color: #562D59;
+}
+
 button {
-    background-color: #DDB6BE ; /* Makes the button background transparent */
-    border: none; /* Removes the default button border */
-    cursor: pointer; /* Changes the mouse cursor to a pointer on hover */
-    margin: 0 10px; /* Adds space between the buttons */
+    background-color: #DDB6BE;
+    border: none;
+    cursor: pointer;
+    margin: 0 10px;
     border-radius: 8px;
-    transition: transform 0.2s, background-color 0.2s; /* Smooth transition for hover effects */
+    transition: transform 0.2s, background-color 0.2s;
 }
 
-/* Styling for the links inside the buttons */
 button a {
-    color:#526E7F; /* Light, readable text color */
-    text-decoration: none; /* Removes the underline from the links */
-    font-family: 'Arial', sans-serif; /* A clean, common font */
+    color: #526E7F;
+    text-decoration: none;
+    font-family: 'Arial', sans-serif;
     font-size: 16px;
     font-weight: bold;
-    padding: 10px 15px; /* Adds padding for a larger clickable area */
-    display: block; /* Makes the link fill the button's space */
+    padding: 10px 15px;
+    display: block;
 }
 
-/* Hover and active effects for the buttons */
 button:hover {
-    transform: translateY(-2px); /* Lifts the button slightly on hover */
+    transform: translateY(-2px);
 }
 
 button a:hover {
-    color: #3498db; /* Changes text color on hover for visual feedback */
+    color: #3498db;
 }
 
 button a:active {
-    transform: scale(0.95); /* Slightly shrinks the button when clicked */
+    transform: scale(0.95);
 }
 
 
@@ -171,9 +292,9 @@ button a:active {
     margin: 40px auto;
     padding: 30px;
     background-color: #562D59;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid #DDB6BE;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #DDB6BE;
 }
 
 
@@ -210,9 +331,9 @@ input:focus {
 
 /* --- Checkbox spécifique (Conditions d'utilisation) --- */
 .form-check {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .form-check input[type="checkbox"] {
@@ -232,8 +353,8 @@ button[type="submit"] {
     padding: 15px;
     border: none;
     border-radius: 50px;
-    background-color: #DDB6BE;
-    color:#526E7F;
+    background-color: #562D59;
+    color: #DDB6BE;
     /* font-family: 'Playball', cursive; */
     font-size: 1.5em;
     cursor: pointer;
@@ -249,8 +370,8 @@ button[type="submit"]:hover {
 /* --- Messages d'erreur --- */
 .invalid-feedback {
     color: #dc3545;
-  font-size: 0.9em;
-  margin-top: 5px;
+    font-size: 0.9em;
+    margin-top: 5px;
 }
 
 .is-invalid {
@@ -268,6 +389,12 @@ button[type="submit"]:hover {
     margin-top: 5px;
 }
 
+.conteneur-flex {
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
 .hero-section {
     display: flex;
     justify-content: center;
@@ -277,4 +404,57 @@ button[type="submit"]:hover {
     background-size: contain;
     width: 50%;
     height: 75vh;
+    margin: 10px;
+}
+
+.bloc {
+    display: grid;
+    grid-template-columns: 400px 400px;
+    grid-template-rows: 400px 400px;
+
+}
+
+
+#bloc1 {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    background-image: url(../img/grange3.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    margin: 10px;
+}
+
+#bloc2 {
+    grid-column: 2 / 3;
+    grid-row: 1;
+    background-image: url(../img/grange11.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    margin: 10px;
+}
+
+#bloc3 {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    background-image: url(../img/grange6.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    margin: 10px;
+}
+
+#bloc4 {
+    grid-column: 2 / 3;
+    grid-row: 2;
+    background-image: url(../img/grange10.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+    margin: 10px;
 }

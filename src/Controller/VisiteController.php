@@ -26,6 +26,13 @@ final class VisiteController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $visite = new Visite();
+        $currentUser = $this->getUser();
+        if ($currentUser) {
+            $visite->setUser($currentUser);
+        } else {
+            $this->addFlash('error', 'Vous devez être connecté pour créer une visite.');
+            return $this->redirectToRoute('app_login'); 
+        }
         $form = $this->createForm(VisiteType::class, $visite);
         $form->handleRequest($request);
 

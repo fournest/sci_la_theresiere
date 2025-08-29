@@ -1,6 +1,17 @@
 twig:
     file_name_pattern: '*.twig'
 
+    globals:
+            societe:
+                nom: "SCI LA THÉRÈSIÈRE"
+                adresse: "La Thérèsière"
+                code_postal: "85440"
+                ville: "TALMONT-SAINT-HILAIRE"
+                telephone: " 07 80 62 43 55"
+                email: "alinedo@live.fr"
+
 when@test:
     twig:
         strict_variables: true
+
+        

@@ -19,8 +19,8 @@
                 {# <td>{{ option.id }}</td> #}
                 <td>{{ option.nom }}</td>
                 <td>
-                    <a href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a>
-                    <a href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
+                    <button><a href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a></button>
+                    <button><a href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a></button>
                 </td>
             </tr>
         {% else %}

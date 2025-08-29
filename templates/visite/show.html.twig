@@ -7,28 +7,25 @@
 
     <table class="table">
         <tbody>
+            
             <tr>
-                <th>Id</th>
-                <td>{{ visite.id }}</td>
+                <th>Votre pseudo</th>
+                <td>{{ visite.user.pseudo }}</td>
             </tr>
             <tr>
-                <th>DateVisite</th>
-                <td>{{ visite.dateVisite ? visite.dateVisite|date('Y-m-d') : '' }}</td>
+                <th>Date de Visite</th>
+                <td>{{ visite.dateVisite ? visite.dateVisite|date('d-m-Y') : '' }}</td>
             </tr>
             <tr>
-                <th>UtilisateurId</th>
-                <td>{{ visite.utilisateurId }}</td>
-            </tr>
-            <tr>
-                <th>DateResaSouhaite</th>
-                <td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('Y-m-d') : '' }}</td>
+                <th>Date de Réservation Souhaitée</th>
+                <td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
             </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_visite_index') }}">Retour à la lsite</a>
+    <button><a href="{{ path('app_visite_index') }}">Retour à la lsite</a></button>
 
-    <a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+    <button><a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a></button>
 
     {{ include('visite/_delete_form.html.twig') }}
 {% endblock %}

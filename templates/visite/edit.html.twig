@@ -7,7 +7,7 @@
 
     {{ include('visite/_form.html.twig', {'button_label': 'Modifier'}) }}
 
-    <a href="{{ path('app_visite_index') }}">Retour à la liste/a>
+    <button><a href="{{ path('app_visite_index') }}">Retour à la liste</a></button>
 
     {{ include('visite/_delete_form.html.twig') }}
 {% endblock %}

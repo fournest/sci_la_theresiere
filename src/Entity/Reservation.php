@@ -19,8 +19,7 @@ class Reservation
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateResaDebut = null;
 
-    #[ORM\Column]
-    private ?int $utilisateurId = null;
+    
 
     #[ORM\Column(length: 255)]
     private ?string $dossierResa = null;
@@ -31,8 +30,7 @@ class Reservation
     #[ORM\Column]
     private ?bool $caution = null;
 
-    #[ORM\Column]
-    private ?int $categorieId = null;
+   
 
     /**
      * @var Collection<int, Option>
@@ -43,9 +41,16 @@ class Reservation
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateResaFin = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'reservations')]
+    private ?Categorie $categorie = null;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -65,17 +70,6 @@ class Reservation
         return $this;
     }
 
-    public function getUtilisateurId(): ?int
-    {
-        return $this->utilisateurId;
-    }
-
-    public function setUtilisateurId(int $utilisateurId): static
-    {
-        $this->utilisateurId = $utilisateurId;
-
-        return $this;
-    }
 
     public function getDossierResa(): ?string
     {
@@ -113,17 +107,6 @@ class Reservation
         return $this;
     }
 
-    public function getCategorieId(): ?int
-    {
-        return $this->categorieId;
-    }
-
-    public function setCategorieId(int $categorieId): static
-    {
-        $this->categorieId = $categorieId;
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, Option>
@@ -157,6 +140,30 @@ class Reservation
     public function setDateResaFin(\DateTime $dateResaFin): static
     {
         $this->dateResaFin = $dateResaFin;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): static
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }

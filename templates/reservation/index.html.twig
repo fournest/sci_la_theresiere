@@ -1,45 +1,56 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réservations{% endblock %}
+{% block title %}Réservations
+{% endblock %}
 
 {% block body %}
-    <h1>Réservations</h1>
+	<h1>Réservations</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                {# <th>Id</th> #}
-                <th>DateResaDebut</th>
-                {# <th>UserId</th> #}
-                <th>DossierResa</th>
-                <th>Acompte</th>
-                <th>Caution</th>
-                {# <th>CategorieId</th> #}
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for reservation in reservations %}
-            <tr>
-                <td>{{ reservation.id }}</td>
-                <td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('Y-m-d') : '' }}</td>
-                {# <td>{{ reservation.utilisateurId }}</td> #}
-                <td>{{ reservation.dossierResa }}</td>
-                <td>{{ reservation.acompte ? 'Yes' : 'No' }}</td>
-                <td>{{ reservation.caution ? 'Yes' : 'No' }}</td>
-                {# <td>{{ reservation.categorieId }}</td> #}
-                <td>
-                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">Aucune réservation trouvée</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+			<tr>
+				{# <th>Id</th> #}
+				<th>Pseudo</th>
+				<th>Date Resa Debut</th>
+				<th>Date Resa Fin</th>
+				<th>Dossier Resa</th>
+				<th>Acompte</th>
+				<th>Caution</th>
+				<th>Categorie</th>
+				<th>Option</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for reservation in reservations %}
+				<tr>
+					<td>{{ reservation.user.pseudo }}</td>
+					<td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</td>
+					<td>{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</td>
+					<td>{{ reservation.dossierResa }}</td>
+					<td>{{ reservation.acompte ? 'Oui' : 'Non' }}</td>
+					<td>{{ reservation.caution ? 'Oui' : 'Non' }}</td>
+					<td>{{ reservation.categorie.nom }}</td>
+					<td>
+						{% for option in reservation.options %}
+							{{ option.nom }}
+						{% else %}
+							Aucune option
+						{% endfor %}
+					</td>
 
-    <a href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
+					<td>
+						<button><a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a></button>
+						<button><a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a></button>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="8">Aucune réservation trouvée</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<button><a href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a></button>
 {% endblock %}

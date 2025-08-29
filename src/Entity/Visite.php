@@ -17,11 +17,13 @@ class Visite
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateVisite = null;
 
-    #[ORM\Column]
-    private ?int $utilisateurId = null;
+    
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $dateResaSouhaite = null;
+
+    #[ORM\ManyToOne(inversedBy: 'visites')]
+    private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -40,17 +42,6 @@ class Visite
         return $this;
     }
 
-    public function getUtilisateurId(): ?int
-    {
-        return $this->utilisateurId;
-    }
-
-    public function setUtilisateurId(int $utilisateurId): static
-    {
-        $this->utilisateurId = $utilisateurId;
-
-        return $this;
-    }
 
     public function getDateResaSouhaite(): ?\DateTime
     {
@@ -60,6 +51,18 @@ class Visite
     public function setDateResaSouhaite(\DateTime $dateResaSouhaite): static
     {
         $this->dateResaSouhaite = $dateResaSouhaite;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }
