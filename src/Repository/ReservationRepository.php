@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Categorie;
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +16,27 @@ class ReservationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Reservation::class);
     }
+
+    public function isRoomAvailable(Categorie $categorie, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
+    {
+        $qb = $this->createQueryBuilder('reservation');
+
+        $reservationsEnConflit = $qb
+            ->select('COUNT(reservation.id)')
+            ->where('reservation.categorie = :categorie')
+            ->andWhere('reservation.statut IN (:statuts)')
+            ->andWhere(':dateDebut < reservation.dateResaFin')
+            ->andWhere(':dateFin > reservation.dateResaDebut')
+            ->setParameter('categorie', $categorie)
+            ->setParameter('dateResaDebut', $dateDebut)
+            ->setParameter('dateResaFin', $dateFin)
+            ->setParameter('statuts', ['confirmée', 'en_attente'])
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return $reservationsEnConflit === 0;
+    }
+
 
     //    /**
     //     * @return Reservation[] Returns an array of Reservation objects

@@ -30,6 +30,11 @@
 				<td>{{ reservation.dossierResa }}</td>
 			</tr>
 			<tr>
+
+			<tr>
+				<th>Statut de la réservation</th>
+				<td>{{ reservation.statut }}</td>
+			</tr>
 				<th>Acompte</th>
 				<td>{{ reservation.acompte ? 'Oui' : 'Non' }}</td>
 			</tr>
@@ -42,7 +47,7 @@
 				<td>{{ reservation.categorie.nom }}</td>
 			</tr>
 			<tr>
-				<th>Option</th>
+				<th>Options</th>
 				<td>
 					{% for option in reservation.options %}
 						{{ option.nom }}
@@ -53,6 +58,8 @@
 			</tr>
 		</tbody>
 	</table>
+
+	
 
 	<a href="{{ path('app_reservation_index') }}">Retour à la liste</a>
 

@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\User;
+
 use App\Entity\Option;
 use App\Entity\Reservation;
 use App\Entity\Categorie;
@@ -18,11 +18,6 @@ class ReservationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'pseudo',
-                'label' => 'Votre pseudo',
-            ])
             ->add('dateResaDebut', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de début de réservation',

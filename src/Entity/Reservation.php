@@ -47,6 +47,9 @@ class Reservation
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Categorie $categorie = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $statut = null;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
@@ -164,6 +167,18 @@ class Reservation
     public function setCategorie(?Categorie $categorie): static
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

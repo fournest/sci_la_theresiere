@@ -11,6 +11,7 @@
 			<tr>
 				{# <th>Id</th> #}
 				<th>Pseudo</th>
+				<th>Statut de la réservation</th>
 				<th>Date Resa Debut</th>
 				<th>Date Resa Fin</th>
 				<th>Dossier Resa</th>
@@ -25,6 +26,7 @@
 			{% for reservation in reservations %}
 				<tr>
 					<td>{{ reservation.user.pseudo }}</td>
+					<td>{{ reservation.statut }}</td>
 					<td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</td>
 					<td>{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</td>
 					<td>{{ reservation.dossierResa }}</td>
@@ -40,8 +42,12 @@
 					</td>
 
 					<td>
-						<button><a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a></button>
-						<button><a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a></button>
+						<button>
+							<a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+						</button>
+						<button>
+							<a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+						</button>
 					</td>
 				</tr>
 			{% else %}
@@ -52,5 +58,7 @@
 		</tbody>
 	</table>
 
-	<button><a href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a></button>
+	<button>
+		<a href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
+	</button>
 {% endblock %}

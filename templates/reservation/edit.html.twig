@@ -3,9 +3,15 @@
 {% block title %}Votre réservation{% endblock %}
 
 {% block body %}
-    <h1>Votre réservation</h1>
+    <h1>Modifiez votre réservation</h1>
 
     {{ include('reservation/_form.html.twig', {'button_label': 'Modifier'}) }}
+     {% if reservation.statut != 'annulee' and is_granted('ROLE_USER') and app.user == reservation.user %}
+        <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+            <button class="btn">Annuler ma réservation</button>
+        </form>
+    {% endif %}
 
     <button><a href="{{ path('app_reservation_index') }}">Retour à la liste</a></button>
 
