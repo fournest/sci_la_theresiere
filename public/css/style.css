@@ -34,7 +34,7 @@ Roboto Paragraphes et contenu principal
 }
 
 .logo-container img {
-    height: 80px;
+    height: 100px;
     width: auto;
     margin-right: 20px;
     border: 2px solid white;
@@ -43,7 +43,7 @@ Roboto Paragraphes et contenu principal
 
 .titre h1 {
     font-size: 2em;
-    color: #526E7F;
+    /* color: #526E7F; */
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -68,8 +68,8 @@ Roboto Paragraphes et contenu principal
     font-weight: bold;
     padding: 10px 18px;
     border-radius: 8px;
-    border: 2px solid #DDB6BE;
-    background-color: white;
+    border: 2px solid #526E7F;
+    background-color: #DDB6BE;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     white-space: nowrap;
 }
@@ -445,7 +445,7 @@ button[type="submit"]:hover {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    text-align: center;
+    text-align:center;
     margin: 10px;
 }
 
@@ -512,4 +512,73 @@ button[type="submit"]:hover {
     overflow-x: auto;
     border: 1px solid #562D59;
     border-radius: 8px;
+}
+
+/* Conteneur principal de la carte utilisateur */
+.card-user {
+    background-color: #562d59; 
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    border: 1px solid #DDB6BE; 
+}
+
+/* En-tête de la carte utilisateur */
+.user-info-header {
+    text-align: center;
+    border-bottom: 2px solid  #DDB6BE; 
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.user-info-header h1 {
+    font-size: 2.5em;
+    color: #DDB6BE; 
+    margin: 0;
+    line-height: 1.2;
+}
+
+.user-info-header p {
+    font-size: 1.2em;
+    color:  #DDB6BE; 
+    margin-top: 5px;
+}
+
+/* Détails du profil */
+.profile-details h2,
+.visits-list h2,
+.reservations-list h2 {
+    color: #DDB6BE; 
+    border-left: 5px solid #DDB6BE; 
+    padding-left: 10px;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+/* Sections des listes (visites, réservations) */
+.visits-list,
+.reservations-list {
+    margin-top: 20px;
+}
+
+.visit-item,
+.reservation-item {
+    background-color:  #DDB6BE; /* Fond légèrement grisé pour les éléments */
+    border: 1px solid  #526E7F;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.visit-item p,
+.reservation-item p {
+    margin: 5px 0;
+}
+
+.visit-item strong,
+.reservation-item strong {
+    color: #526E7F;
 }

@@ -25,6 +25,9 @@ class Visite
     #[ORM\ManyToOne(inversedBy: 'visites')]
     private ?User $user = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $statut = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -63,6 +66,18 @@ class Visite
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getStatut(): ?string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

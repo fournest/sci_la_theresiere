@@ -1,39 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Visite de la Salle{% endblock %}
+{% block title %}Visite de la Salle
+{% endblock %}
 
 {% block body %}
-    <h1>Visite de la Salle</h1>
+	<h1>Visite de la Salle</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                {# <th>Id</th> #}
-                <th>Pseudo</th>
-                <th>Date de Visite</th>
-                <th>Date de réservation souhaitée</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for visite in visites %}
-            <tr>
-                {# <td>{{ visite.id }}</td> #}
-                <td>{{ visite.user.pseudo }}</td>
-                <td>{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</td>
-                <td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
-                <td>
-                    <button><a href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a></button>
-                    <button><a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a></button>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">Aucune visite trouvée</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+			<tr>
+				{# <th>Id</th> #}
+				<th>Pseudo</th>
+				<th>Date de Visite</th>
+				<th>statut de la visite</th>
+				<th>Date de réservation souhaitée</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for visite in visites %}
+				<tr>
+					{# <td>{{ visite.id }}</td> #}
+					<td>{{ visite.user.pseudo }}</td>
+					<td>{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</td>
+					<td>{{ visite.statut }}</td>
+					<td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
+					<td>
+						<button>
+							<a href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
+						</button>
+						<button>
+							<a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+						</button>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="5">Aucune visite trouvée</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
-    <button><a href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a></button>
+	<button>
+		<a href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a>
+	</button>
 {% endblock %}

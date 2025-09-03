@@ -27,8 +27,12 @@
 					</li> #}
 					{% if is_granted('ROLE_USER') %}
 						<li>
+							<a href="{{ path('app_user_show', {'id': app.user.id}) }}">Profil</a>
+						</li>
+						<li>
 							<a href="{{ path('app_logout') }}">Déconnexion</a>
 						</li>
+
 					{% else %}
 						<li>
 							<a href="{{ path('app_login') }}">Connexion</a>

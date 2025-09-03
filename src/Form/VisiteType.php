@@ -16,12 +16,7 @@ class VisiteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('user', EntityType::class, [
-                'class' => User::class,
-                'choice_label' => 'pseudo',
-                'label' => 'Votre pseudo',
-            ])
-             ->add('dateVisite', DateType::class, [
+            ->add('dateVisite', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de visite',
             ])

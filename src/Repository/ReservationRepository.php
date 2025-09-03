@@ -3,9 +3,12 @@
 namespace App\Repository;
 
 use App\Entity\Categorie;
+use App\Entity\User;
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 
 /**
  * @extends ServiceEntityRepository<Reservation>
@@ -25,8 +28,8 @@ class ReservationRepository extends ServiceEntityRepository
             ->select('COUNT(reservation.id)')
             ->where('reservation.categorie = :categorie')
             ->andWhere('reservation.statut IN (:statuts)')
-            ->andWhere(':dateDebut < reservation.dateResaFin')
-            ->andWhere(':dateFin > reservation.dateResaDebut')
+            ->andWhere(':dateResaDebut < reservation.dateResaFin')
+            ->andWhere(':dateResaFin > reservation.dateResaDebut')
             ->setParameter('categorie', $categorie)
             ->setParameter('dateResaDebut', $dateDebut)
             ->setParameter('dateResaFin', $dateFin)
@@ -35,6 +38,23 @@ class ReservationRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
 
         return $reservationsEnConflit === 0;
+    }
+
+      public function findPaginatedByUser(User $user, int $limit, int $offset): array
+    {
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->andWhere('r.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('r.id', 'DESC')
+            ->setFirstResult($offset) 
+            ->setMaxResults($limit); 
+
+        $paginator = new Paginator($queryBuilder->getQuery());
+
+        return [
+            'reservations' => $paginator->getIterator(),
+            'totalCountReservations' => $paginator->count(), 
+        ];
     }
 
 

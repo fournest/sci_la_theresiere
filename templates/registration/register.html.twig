@@ -1,23 +1,55 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvel utilisateur{% endblock %}
+{% block title %}
+	{% if is_granted('ROLE_USER') %}
+		Modifier mon profil
+	{% else %}
+		Créer un nouveau profil
+	{% endif %}
+{% endblock %}
 
 {% block body %}
-<form class="form-container" method="POST">
-    <h1>S'inscrire</h1>
-    {{ form_errors(registrationForm) }}
+	{{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.nom) }}
-        {{ form_row(registrationForm.prenom) }}
-        {{ form_row(registrationForm.pseudo) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
+	{{ form_start(registrationForm, {'attr': {'class': 'form-container'}}) }}
+	{% if is_granted('ROLE_USER') %}
+		<h1>
+			Profil de
+			{{ user.pseudo }}
+		</h1>
+		<h2>Modifier mon profil</h2>
+	{% else %}
+		<h2>Créer un nouveau profil</h2>
+	{% endif %}
+	{{ form_row(registrationForm.nom) }}
+	{{ form_row(registrationForm.prenom) }}
+	{{ form_row(registrationForm.pseudo) }}
+	{{ form_row(registrationForm.email) }}
+	{# {% if button_label is not defined or button_label != 'Modifier' %} #}
+		{{ form_row(registrationForm.plainPassword, {
             label: 'Mot  de passe'
         }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+		{% if registrationForm.agreeTerms is not defined %}
+			{{ form_row(registrationForm.agreeTerms) }}
+		{% endif %}
+	{# {% endif %} #}
 
-        <button type="submit" class="btn">Enregistrez vous.</button>
-    {{ form_end(registrationForm) }}
-    </form>
+	{% if is_granted('ROLE_USER') %}
+		<div>
+			<a href="{{ path('app_user_show') }}">
+				Retour au profil
+			</a>
+
+			<form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}">
+				<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ app.user.id) }}">
+				<button data-delete-user-id="{{ app.user.id }}">Supprimer mon compte
+				</button>
+			</form>
+			<button type="submit" class="btn">Modifier</button>
+		{% else %}
+			<button type="submit" class="btn">Enregistrez vous</button>
+		</div>
+	{% endif %}
+	{{ form_end(registrationForm) }}
+
 {% endblock %}

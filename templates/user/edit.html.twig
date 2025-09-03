@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier votre profil
+{% endblock %}
+
+
+{% block body %}
+	<div class="form-container">
+		<h1>
+			Profil de
+			{{ user.pseudo }}
+		</h1>
+		<h2>Modifier mon profil</h2>
+
+		{{ form_start(form, {'attr': {'class': 'form-container'}}) }}
+
+		{{ form_row(form.nom) }}
+		{{ form_row(form.prenom) }}
+		{{ form_row(form.pseudo) }}
+		{{ form_row(form.email) }}
+		{{ form_row(form.plainPassword, {
+        label: 'Nouveau mot de passe'    }) }}
+		{{ form_row(form.confirmPassword) }}
+		<button type="submit" class="btn">Modifier</button>
+		{{ form_end(form) }}
+		<div class="account-actions">
+			<form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre compte ? Cette action est irréversible.');">
+				<input type="hidden" name="_token" value="{{ csrf_token('desactive' ~ app.user.id) }}">
+				<button type="submit" class="btn">Supprimer mon compte</button>
+			</form>
+			<a href="{{ path('app_user_show') }}" class="btn">Retour au profil</a>
+		</div>
+	</div>
+
+{% endblock %}

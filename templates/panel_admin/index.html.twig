@@ -110,7 +110,9 @@
 		<table>
 			<thead>
 				<tr>
+					<th>Pseudo</th>
 					<th>Date de la visite</th>
+					<th>Statut</th>
 					<th>Date de réservation souhaitée</th>
 					<th>Actions</th>
 				</tr>
@@ -118,9 +120,25 @@
 			<tbody>
 				{% for visite in visites %}
 					<tr>
+						<td>{{ visite.user.pseudo }}</td>
 						<td>{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</td>
+						<td>{{ visite.statut }}</td>
 						<td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
 						<td>
+
+							{% if visite.statut != 'annulée' and is_granted('ROLE_ADMIN') or app.user == visite.user %}
+								<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
+									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
+									<button class="btn">Annuler</button>
+								</form>
+							{% endif %}
+
+							{% if is_granted('ROLE_ADMIN') and visite.statut == 'en_attente' %}
+								<form method="post" action="{{ path('app_visite_validate', {'id': visite.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ visite.id) }}">
+									<button class="btn btn-success">Valider</button>
+								</form>
+							{% endif %}
 							<button>
 								<a href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
 							</button>
@@ -164,6 +182,7 @@
 					<th>Date Resa Debut</th>
 					<th>Date Resa Fin</th>
 					<th>Dossier Resa</th>
+					<th>Statut</th>
 					<th>Acompte</th>
 					<th>Caution</th>
 					<th>Categorie</th>
@@ -178,6 +197,7 @@
 						<td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</td>
 						<td>{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</td>
 						<td>{{ reservation.dossierResa }}</td>
+						<td>{{ reservation.statut }}</td>
 						<td>{{ reservation.acompte }}</td>
 						<td>{{ reservation.caution  }}</td>
 						<td>{{ reservation.categorie.nom }}</td>
@@ -190,18 +210,25 @@
 						</td>
 
 						<td>
+							{% if reservation.statut != 'annulee' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
+								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+									<button class="btn">Annuler</button>
+								</form>
+							{% endif %}
+
+							{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
+								<form method="post" action="{{ path('app_reservation_validate', {'id': reservation.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ reservation.id) }}">
+									<button class="btn btn-success">Valider</button>
+								</form>
+							{% endif %}
 							<button>
 								<a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
 							</button>
 							<button>
 								<a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
 							</button>
-							{% if reservation.statut != 'annulee' and is_granted('ROLE_USER') and app.user == reservation.user %}
-								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-									<button class="btn">Annuler la réservation</button>
-								</form>
-							{% endif %}
 						</td>
 					</tr>
 				{% endfor %}

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 
 use App\Entity\Reservation;
+use App\Entity\User;
 use App\Entity\Categorie;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
@@ -24,10 +25,26 @@ final class ReservationController extends AbstractController
 {
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function index(ReservationRepository $reservationRepository): Response
+    public function index(ReservationRepository $reservationRepository, Request $request): Response
     {
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $limit = 5;
+        $page = max(1, (int) $request->query->get('page', 1));
+        $offset = ($page - 1) * $limit;
+
+        $paginationDataReservations = $reservationRepository->findPaginatedByUser($user, $limit, $offset);
+        $reservations = $paginationDataReservations['reservations'];
+        $totalReservations = $paginationDataReservations['totalCountReservations'];
         return $this->render('reservation/index.html.twig', [
-            'reservations' => $reservationRepository->findAll(),
+            'currentPage' => $page,
+            'reservations' => $reservations,
+            'totalCountReservations' => $totalReservations,
+            'totalPagesReservations' => ceil($totalReservations / $limit),
         ]);
     }
 
@@ -69,6 +86,7 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Reservation $reservation): Response
     {
         return $this->render('reservation/show.html.twig', [
@@ -77,6 +95,7 @@ final class ReservationController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -99,7 +118,7 @@ final class ReservationController extends AbstractController
     public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
     {
 
-         if (!$reservation) {
+        if (!$reservation) {
             throw new NotFoundHttpException('La réservation demandée n\'existe pas.');
         }
         // Vérifie si l'utilisateur est le propriétaire de la réservation ou un administrateur
@@ -110,12 +129,36 @@ final class ReservationController extends AbstractController
         // Vérifie si le token CSRF est valide
         if ($this->isCsrfTokenValid('cancel' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
             // Change le statut de la réservation en "annulee"
-            $reservation->setStatut('annulee');
+            $reservation->setStatut('annulée');
             $entityManager->flush();
 
             $this->addFlash('success', 'Votre réservation a été annulée avec succès.');
         } else {
             $this->addFlash('error', 'Token de sécurité invalide.');
+        }
+
+        return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/validate/{id}', name: 'app_reservation_validate', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function validate(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    {
+        if (!$reservation) {
+            throw new NotFoundHttpException('La réservation demandée n\'existe pas.');
+        }
+
+        if ($this->isCsrfTokenValid('validate' . $reservation->getId(), $request->request->get('_token'))) {
+            if ($reservation->getStatut() === 'en_attente') {
+                $reservation->setStatut('validée');
+                $entityManager->flush();
+
+                $this->addFlash('success', 'La réservation a été validée avec succès.');
+            } else {
+                $this->addFlash('error', 'La réservation n\'est pas dans un état "en_attente" et ne peut pas être validée.');
+            }
+        } else {
+            $this->addFlash('error', 'Jeton de sécurité invalide.');
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);

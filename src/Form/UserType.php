@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,14 +13,11 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
-
-class RegistrationFormType extends AbstractType
+class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-         // CHAMP : NOM
-
             ->add('nom', null, [
                 'label' => 'Nom :',
                 'constraints' => [
@@ -37,7 +33,7 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
 
-             // CHAMP : PRÉNOM
+            // CHAMP : PRÉNOM
 
             ->add('prenom', null, [
                 'label' => 'Prénom :',
@@ -70,7 +66,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-           
+
             // CHAMP : ADRESSE MAIL
 
             ->add('email', EmailType::class, [
@@ -90,30 +86,24 @@ class RegistrationFormType extends AbstractType
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
-                'label' => 'Mot de passe :',
+                'label' => 'Nouveau mot de passe :',
                 'attr' => ['autocomplete' => 'new-password'],
+                'required' => false,
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
+
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Votre mot de passe doit contenir au moin {{ limit }} caractères',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                 ],
-                ])
-                ->add('agreeTerms', CheckboxType::class, [
-                     'label' => 'Conditions d\'utilisations :',
-                    'mapped' => false,
-                    'constraints' => [
-                        new IsTrue([
-                            'message' => 'Vous devez accepter nos conditions.',
-                        ]),
-                    ],
-                ])
-        ;
+            ])
+            ->add('confirmPassword', PasswordType::class, [
+                'label' => 'Confirmer le nouveau mot de passe :',
+                'mapped' => false,
+                'required' => false,
+            ]);;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
