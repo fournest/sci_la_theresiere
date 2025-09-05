@@ -16,6 +16,12 @@ Roboto Paragraphes et contenu principal
     font-family: 'roboto';
 }
 
+main {
+
+    height: 125vh;
+}
+
+
 /* Styles pour la barre d'en-tête complète */
 .header-container {
     display: flex;
@@ -343,8 +349,8 @@ footer {
 
 /* Effet de survol */
 .btn-principal:hover {
-    background-color: #DDB6BE;
-    color: #526E7F;
+    background-color: #526E7F;
+    /* color: #526E7F; */
     transform: translateY(-2px);
 }
 
@@ -738,3 +744,4 @@ button[type="submit"]:hover {
 .social-links a:hover {
     transform: scale(1.1);
 }
+
