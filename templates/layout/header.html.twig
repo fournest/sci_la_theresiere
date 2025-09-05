@@ -1,59 +1,55 @@
 <header>
-	<div
-		class="header-container">
-		<!-- Logo -->
+	<div class="header-container">
 		<div class="logo-container">
-			<a
-				href="{{ path('app_home') }}">
-				<!-- Logo clair -->
-				<img class="logo-container" src="{{ asset('img/logo.png') }}" alt="Logo clair">
+			<a href="{{ path('app_home') }}">
+				<img class="logo-container" src="{{ asset('img/logo.png') }}" alt="Logo">
 			</a>
-			<div class="titre">
-				<h1>LA SALLE DE LA THÉRÈSIÈRE</h1>
-			</div>
-			<nav class="navbar">
-				<ul>
-					<li>
-						<a href="{{ path('app_home') }}">Accueil</a>
-					</li>
-					<li>
-						<a href="{{ path('app_visite_index') }}">Visite</a>
-					</li>
-					<li>
-						<a href="{{ path('app_reservation_index') }}">Réservation</a>
-					</li>
-					{# <li>
-						<a href="{{ path('app_contact') }}">Contact</a>
-					</li> #}
-					{% if is_granted('ROLE_USER') %}
-						<li>
-							<a href="{{ path('app_user_show', {'id': app.user.id}) }}">Profil</a>
-						</li>
-						<li>
-							<a href="{{ path('app_logout') }}">Déconnexion</a>
-						</li>
-
-					{% else %}
-						<li>
-							<a href="{{ path('app_login') }}">Connexion</a>
-						</li>
-						<li>
-							<a href="{{ path('app_register') }}">Inscrivez-vous!</a>
-						</li>
-					{% endif %}
-					{% if is_granted('ROLE_ADMIN') %}
-						<li>
-							<a href="{{ path('app_panel_admin') }}">Espace administrateur</a>
-						</li>
-						<li>
-							<a href="{{ path('app_option_index') }}">Options</a>
-						</li>
-						<li>
-							<a href="{{ path('app_categorie_index') }}">Catégories</a>
-						</li>
-					{% endif %}
-				</ul>
-			</nav>
 		</div>
+		<div class="titre">
+			<h1>LA SALLE DE LA THÉRÈSIÈRE</h1>
+		</div>
+		<nav class="navbar">
+			<ul>
+				<li>
+					<a href="{{ path('app_home') }}">Accueil</a>
+				</li>
+				<li>
+					<a href="{{ path('app_visite_index') }}">Visite</a>
+				</li>
+				<li>
+					<a href="{{ path('app_reservation_index') }}">Réservation</a>
+				</li>
+				<li>
+					<a href="{{ path('app_contact') }}">Contact</a>
+				</li>
+				{% if is_granted('ROLE_USER') %}
+					<li>
+						<a href="{{ path('app_user_show', {'id': app.user.id}) }}">Profil</a>
+					</li>
+					<li>
+						<a href="{{ path('app_logout') }}">Déconnexion</a>
+					</li>
+
+				{% else %}
+					<li>
+						<a href="{{ path('app_login') }}">Connexion</a>
+					</li>
+					<li>
+						<a href="{{ path('app_register') }}">Inscrivez-vous!</a>
+					</li>
+				{% endif %}
+				{% if is_granted('ROLE_ADMIN') %}
+					<li>
+						<a href="{{ path('app_panel_admin') }}">Espace administrateur</a>
+					</li>
+					<li>
+						<a href="{{ path('app_option_index') }}">Options</a>
+					</li>
+					<li>
+						<a href="{{ path('app_categorie_index') }}">Catégories</a>
+					</li>
+				{% endif %}
+			</ul>
+		</nav>
 	</div>
 </header>

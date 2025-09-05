@@ -4,27 +4,30 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\HttpFoundation\Request;
 
 class SecurityController extends AbstractController
 {
-    #[Route(path: '/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils, EntityManagerInterface $entityManager): Response
+   #[Route(path: '/login', name: 'app_login')]
+    public function login(AuthenticationUtils $authenticationUtils, Request $request, EntityManagerInterface $em): Response
     {
-        
+        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
+
+        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-         if ($error instanceof CustomUserMessageAuthenticationException) {
-            $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $lastUsername]);
-            if ($user && !$user->isActive()) {
-                return $this->redirectToRoute('app_user_reactivate', ['id' => $user->getId()]);
-            }
+        if ($error) {
+            $this->addFlash('error', 'Identifiants invalides.');
         }
+
+        if ($request->query->get('logout') === '1') {
+            $this->addFlash('success', 'Vous avez bien été déconnecté.');
+        }
+
 
         return $this->render('security/login.html.twig', [
             'last_username' => $lastUsername,

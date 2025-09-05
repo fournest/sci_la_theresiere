@@ -26,9 +26,11 @@
 		<div class="account-actions">
 			<form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre compte ? Cette action est irréversible.');">
 				<input type="hidden" name="_token" value="{{ csrf_token('desactive' ~ app.user.id) }}">
-				<button type="submit" class="btn">Supprimer mon compte</button>
+				<button type="submit" class="btn-principal">Supprimer mon compte</button>
 			</form>
-			<a href="{{ path('app_user_show') }}" class="btn">Retour au profil</a>
+			<div class="btn-principal">
+				<a href="{{ path('app_user_show') }}" class="btn">Retour au profil</a>
+			</div>
 		</div>
 	</div>
 

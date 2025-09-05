@@ -13,6 +13,7 @@ Roboto Paragraphes et contenu principal
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    font-family: 'roboto';
 }
 
 /* Styles pour la barre d'en-tête complète */
@@ -24,54 +25,75 @@ Roboto Paragraphes et contenu principal
     background-color: #562D59;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     color: #526E7F;
+    width: 100%;
+    max-width: none;
 
 }
 
-/* Conteneur du logo et du titre */
+.titre {
+
+    display: block;
+    text-align: center;
+    padding: 15px;
+    background-color: #526E7F;
+    border-radius: 35px;
+}
+
+.titre h1 {
+    font-size: 3.5em;
+    color: #DDB6BE;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Ovo';
+}
+
+
 .logo-container {
     display: flex;
+    justify-content: center;
     align-items: center;
 }
 
 .logo-container img {
+    max-width: 100px;
     height: 100px;
     width: auto;
-    margin-right: 20px;
+    /* margin-right: 20px; */
     border: 2px solid white;
     border-radius: 50%;
 }
 
-.titre h1 {
-    font-size: 2em;
-    /* color: #526E7F; */
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
 
 /* Styles pour la barre de navigation */
 .navbar ul {
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    text-align: center;
+    justify-content: end;
 }
 
 .navbar li {
-    display: inline-block;
+    width: auto;
 }
 
 .navbar a {
     text-decoration: none;
+    text-align: center;
     color: #526E7F;
     font-weight: bold;
+    font-family: 'Playball';
     padding: 10px 18px;
     border-radius: 8px;
     border: 2px solid #526E7F;
     background-color: #DDB6BE;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-    white-space: nowrap;
+    display: block;
+    width: 100%;
 }
 
 .navbar a:hover,
@@ -92,6 +114,7 @@ h3 {
     text-align: center;
     color: #526E7F;
     margin-bottom: 20px;
+    font-family: 'playball';
 
 }
 
@@ -101,6 +124,7 @@ p {
     color: #526E7F;
     font-size: 1rem;
     padding: 15px;
+
 }
 
 footer {
@@ -111,30 +135,56 @@ footer {
 
 .footer-content {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
-    /* max-width: 1200px; */
+    align-items: flex-start;
     margin: 0 auto;
+    max-width: none;
 }
 
-/* Section de la carte */
+.footer-contact-info,
+.map-container,
+.footer-nav {
+    margin: 1rem;
+}
+
 .map-container {
     flex-grow: 1;
-    margin: 1rem 2rem;
+    /* Allows the map container to grow within its parent */
+    flex-basis: 350px;
+    /* Sets a base width for the map */
     max-width: 400px;
-    border: 2px solid #DDB6BE;
+    margin: 0;
+    /* Removed conflicting margin */
 }
 
-/* Section de navigation du pied de page */
-/* .footer-nav {
-    margin-left: 2rem;
-} */
-
 .map-container iframe {
+    flex: 1;
+    margin: 1rem 2rem;
+    max-width: 300px;
     width: 100%;
     height: 200px;
     display: block;
+    /* border: 2px solid #DDB6BE; */
+}
+
+/* Section de navigation du pied de page */
+.footer-nav {
+    margin-top: 4rem;
+    margin-left: 2rem;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+
+}
+
+.footer-nav button {
+    background-color: #DDB6BE;
+    border: 1px solid#562D59;
+    color: #526E7F;
+    padding: 10px 15px;
+    cursor: pointer;
 }
 
 .footer-contact-info {
@@ -162,12 +212,14 @@ footer {
     margin: 0 10px;
     border-radius: 8px;
     transition: transform 0.2s, background-color 0.2s;
+    font-family: 'playball';
+    padding: 10px 15px
 }
 
 .table td button a {
-    color: #526E7F;
+    color: #DDB6BE;
     text-decoration: none;
-    font-family: 'Arial', sans-serif;
+    font-family: 'playball';
     font-size: 16px;
     font-weight: bold;
     padding: 10px 15px;
@@ -176,10 +228,11 @@ footer {
 
 .table td button:hover {
     transform: translateY(-2px);
+    background-color: #452349;
 }
 
 .table td button a:hover {
-    color: #DDB6BE;
+    color: #526E7F;
 }
 
 .table td button a:active {
@@ -198,8 +251,8 @@ footer {
 
 .table,
 .user-table {
-    width: 80%;
-    margin-top: 20px;
+    width: 100%;
+    /* margin-top: 20px; */
     background-color: #DDB6BE;
     border-collapse: collapse;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -208,7 +261,8 @@ footer {
 }
 
 .table th,
-.user-table th .table td,
+.user-table th,
+.table td,
 .user-table td {
     padding: 12px 15px;
     text-align: left;
@@ -224,11 +278,11 @@ footer {
 
 .user-table,
 .table tbody tr:nth-child(even) {
-    background-color: #DDB6BE;
+    background-color: #D3A7B1;
 }
 
 .table tbody tr:hover {
-    background-color: #DDB6BE;
+    background-color: #CDBECA;
     transition: background-color 0.3s ease;
 }
 
@@ -240,7 +294,7 @@ footer {
 }
 
 .table td a:hover {
-    color: #526E7F;
+    color: #562D59;
     text-decoration: underline;
 }
 
@@ -272,6 +326,33 @@ footer {
     background-color: #562D59;
 }
 
+/* Style de base pour tous les boutons */
+.btn-principal {
+    background-color: #562D59;
+    color: #DDB6BE;
+    border: 1px solid #DDB6BE;
+    padding: 10px 15px;
+    border-radius: 50px;
+    font-family: 'Playball', sans-serif;
+    font-size: 16px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
+    cursor: pointer;
+    display: inline-block;
+}
+
+/* Effet de survol */
+.btn-principal:hover {
+    background-color: #DDB6BE;
+    color: #526E7F;
+    transform: translateY(-2px);
+}
+
+/* Effet de clic */
+.btn-principal:active {
+    transform: scale(0.95);
+}
+
 button,
 .btn {
     background-color: #DDB6BE;
@@ -286,7 +367,7 @@ button a,
 .btn {
     color: #526E7F;
     text-decoration: none;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Playball', sans-serif;
     font-size: 16px;
     font-weight: bold;
     padding: 10px 15px;
@@ -307,6 +388,8 @@ button a:active,
 .btn:active {
     transform: scale(0.95);
 }
+
+
 
 
 /* --- Conteneur du formulaire --- */
@@ -335,12 +418,13 @@ label {
 /* --- Champs de saisie (input) --- */
 input[type="text"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    /* font-family: 'Roboto', sans-serif; */
+    font-family: 'Roboto', sans-serif;
     font-size: 1em;
     box-sizing: border-box;
     transition: border-color 0.3s;
@@ -378,7 +462,7 @@ button[type="submit"] {
     border-radius: 50px;
     background-color: #562D59;
     color: #DDB6BE;
-    /* font-family: 'Playball', cursive; */
+    font-family: 'Playball', cursive;
     font-size: 1.5em;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
@@ -413,73 +497,117 @@ button[type="submit"]:hover {
 }
 
 .conteneur-flex {
-    display: flex;
-    flex-wrap: wrap;
-
+    width: 100%;
+    max-width: none;
 }
 
 .hero-section {
     display: flex;
     justify-content: center;
+    align-items: center;
     background-image: url(../img/grange1.jpg);
     background-position: center;
     background-repeat: no-repeat;
-    background-size: contain;
-    width: 50%;
-    height: 75vh;
-    margin: 10px;
+    background-size: cover;
+    width: 100%;
+    height: 50vh;
+
 }
+
+
+.hero-content {
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 0 20px;
+    width: 80%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 8px;
+    padding-left: 20px;
+}
+
+.hero-content-titre {
+
+    text-align: center;
+    color: #DDB6BE;
+    font-size: 3.5em;
+    margin: 0;
+    line-height: 1.4;
+    letter-spacing: 2px;
+    font-family: 'playball';
+    margin: 0;
+}
+
+
 
 .bloc {
     display: grid;
-    grid-template-columns: 400px 400px;
-    grid-template-rows: 400px 400px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 20px;
 
 }
 
+#bloc1,
+#bloc2,
+#bloc3,
+#bloc4 {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+    border-radius: 8px;
+    margin: 0;
+    
+}
 
 #bloc1 {
-    grid-column: 1 / 3;
+    grid-column: 1;
     grid-row: 1;
     background-image: url(../img/grange3.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    text-align:center;
-    margin: 10px;
-}
-
-#bloc2 {
-    grid-column: 2 / 3;
-    grid-row: 1;
-    background-image: url(../img/grange11.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     text-align: center;
     margin: 10px;
 }
 
+#bloc2 {
+    grid-column: 2;
+    grid-row: 1;
+    background-image: url(../img/grange11.jpg);
+    text-align: center;
+    margin: 10px;
+    
+}
+
 #bloc3 {
-    grid-column: 1 / 3;
+    grid-column: 1;
     grid-row: 2;
     background-image: url(../img/grange6.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     text-align: center;
     margin: 10px;
 }
 
 #bloc4 {
-    grid-column: 2 / 3;
+    grid-column: 2;
     grid-row: 2;
     background-image: url(../img/grange10.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
     text-align: center;
     margin: 10px;
+}
+
+.bloc p {
+    
+    background-color: rgba(0, 0, 0, 0.6);
+    position: relative;
+    z-index: 2;
+    color: #DDB6BE;
+    font-family: 'playball';
+    text-align: center;
+    padding: 20px;
+    font-size: 2.0em;
 }
 
 .admin-dashboard {
@@ -516,57 +644,59 @@ button[type="submit"]:hover {
 
 /* Conteneur principal de la carte utilisateur */
 .card-user {
-    background-color: #562d59; 
+    background-color: #562d59;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 800px;
     margin: 20px auto;
     padding: 30px;
-    border: 1px solid #DDB6BE; 
+    border: 1px solid #DDB6BE;
 }
 
 /* En-tête de la carte utilisateur */
 .user-info-header {
     text-align: center;
-    border-bottom: 2px solid  #DDB6BE; 
+    border-bottom: 2px solid #DDB6BE;
     padding-bottom: 20px;
     margin-bottom: 20px;
 }
 
 .user-info-header h1 {
     font-size: 2.5em;
-    color: #DDB6BE; 
+    color: #DDB6BE;
     margin: 0;
     line-height: 1.2;
 }
 
-.user-info-header p {
-    font-size: 1.2em;
-    color:  #DDB6BE; 
+.user-info-header h2 {
+    font-size: 2em;
+    color: #DDB6BE;
     margin-top: 5px;
 }
 
 /* Détails du profil */
-.profile-details h2,
+.profile-details p,
 .visits-list h2,
-.reservations-list h2 {
-    color: #DDB6BE; 
-    border-left: 5px solid #DDB6BE; 
+.reservations-list h2,
+.messages-list h2 {
+    color: #DDB6BE;
     padding-left: 10px;
     font-size: 1.5em;
     margin-bottom: 15px;
 }
 
-/* Sections des listes (visites, réservations) */
+
 .visits-list,
-.reservations-list {
+.reservations-list,
+.messages-list {
     margin-top: 20px;
 }
 
 .visit-item,
-.reservation-item {
-    background-color:  #DDB6BE; /* Fond légèrement grisé pour les éléments */
-    border: 1px solid  #526E7F;
+.reservation-item,
+.message-item {
+    background-color: #DDB6BE;
+    border: 1px solid #526E7F;
     border-radius: 10px;
     padding: 15px;
     margin-bottom: 15px;
@@ -574,11 +704,37 @@ button[type="submit"]:hover {
 }
 
 .visit-item p,
-.reservation-item p {
+.reservation-item p,
+.message-item p {
     margin: 5px 0;
 }
 
 .visit-item strong,
-.reservation-item strong {
+.reservation-item strong,
+.message-item strong {
     color: #526E7F;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 20px;
+
+}
+
+.social-links a {
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.social-links a img {
+    height: 60px;
+    width: auto;
+
+}
+
+.social-links a:hover {
+    transform: scale(1.1);
 }

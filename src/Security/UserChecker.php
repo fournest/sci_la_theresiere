@@ -8,13 +8,23 @@ use App\Entity\User as AppUser;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\User\UserCheckerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\ORM\EntityManagerInterface;
+
 
 
 
 class UserChecker implements UserCheckerInterface
 
 {
-        public function checkPreAuth(UserInterface $user): void
+
+     private EntityManagerInterface $em;
+
+    public function __construct(EntityManagerInterface $em)
+    {
+        $this->em = $em;
+    }
+        
+    public function checkPreAuth(UserInterface $user): void
 
     {
 
@@ -23,7 +33,7 @@ class UserChecker implements UserCheckerInterface
             return;
         }
 
-        if (!$user->IsActive()) {
+        if ($user->isBanned()) {
 
             throw new CustomUserMessageAuthenticationException(
 

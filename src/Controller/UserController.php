@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
 use App\Form\UserType;
+use App\Repository\ContactRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -24,7 +25,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class UserController extends AbstractController
 {
     #[Route('/', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user, VisiteRepository $visiteRepository, ReservationRepository $reservationRepository): Response
+    public function show(User $user, VisiteRepository $visiteRepository, ReservationRepository $reservationRepository, ContactRepository $contactRepository): Response
     {
 
         $user = $this->getUser();
@@ -34,11 +35,13 @@ final class UserController extends AbstractController
 
         $visites = $visiteRepository->findBy(['user' => $user->getId()]);
         $reservations = $reservationRepository->findBy(['user' => $user->getId()]);
+        $contacts = $contactRepository->findBy(['user' => $user->getId()]);
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
             'visites' => $visites,
             'reservations' => $reservations,
+            'contacts' => $contacts,
         ]);
     }
 
@@ -87,23 +90,24 @@ final class UserController extends AbstractController
         return $this->redirectToRoute('app_user_show');
     }
 
-    #[Route('/{id}/reactivate', name: 'app_user_reactivate', methods: ['POST'])]
-    public function reactivate(Request $request, Security $security, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $currentUser = $this->getUser();
-        if (!$security->isGranted('ROLE_ADMIN') && (!$currentUser || $user->getId() !== $currentUser->getId())) {
-            throw new AccessDeniedException("Vous n'avez pas le droit de réactiver ce compte.");
-        }
+    // #[Route('/{id}/reactivate', name: 'app_user_reactivate')]
+    // public function reactivate(Request $request, Security $security, User $user, EntityManagerInterface $entityManager): Response
+    // {  
+    //     $currentUser = $this->getUser();
+    //     if (!$security->isGranted('ROLE_ADMIN') && (!$currentUser || $user->getId() !== $currentUser->getId())) {
+    //         throw new AccessDeniedException("Vous n'avez pas le droit de réactiver ce compte.");
+    //     }
 
-        if ($this->isCsrfTokenValid('reactivate' . $user->getId(), $request->request->get('_token'))) {
-            $user->setIsActive(true);
-            $entityManager->flush();
 
-            $this->addFlash('success', 'Votre compte a été réactivé avec succès.');
-            return $this->redirectToRoute('app_user_show');
-        }
-        return $this->redirectToRoute('app_user_show');
-    }
+    //     if ($this->isCsrfTokenValid('reactivate' . $user->getId(), $request->request->get('_token'))) {
+    //         $user->setIsActive(true);
+    //         $entityManager->flush();
+
+    //         $this->addFlash('success', 'Votre compte a été réactivé avec succès.');
+    //         return $this->redirectToRoute('app_user_show');
+    //     }
+    //     return $this->redirectToRoute('app_user_show');
+    // }
 
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, Security $security, User $user, EntityManagerInterface $entityManager): Response

@@ -11,15 +11,18 @@
 	<div class="card-user">
 		<h1>Informations de mon profil</h1>
 		<div class="user-info-header">
-			<h2>{{user.nom}}
-				{{user.prenom}}</h2>
-			<p>
-				<strong>Pseudo :</strong>
-				{{user.pseudo}}</p>
-			<p></p>
+			<h2>
+				<strong>{{user.pseudo}}</strong>
+			</h2>
 		</div>
 
 		<div class="profile-details">
+			<p>
+				<strong>Nom :</strong>
+				{{user.nom}}</p>
+			<p>
+				<strong>Prénom :</strong>
+				{{user.prenom}}</p>
 			<p>
 				<strong>Email :</strong>
 				{{user.email}}</p>
@@ -37,13 +40,13 @@
 				{% for visite in visites %}
 					<div class="visit-item">
 						<p>
-							<strong>Date de visite</strong>
+							<strong>Date de visite :</strong>
 							{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</p>
 						<p>
-							<strong>Statut de la visite</strong>
+							<strong>Statut de la visite :</strong>
 							{{ visite.statut }}</p>
 						<p>
-							<strong>Date de réservation souhaitée</strong>
+							<strong>Date de réservation souhaitée :</strong>
 							{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</p>
 
 					</div>
@@ -58,26 +61,39 @@
 				{% for reservation in reservations %}
 					<div class="reservation-item">
 						<p>
-							<strong>Dossier de réservation</strong>
+							<strong>Dossier de réservation :</strong>
 							{{ reservation.dossierResa }}</p>
 						<p>
-							<strong>Date de début de réservation</strong>
+							<strong>Date de début de réservation :</strong>
 							{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</p>
 						<p>
-							<strong>Statut de la réservation</strong>
-							{{ reservation.statut }}</p>
-						<p>
-							<strong>Date de fin deréservation
+							<strong>Date de fin deréservation :
 							</strong>
 							{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</p>
 
+						<p>
+							<strong>Statut de la réservation :</strong>
+							{{ reservation.statut }}</p>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+
+		{% if user.contacts is not empty %}
+			<h2>Mes messages</h2>
+			<div class="messages-list">
+				{% for contact in contacts %}
+					<div class="message-item">
+						<p>
+							<strong>Message :</strong>
+							{{ contact.message }}</p>
 					</div>
 				{% endfor %}
 			</div>
 		{% endif %}
 
 		{% if app.user and app.user.id == user.id %}
-			<div>
+			<div class="btn-principal">
 				<a href="{{ path('app_user_edit', {'id': app.user.id}) }}" class="btn">
 					Modifier le profil
 				</a>

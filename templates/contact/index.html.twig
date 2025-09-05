@@ -1,20 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ContactController!{% endblock %}
+{% block title %}Votre message
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+	<form class="form-container" method="POST">
+		<h1>Votre message</h1>
+		{% if app.user %}
+			<p>
+				{{ app.user.pseudo }}
+			</p>
+		{% endif %}
+		{{ form_start(contactForm) }}
+		{{ form_widget(contactForm) }}
+		<button>{{ button_label|default('Envoyer') }}</button>
+		{{ form_end(contactForm) }}
+	</form>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/Arinfo/sci_la_theresiere/src/Controller/ContactController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/Arinfo/sci_la_theresiere/templates/contact/index.html.twig</code></li>
-    </ul>
-</div>
 {% endblock %}

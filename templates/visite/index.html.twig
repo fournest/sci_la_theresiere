@@ -26,10 +26,10 @@
 					<td>{{ visite.statut }}</td>
 					<td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
 					<td>
-						<button>
+						<button class="btn-principal">
 							<a href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
 						</button>
-						<button>
+						<button class="btn-principal">
 							<a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
 						</button>
 					</td>
@@ -42,7 +42,7 @@
 		</tbody>
 	</table>
 
-	<button>
+	<button class="btn-principal">
 		<a href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a>
 	</button>
 {% endblock %}
