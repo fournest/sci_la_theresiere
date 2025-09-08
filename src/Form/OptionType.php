@@ -15,11 +15,11 @@ class OptionType extends AbstractType
     {
         $builder
             ->add('nom')
-            // ->add('reservations', EntityType::class, [
-            //     'class' => Reservation::class,
-            //     'choice_label' => 'id',
-            //     'multiple' => true,
-            // ])
+            ->add('reservations', EntityType::class, [
+                'class' => Reservation::class,
+                'choice_label' => 'id',
+                'multiple' => true,
+            ])
         ;
     }
 

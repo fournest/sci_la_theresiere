@@ -40,21 +40,30 @@ final class VisiteController extends AbstractController
 
     #[Route('/new', name: 'app_visite_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $VisiteRepository): Response
     {
         $visite = new Visite();
         $currentUser = $this->getUser();
         $form = $this->createForm(VisiteType::class, $visite);
         $form->handleRequest($request);
 
-       if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+           
+            $isBooked = $VisiteRepository->findValidatedBookingByDate($visite->getDateVisite());
+
+            if ($isBooked) {
+                // Étape 2 : Si elle est réservée, ajouter un message d'erreur et rediriger
+                $this->addFlash('error', 'Cette date est en attente de validation. Choississez une autre date ou contactez-nous.');
+                return $this->redirectToRoute('app_visite_new');
+            }
             $currentUser = $this->getUser();
             if ($currentUser) {
-                $visite->setUser($currentUser);} else {
-            $this->addFlash('error', 'Vous devez être connecté pour créer une visite.');
-            return $this->redirectToRoute('app_login');
-        }
-      
+                $visite->setUser($currentUser);
+            } else {
+                $this->addFlash('error', 'Vous devez être connecté pour créer une visite.');
+                return $this->redirectToRoute('app_login');
+            }
+
             $visite->setStatut('en_attente');
             $entityManager->persist($visite);
             $entityManager->flush();
@@ -96,7 +105,7 @@ final class VisiteController extends AbstractController
         ]);
     }
 
-     #[Route('/cancel/{id}', name: 'app_visite_cancel', methods: ['POST'])]
+    #[Route('/cancel/{id}', name: 'app_visite_cancel', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function cancel(Request $request, Visite $visite, EntityManagerInterface $entityManager): Response
     {

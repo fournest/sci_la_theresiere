@@ -26,12 +26,8 @@
 					<td>{{ visite.statut }}</td>
 					<td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
 					<td>
-						<button class="btn-principal">
-							<a href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
-						</button>
-						<button class="btn-principal">
-							<a href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
-						</button>
+							<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
+							<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
 					</td>
 				</tr>
 			{% else %}

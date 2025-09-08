@@ -9,13 +9,9 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Ovo&family=Playball&family=Roboto&display=swap" rel="stylesheet">
-		{% block stylesheets %}
-			<link rel="stylesheet" href="{{ asset('css/style.css') }}">
-		{% endblock %}
+		<link rel="stylesheet" href="{{ asset('css/style.css') }}"> 
 		{% block javascripts %}
-			{% block importmap %}
-				<script src="{{ asset('script/modal.js') }}" defer></script>
-			{% endblock %}
+			{% block importmap %}{% endblock %}
 		{% endblock %}
 	</head>
 	<body>

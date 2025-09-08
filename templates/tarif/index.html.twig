@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tarif index
+{% endblock %}
+
+{% block body %}
+	<h1>Tarif index</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+
+				<th>Prix de la Reservation</th>
+				<th>Prix des options</th>
+				{% if is_granted('ROLE_ADMIN') %}
+					<th>actions</th>
+				{% endif %}
+			</tr>
+		</thead>
+		<tbody>
+			{% for tarif in tarifs %}
+				<tr>
+
+					<td>{{ tarif.prixReservation }}
+						€</td>
+					<td>{{ tarif.prixOption }}
+						€</td>
+					{% if is_granted('ROLE_ADMIN') %}
+						<td>
+							<a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
+							<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
+						</td>
+					{% endif %}
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="4">aucun tarif trouvé</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% if is_granted('ROLE_ADMIN') %}
+		<a class="btn-principal" href="{{ path('app_tarif_new') }}">Créez un tarif</a>
+	{% endif %}
+
+
+{% endblock %}

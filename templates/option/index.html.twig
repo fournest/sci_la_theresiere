@@ -1,35 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Options{% endblock %}
+{% block title %}Options
+{% endblock %}
 
 {% block body %}
-    <h1>Options</h1>
+	<h1>Options</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                {# <th>Id</th> #}
-                <th>Nom</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for option in options %}
-            <tr>
-                {# <td>{{ option.id }}</td> #}
-                <td>{{ option.nom }}</td>
-                <td>
-                    <button><a href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a></button>
-                    <button><a href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a></button>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">Aucune option trouvée</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<table class="table">
+		<thead>
+			<tr>
+				{# <th>Id</th> #}
+				<th>Nom</th>
+				<th>actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for option in options %}
+				<tr>
+					{# <td>{{ option.id }}</td> #}
+					<td>{{ option.nom }}</td>
+					<td>
+						<a class="btn-principal" href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a>
+						<a class="btn-principal" href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="3">Aucune option trouvée</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
-    <button><a href="{{ path('app_option_new') }}">Créez une option ici</a></button>
+
+		<a class="btn-principal" href="{{ path('app_option_new') }}">Créez une option ici</a>
+	
 {% endblock %}

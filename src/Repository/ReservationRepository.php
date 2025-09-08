@@ -28,12 +28,12 @@ class ReservationRepository extends ServiceEntityRepository
             ->select('COUNT(reservation.id)')
             ->where('reservation.categorie = :categorie')
             ->andWhere('reservation.statut IN (:statuts)')
-            ->andWhere(':dateResaDebut < reservation.dateResaFin')
-            ->andWhere(':dateResaFin > reservation.dateResaDebut')
+            ->andWhere(':dateDebut < reservation.dateResaFin')
+            ->andWhere(':dateFin > reservation.dateResaDebut')
             ->setParameter('categorie', $categorie)
-            ->setParameter('dateResaDebut', $dateDebut)
-            ->setParameter('dateResaFin', $dateFin)
-            ->setParameter('statuts', ['confirmée', 'en_attente'])
+            ->setParameter('dateDebut', $dateDebut)
+            ->setParameter('dateFin', $dateFin)
+            ->setParameter('statuts', ['en_attente', 'validée'])
             ->getQuery()
             ->getSingleScalarResult();
 

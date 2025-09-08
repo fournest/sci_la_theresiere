@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau tarif{% endblock %}
+
+{% block body %}
+    <h1>Créez un nouveau tarif</h1>
+
+    {{ include('tarif/_form.html.twig') }}
+
+    <a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
+{% endblock %}

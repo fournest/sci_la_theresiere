@@ -22,6 +22,9 @@
 				<li>
 					<a href="{{ path('app_contact') }}">Contact</a>
 				</li>
+				<li>
+					<a href="{{ path('app_tarif_index') }}">Tarifs</a>
+				</li>
 				{% if is_granted('ROLE_USER') %}
 					<li>
 						<a href="{{ path('app_user_show', {'id': app.user.id}) }}">Profil</a>

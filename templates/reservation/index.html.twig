@@ -10,14 +10,14 @@
 		<thead>
 			<tr>
 				{# <th>Id</th> #}
-				<th>Pseudo</th>
+				{# <th>Pseudo</th> #}
 				<th>Statut de la réservation</th>
 				<th>Date de début de Réservation</th>
-				<th>Date de fin de réservation</th>
-				<th>Dossier de réservation n°</th>
+				<th class="masquer-en-mobile">Date de fin de réservation</th>
+				<th class="masquer-en-mobile">Dossier de réservation n°</th>
 				<th>Acompte</th>
 				<th>Caution</th>
-				<th>Catégorie</th>
+				<th class="masquer-en-mobile">Catégorie</th>
 				<th>Options</th>
 				<th>Actions</th>
 			</tr>
@@ -25,14 +25,14 @@
 		<tbody>
 			{% for reservation in reservations %}
 				<tr>
-					<td>{{ reservation.user.pseudo }}</td>
+					{# <td>{{ reservation.user.pseudo }}</td> #}
 					<td>{{ reservation.statut }}</td>
 					<td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</td>
-					<td>{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</td>
-					<td>{{ reservation.dossierResa }}</td>
+					<td class="masquer-en-mobile">{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</td>
+					<td class="masquer-en-mobile">{{ reservation.dossierResa }}</td>
 					<td>{{ reservation.acompte ? 'Oui' : 'Non' }}</td>
 					<td>{{ reservation.caution ? 'Oui' : 'Non' }}</td>
-					<td>{{ reservation.categorie.nom }}</td>
+					<td class="masquer-en-mobile">{{ reservation.categorie.nom }}</td>
 					<td>
 						{% for option in reservation.options %}
 							{{ option.nom }}
@@ -42,12 +42,8 @@
 					</td>
 
 					<td>
-						<button>
-							<a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-						</button>
-						<button>
-							<a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-						</button>
+							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+							<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
 					</td>
 				</tr>
 			{% else %}
@@ -58,7 +54,5 @@
 		</tbody>
 	</table>
 
-	<button>
-		<a href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
-	</button>
+		<a class="btn-principal" href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
 {% endblock %}

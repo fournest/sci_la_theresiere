@@ -61,13 +61,9 @@
 			<button class="btn-principal">Annuler ma réservation</button>
 		</form>
 	{% endif %}
-	<button class="btn-principal">
-		<a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-	</button>
+		<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
 	{% if is_granted('ROLE_ADMIN') %}
 		{{ include('reservation/_delete_form.html.twig') }}
 	{% endif %}
-	<button class="btn-principal">
-		<a href="{{ path('app_reservation_index') }}">Retour à la liste</a>
-	</button>
+		<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
 {% endblock %}
