@@ -6,64 +6,61 @@
 {% block body %}
 	<h1>Votre réservation</h1>
 
-	<table class="table">
-		<tbody>
-			<tr>
-				<th>Pseudo</th>
-				<td>{{ reservation.user.pseudo }}</td>
-			</tr>
-			<tr>
-				<th>Début de réservation</th>
-				<td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('Y-m-d') : '' }}</td>
-			</tr>
-			<tr>
-				<th>Fin de réservation</th>
-				<td>{{ reservation.dateResaFin ? reservation.dateResaFin|date('Y-m-d') : '' }}</td>
-			</tr>
-			<tr>
-				<th>Dossier n°
-				</th>
-				<td>{{ reservation.dossierResa }}</td>
-			</tr>
-
-			<tr>
-				<th>Statut de la réservation</th>
-				<td>{{ reservation.statut }}</td>
-			</tr>
-			<tr>
-				<th>Acompte</th>
-				<td>{{ reservation.acompte ? 'Oui' : 'Non' }}</td>
-
-			</tr>
-			<tr>
-				<th>Caution</th>
-				<td>{{ reservation.caution ? 'Oui' : 'Non' }}</td>
-			</tr>
-			<tr>
-				<th>Categorie</th>
-				<td>{{ reservation.categorie.nom }}</td>
-			</tr>
-			<tr>
-				<th>Options</th>
-				<td>
+	<div class="reservation-details-container">
+		<ul class="reservation-details-list">
+			<li class="detail-item">
+				<strong>Pseudo :</strong>
+				<span>{{ reservation.user.pseudo }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Début de réservation :</strong>
+				<span>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('Y-m-d') : '' }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Fin de réservation :</strong>
+				<span>{{ reservation.dateResaFin ? reservation.dateResaFin|date('Y-m-d') : '' }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Dossier n° :</strong>
+				<span>{{ reservation.dossierResa }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Statut de la réservation :</strong>
+				<span>{{ reservation.statut }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Acompte :</strong>
+				<span>{{ reservation.acompte ? 'Oui' : 'Non' }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Caution :</strong>
+				<span>{{ reservation.caution ? 'Oui' : 'Non' }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Catégorie :</strong>
+				<span>{{ reservation.categorie.nom }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Options :</strong>
+				<span>
 					{% for option in reservation.options %}
 						{{ option.nom }}
 					{% else %}
 						Aucune option
 					{% endfor %}
-				</td>
-			</tr>
-		</tbody>
-	</table>
+				</span>
+			</li>
+		</ul>
+	</div>
 	{% if reservation.statut != 'annulée' and is_granted('ROLE_USER') and app.user == reservation.user %}
 		<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
 			<button class="btn-principal">Annuler ma réservation</button>
 		</form>
 	{% endif %}
-		<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+	<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
 	{% if is_granted('ROLE_ADMIN') %}
 		{{ include('reservation/_delete_form.html.twig') }}
 	{% endif %}
-		<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
+	<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
 {% endblock %}

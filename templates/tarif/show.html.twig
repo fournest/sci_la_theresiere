@@ -1,27 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tarif{% endblock %}
+{% block title %}Tarif
+{% endblock %}
 
 {% block body %}
-    <h1>Tarif</h1>
+	<h1>Tarif</h1>
 
-    <table class="table">
-        <tbody>
-            
-            <tr>
-                <th>Prix de la réservation</th>
-                <td>{{ tarif.prixReservation }}</td>
-            </tr>
-            <tr>
-                <th>Prix de l'option</th>
-                <td>{{ tarif.prixOption }}</td>
-            </tr>
-        </tbody>
-    </table>
+	<div class="tarif-details-container">
+		<ul class="tarif-details-list">
+			<li class="detail-item">
+				<strong>Prix de la réservation :</strong>
+				<span>{{ tarif.prixReservation }}
+					€</span>
+			</li>
+			<li class="detail-item">
+				<strong>Prix de l'option :</strong>
+				<span>{{ tarif.prixOption }}
+					€</span>
+			</li>
+		</ul>
+	</div>
 
-    <a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
+	<a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
 
-    <a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
+	<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
 
-    {{ include('tarif/_delete_form.html.twig') }}
+	{{ include('tarif/_delete_form.html.twig') }}
 {% endblock %}

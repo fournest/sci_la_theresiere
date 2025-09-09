@@ -6,39 +6,43 @@
 {% block body %}
 	<h1>Visite de la Salle</h1>
 
-	<table class="table">
-		<thead>
-			<tr>
-				{# <th>Id</th> #}
-				<th>Pseudo</th>
-				<th>Date de Visite</th>
-				<th>statut de la visite</th>
-				<th>Date de réservation souhaitée</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for visite in visites %}
-				<tr>
-					{# <td>{{ visite.id }}</td> #}
-					<td>{{ visite.user.pseudo }}</td>
-					<td>{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</td>
-					<td>{{ visite.statut }}</td>
-					<td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
-					<td>
-							<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
-							<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
-					</td>
-				</tr>
+	<div class="admin-dashboard">
+		<div class="user-table">
+			{% if visites is not empty %}
+				<ul class="visit-list">
+					{% for visite in visites %}
+						<li class="visit-item">
+							<div class="visit-item-content">
+								<p>
+									<strong>Pseudo :</strong>
+									{{ visite.user.pseudo }}
+								</p>
+								<p>
+									<strong>Date de Visite :</strong>
+									{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}
+								</p>
+								<p>
+									<strong>Statut :</strong>
+									{{ visite.statut }}
+								</p>
+								<p>
+									<strong>Date de réservation souhaitée :</strong>
+									{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}
+								</p>
+							</div>
+							<div class="visit-item-actions">
+								<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
+								<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
 			{% else %}
-				<tr>
-					<td colspan="5">Aucune visite trouvée</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+				<p class="no-data-found">Aucune visite trouvée.</p>
+			{% endif %}
+		</div>
+	</div>
 
-	<button class="btn-principal">
-		<a href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a>
-	</button>
+
+	<a class="btn-principal" href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a>
 {% endblock %}

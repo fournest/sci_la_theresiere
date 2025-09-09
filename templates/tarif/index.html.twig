@@ -6,39 +6,32 @@
 {% block body %}
 	<h1>Tarif index</h1>
 
-	<table class="table">
-		<thead>
-			<tr>
-
-				<th>Prix de la Reservation</th>
-				<th>Prix des options</th>
+	<ul class="tarifs-list">
+		{% for tarif in tarifs %}
+			<li class="tarif-item">
+				<div class="tarif-info">
+					<p>
+						<strong>Prix de la réservation :</strong>
+						{{ tarif.prixReservation }}
+						€
+					</p>
+					<p>
+						<strong>Prix des options :</strong>
+						{{ tarif.prixOption }}
+						€
+					</p>
+				</div>
 				{% if is_granted('ROLE_ADMIN') %}
-					<th>actions</th>
+					<div class="tarif-actions">
+						<a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
+						<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
+					</div>
 				{% endif %}
-			</tr>
-		</thead>
-		<tbody>
-			{% for tarif in tarifs %}
-				<tr>
-
-					<td>{{ tarif.prixReservation }}
-						€</td>
-					<td>{{ tarif.prixOption }}
-						€</td>
-					{% if is_granted('ROLE_ADMIN') %}
-						<td>
-							<a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
-							<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
-						</td>
-					{% endif %}
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="4">aucun tarif trouvé</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+			</li>
+		{% else %}
+			<p>Aucun tarif trouvé</p>
+		{% endfor %}
+	</ul>
 	{% if is_granted('ROLE_ADMIN') %}
 		<a class="btn-principal" href="{{ path('app_tarif_new') }}">Créez un tarif</a>
 	{% endif %}

@@ -6,33 +6,25 @@
 {% block body %}
 	<h1>Options</h1>
 
-	<table class="table">
-		<thead>
-			<tr>
-				{# <th>Id</th> #}
-				<th>Nom</th>
-				<th>actions</th>
-			</tr>
-		</thead>
-		<tbody>
+	<div class="options-container">
+		<ul class="options-list">
 			{% for option in options %}
-				<tr>
-					{# <td>{{ option.id }}</td> #}
-					<td>{{ option.nom }}</td>
-					<td>
+				<li class="option-item">
+					<div class="option-details">
+						<strong>Nom :</strong>
+						<span>{{ option.nom }}</span>
+					</div>
+					<div class="option-actions">
 						<a class="btn-principal" href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a>
 						<a class="btn-principal" href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
-					</td>
-				</tr>
+					</div>
+				</li>
 			{% else %}
-				<tr>
-					<td colspan="3">Aucune option trouvée</td>
-				</tr>
+				<li class="no-options">Aucune option trouvée</li>
 			{% endfor %}
-		</tbody>
-	</table>
+		</ul>
+	</div>
 
+	<a class="btn-principal" href="{{ path('app_option_new') }}">Créez une option ici</a>
 
-		<a class="btn-principal" href="{{ path('app_option_new') }}">Créez une option ici</a>
-	
 {% endblock %}

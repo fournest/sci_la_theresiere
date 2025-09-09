@@ -1,34 +1,29 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Categories{% endblock %}
+{% block title %}Categories
+{% endblock %}
 
 {% block body %}
-    <h1>Categories</h1>
+	<h1>Categories</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                {# <th>Id</th> #}
-                <th>Nom</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for categorie in categories %}
-            <tr>
-                <td>{{ categorie.nom }}</td>
-                <td>
-                   <a class="btn-principal" href="{{ path('app_categorie_show', {'id': categorie.id}) }}">Voir</a>
-                   <a class="btn-principal" href="{{ path('app_categorie_edit', {'id': categorie.id}) }}">Modifier</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">Aucune catégorie trouvée.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<div class="categories-list-container">
+		<ul class="categories-list">
+			{% for categorie in categories %}
+				<li class="categorie-item">
+					<div class="categorie-info">
+						<strong>Nom:</strong>
+						<span>{{ categorie.nom }}</span>
+					</div>
+					<div class="categorie-actions">
+						<a class="btn-principal" href="{{ path('app_categorie_show', {'id': categorie.id}) }}">Voir</a>
+						<a class="btn-principal" href="{{ path('app_categorie_edit', {'id': categorie.id}) }}">Modifier</a>
+					</div>
+				</li>
+			{% else %}
+				<li class="no-categories">Aucune catégorie trouvée.</li>
+			{% endfor %}
+		</ul>
+	</div>
 
-    <a class="btn-principal" href="{{ path('app_categorie_new') }}">Créez votre catégorie.</a>
+	<a class="btn-principal" href="{{ path('app_categorie_new') }}">Créez votre catégorie.</a>
 {% endblock %}

@@ -6,53 +6,55 @@
 {% block body %}
 	<h1>Réservations</h1>
 
-	<table class="table">
-		<thead>
-			<tr>
-				{# <th>Id</th> #}
-				{# <th>Pseudo</th> #}
-				<th>Statut de la réservation</th>
-				<th>Date de début de Réservation</th>
-				<th class="masquer-en-mobile">Date de fin de réservation</th>
-				<th class="masquer-en-mobile">Dossier de réservation n°</th>
-				<th>Acompte</th>
-				<th>Caution</th>
-				<th class="masquer-en-mobile">Catégorie</th>
-				<th>Options</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for reservation in reservations %}
-				<tr>
-					{# <td>{{ reservation.user.pseudo }}</td> #}
-					<td>{{ reservation.statut }}</td>
-					<td>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</td>
-					<td class="masquer-en-mobile">{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</td>
-					<td class="masquer-en-mobile">{{ reservation.dossierResa }}</td>
-					<td>{{ reservation.acompte ? 'Oui' : 'Non' }}</td>
-					<td>{{ reservation.caution ? 'Oui' : 'Non' }}</td>
-					<td class="masquer-en-mobile">{{ reservation.categorie.nom }}</td>
-					<td>
-						{% for option in reservation.options %}
-							{{ option.nom }}
-						{% else %}
-							Aucune option
-						{% endfor %}
-					</td>
-
-					<td>
-							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-							<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-					</td>
-				</tr>
+	<div class="reservation-list-container">
+		<div class="user-table">
+			{% if reservations is not empty %}
+				<ul class="reservation-list">
+					{% for reservation in reservations %}
+						<li class="reservation-item">
+							<div class="reservation-item-content">
+								<p>
+									<strong>Statut:</strong>
+									{{ reservation.statut }}</p>
+								<p>
+									<strong>Début:</strong>
+									{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</p>
+								<p>
+									<strong>Fin:</strong>
+									{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</p>
+								<p>
+									<strong>Dossier n°:</strong>
+									{{ reservation.dossierResa }}</p>
+								<p>
+									<strong>Acompte:</strong>
+									{{ reservation.acompte ? 'Oui' : 'Non' }}</p>
+								<p>
+									<strong>Caution:</strong>
+									{{ reservation.caution ? 'Oui' : 'Non' }}</p>
+								<p>
+									<strong>Catégorie:</strong>
+									{{ reservation.categorie.nom }}</p>
+								<p>
+									<strong>Options:</strong>
+									{% for option in reservation.options %}
+										{{ option.nom }}
+									{% else %}
+										Aucune option
+									{% endfor %}
+								</p>
+							</div>
+							<div class="reservation-item-actions">
+								<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+								<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+							</div>
+						</li>
+					{% endfor %}
+				</ul>
 			{% else %}
-				<tr>
-					<td colspan="8">Aucune réservation trouvée</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+				<p class="no-reservation">Aucune réservation trouvée.</p>
+			{% endif %}
+		</div>
+	</div>
 
-		<a class="btn-principal" href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
+	<a class="btn-principal" href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>
 {% endblock %}

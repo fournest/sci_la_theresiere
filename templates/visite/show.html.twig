@@ -6,27 +6,26 @@
 {% block body %}
 	<h1>Visite</h1>
 
-	<table class="table">
-		<tbody>
-
-			<tr>
-				<th>Votre pseudo</th>
-				<td>{{ visite.user.pseudo }}</td>
-			</tr>
-			<tr>
-				<th>Statut</th>
-				<td>{{ visite.statut }}</td>
-			</tr>
-			<tr>
-				<th>Date de Visite</th>
-				<td>{{ visite.dateVisite ? visite.dateVisite|date('d-m-Y') : '' }}</td>
-			</tr>
-			<tr>
-				<th>Date de Réservation Souhaitée</th>
-				<td>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</td>
-			</tr>
-		</tbody>
-	</table>
+	<div class="visite-details-container">
+		<ul class="visite-details-list">
+			<li class="detail-item">
+				<strong>Votre pseudo :</strong>
+				<span>{{ visite.user.pseudo }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Statut :</strong>
+				<span>{{ visite.statut }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Date de Visite :</strong>
+				<span>{{ visite.dateVisite ? visite.dateVisite|date('d-m-Y') : '' }}</span>
+			</li>
+			<li class="detail-item">
+				<strong>Date de Réservation Souhaitée :</strong>
+				<span>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</span>
+			</li>
+		</ul>
+	</div>
 
 	{% if visite.statut != 'annulée' and is_granted('ROLE_USER') and app.user == visite.user %}
 		<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">

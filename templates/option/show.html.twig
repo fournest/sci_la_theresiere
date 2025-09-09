@@ -1,26 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Options{% endblock %}
+{% block title %}Options
+{% endblock %}
 
 {% block body %}
-    <h1>Options</h1>
+	<h1>Options</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                {# <th>Id</th>
-                <td>{{ option.id }}</td> #}
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ option.nom }}</td>
-            </tr>
-        </tbody>
-    </table>
+	<div class="option-details-container">
+		<ul class="option-details-list">
+			<li class="detail-item">
+				<strong>Nom :</strong>
+				<span>{{ option.nom }}</span>
+			</li>
+		</ul>
+	</div>
 
-    <a class="btn-principal" href="{{ path('app_option_index') }}">Retour à la liste</a>
+	<a class="btn-principal" href="{{ path('app_option_index') }}">Retour à la liste</a>
 
-    <a class="btn-principal" href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
+	<a class="btn-principal" href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
 
-    {{ include('option/_delete_form.html.twig') }}
+	{{ include('option/_delete_form.html.twig') }}
 {% endblock %}

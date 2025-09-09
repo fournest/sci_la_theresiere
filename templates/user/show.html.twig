@@ -12,85 +12,96 @@
 		<h1>Informations de mon profil</h1>
 		<div class="user-info-header">
 			<h2>
-				<strong>{{user.pseudo}}</strong>
+				<strong>{{ user.pseudo }}</strong>
 			</h2>
 		</div>
 
-		<div class="profile-details">
-			<p>
+		<ul class="profile-details-list">
+			<li class="profile-detail-item">
 				<strong>Nom :</strong>
-				{{user.nom}}</p>
-			<p>
+				<span>{{ user.nom }}</span>
+			</li>
+			<li class="profile-detail-item">
 				<strong>Prénom :</strong>
-				{{user.prenom}}</p>
-			<p>
+				<span>{{ user.prenom }}</span>
+			</li>
+			<li class="profile-detail-item">
 				<strong>Email :</strong>
-				{{user.email}}</p>
+				<span>{{ user.email }}</span>
+			</li>
 			{% if is_granted('ROLE_ADMIN') %}
-				<p>
+				<li class="profile-detail-item">
 					<strong>Utilisateur administrateur :</strong>
-					Oui</p>
+					<span>Oui</span>
+				</li>
 			{% endif %}
-		</div>
+		</ul>
 
 
 		{% if user.visites is not empty %}
 			<h2>Mes visites</h2>
-			<div class="visits-list">
+			<ul class="visits-list">
 				{% for visite in visites %}
-					<div class="visit-item">
+					<li class="visit-item">
 						<p>
 							<strong>Date de visite :</strong>
-							{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</p>
+							{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}
+						</p>
 						<p>
 							<strong>Statut de la visite :</strong>
-							{{ visite.statut }}</p>
+							{{ visite.statut }}
+						</p>
 						<p>
 							<strong>Date de réservation souhaitée :</strong>
-							{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</p>
-
-					</div>
+							{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}
+						</p>
+					</li>
 				{% endfor %}
-			</div>
+			</ul>
 		{% endif %}
 
 
 		{% if user.reservations is not empty %}
 			<h2>Mes réservations</h2>
-			<div class="reservations-list">
+			<ul class="reservations-list">
 				{% for reservation in reservations %}
-					<div class="reservation-item">
+					<li class="reservation-item">
 						<p>
 							<strong>Dossier de réservation :</strong>
-							{{ reservation.dossierResa }}</p>
+							{{ reservation.dossierResa }}
+						</p>
 						<p>
 							<strong>Date de début de réservation :</strong>
-							{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</p>
+							{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}
+						</p>
 						<p>
-							<strong>Date de fin deréservation :
-							</strong>
-							{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</p>
-
+							<strong>Date de fin de réservation :</strong>
+							{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}
+						</p>
 						<p>
 							<strong>Statut de la réservation :</strong>
-							{{ reservation.statut }}</p>
-					</div>
+							{{ reservation.statut }}
+						</p>
+					</li>
 				{% endfor %}
-			</div>
+			</ul>
 		{% endif %}
+
 
 		{% if user.contacts is not empty %}
 			<h2>Mes messages</h2>
-			<div class="messages-list">
+			<ul class="messages-list">
 				{% for contact in contacts %}
-					<div class="message-item">
+					<li class="message-item">
 						<p>
 							<strong>Message :</strong>
-							{{ contact.message }}</p>
-					</div>
+							{{ contact.message }}
+						</p>
+					</li>
 				{% endfor %}
-			</div>
+			</ul>
 		{% endif %}
+
 
 		{% if app.user and app.user.id == user.id %}
 			<div class="btn-principal">

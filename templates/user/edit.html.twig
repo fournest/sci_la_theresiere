@@ -21,16 +21,14 @@
 		{{ form_row(form.plainPassword, {
         label: 'Nouveau mot de passe'    }) }}
 		{{ form_row(form.confirmPassword) }}
-		<button type="submit" class="btn">Modifier</button>
+		<button type="submit" class="btn-principal">Modifier</button>
 		{{ form_end(form) }}
 		<div class="account-actions">
 			<form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre compte ? Cette action est irréversible.');">
 				<input type="hidden" name="_token" value="{{ csrf_token('desactive' ~ app.user.id) }}">
 				<button type="submit" class="btn-principal">Supprimer mon compte</button>
 			</form>
-			<div class="btn-principal">
-				<a href="{{ path('app_user_show') }}" class="btn">Retour au profil</a>
-			</div>
+				<a class="btn-principal"href="{{ path('app_user_show') }}" class="btn">Retour au profil</a>
 		</div>
 	</div>
 

@@ -6,17 +6,15 @@
 {% block body %}
 	<form class="form-container" method="post">
 
-		{% if error %}
+		{# {% if error %}
 			<div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-		{% endif %}
+		{% endif %} #}
 
 		{% if app.user %}
 			<div>
 				Vous êtes connecté(e) en tant que
 				{{ app.user.userIdentifier }},
-				<div class="btn-principal">
-					<a href="{{ path('app_logout') }}">Déconnexion</a>
-				</div>
+				<a class="btn-principal" href="{{ path('app_logout') }}">Déconnexion</a>
 			</div>
 		{% endif %}
 
@@ -30,7 +28,7 @@
 
 
 		{# Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-				            See https://symfony.com/doc/current/security/remember_me.html #}
+						            See https://symfony.com/doc/current/security/remember_me.html #}
 
 		<div>
 			<input type="checkbox" name="_remember_me" id="_remember_me">
