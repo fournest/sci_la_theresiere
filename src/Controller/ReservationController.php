@@ -5,7 +5,6 @@ namespace App\Controller;
 
 use App\Entity\Reservation;
 use App\Entity\User;
-use App\Entity\Categorie;
 use App\Form\ReservationType;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,6 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Service\MessageService;
 
 
 
@@ -115,22 +115,29 @@ final class ReservationController extends AbstractController
 
     #[Route('/cancel/{id}', name: 'app_reservation_cancel', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, MessageService $messageService): Response
     {
 
         if (!$reservation) {
             throw new NotFoundHttpException('La réservation demandée n\'existe pas.');
         }
-        // Vérifie si l'utilisateur est le propriétaire de la réservation ou un administrateur
         if ($this->getUser() !== $reservation->getUser() && !$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException('Vous n\'êtes pas autorisé à annuler cette réservation.');
         }
 
-        // Vérifie si le token CSRF est valide
         if ($this->isCsrfTokenValid('cancel' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
-            // Change le statut de la réservation en "annulee"
             $reservation->setStatut('annulée');
             $entityManager->flush();
+
+            $sender = $this->getUser(); 
+            $recipient = $reservation->getUser(); 
+
+            if ($sender instanceof User && $recipient instanceof User) {
+                $objet = "Annulation de votre réservation";
+                $message = "Bonjour " . $recipient->getPrenom() . ", votre réservation a été annulée avec succès.";
+                
+                $messageService->sendMessage($sender, $recipient, $objet, $message);
+            }
 
             $this->addFlash('success', 'Votre réservation a été annulée avec succès.');
         } else {

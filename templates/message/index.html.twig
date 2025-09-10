@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre boîte de réception
+{% endblock %}
+
+{% block body %}
+	<h1>Bienvenue dans votre boîte de réception</h1>
+	{% if messages is not empty %}
+		{% for message in messages %}
+			<div>
+				<h2>Objet :
+					{{ message.objet }}</h2>
+				<p>Message :
+					{{ message.message }}</p>
+			</div>
+		{% endfor %}
+	{% else %}
+		<p>Vous n'avez aucun nouveau message.</p>
+	{% endif %}
+{% endblock %}

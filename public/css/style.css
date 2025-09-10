@@ -226,6 +226,7 @@ footer {
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
     cursor: pointer;
     display: inline-block;
+    text-decoration: none;
 }
 
 /* Effet de survol */
@@ -245,12 +246,21 @@ footer {
 }
 
 /* ------------------ TABLEAUX ------------------ */
-
 .admin-dashboard {
     padding: 1rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    margin: 5px;
+}
+
+.reservation-list-container,
+.tarif-list-container {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
 }
 
 .user-table {
@@ -284,6 +294,10 @@ footer {
     list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 5px;
 }
 
 /* Style de chaque élément de la liste (correspond à une ligne de tableau) */
@@ -292,13 +306,18 @@ footer {
 .reservation-item,
 .tarif-item,
 .option-item,
-.categorie-item {
+.categorie-item,
+.message-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: #DDB6BE;
     border: 1px solid #562d59;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: left;
 }
 
 /* Style pour les paires de "label-valeur" */
@@ -454,13 +473,13 @@ footer {
 }
 
 .profile-detail-item strong {
-    color: var(--poudre-rose);
+    color: #DDB6BE;
     text-align: left;
     flex: 1;
 }
 
 .profile-detail-item span {
-    color: var(--poudre-rose);
+    color: #DDB6BE;
     text-align: right;
     flex: 1;
 }
@@ -543,49 +562,30 @@ input:focus {
 
 .conteneur-flex {
     width: 100%;
-}
-
-.hero-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url(../img/grange1.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 30vh;
-    border-radius: 8px;
-
-}
-
-
-.hero-content {
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 0 10px;
-    width: 90%;
-    border-radius: 8px;
-}
-
-.hero-content-titre {
-    
-    color: #DDB6BE;
-    font-size: 2em;
-    margin: 10px 0;
-    font-family: 'playball';
-}
-
-.bloc {
     display: flex;
     flex-direction: column;
     gap: 15px;
     padding: 10px;
-    
 }
+
+.main-image-container,
+.small-images-container {
+    width: 100%;
+}
+
+.small-images-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+
 
 #bloc1,
 #bloc2,
 #bloc3,
-#bloc4 {
+#bloc4,
+#bloc5 {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -597,26 +597,34 @@ input:focus {
     height: 300px;
     border-radius: 8px;
     margin: 10px;
-    
+
 }
 
 #bloc1 {
-    background-image: url(../img/grange3.jpg);
+    background-image: url(../img/grange1.jpg);
 }
 
 #bloc2 {
-    background-image: url(../img/grange11.jpg);
+    background-image: url(../img/grange3.jpg);
 }
 
 #bloc3 {
-    background-image: url(../img/grange6.jpg);
+    background-image: url(../img/grange11.jpg);
 }
 
 #bloc4 {
+    background-image: url(../img/grange6.jpg);
+}
+
+#bloc5 {
     background-image: url(../img/grange10.jpg);
 }
 
-.bloc p {
+#bloc1 p,
+#bloc2 p,
+#bloc3 p,
+#bloc4 p,
+#bloc5 p {
 
     background-color: rgba(0, 0, 0, 0.6);
     position: relative;
@@ -716,6 +724,10 @@ input:focus {
 /* --- MEDIA QUERIES  --- */
 
 @media (min-width: 768px) {
+    main {
+        max-width: none;
+        margin: 0;
+    }
 
     /* Header */
     .header-container {
@@ -751,44 +763,76 @@ input:focus {
     /* Footer */
     footer {
         height: 300px;
+        padding: 0 40px;
     }
 
     .footer-content {
+        display: flex;
         flex-direction: row;
-        justify-content: space-around;
-        align-items: flex-start;
+        justify-content: space-evenly;
+        align-items: center;
+        height: 100%;
     }
 
-    .footer-nav-buttons ul {
-        flex-direction: row;
-        padding-top: 0;
-    }
-
-    .footer-nav-buttons li {
-        width: auto;
-    }
-
+    .map-container,
     .footer-contact-info {
-        text-align: left;
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .map-container {
+        flex-direction: column;
     }
 
     .footer-contact-info p {
-        text-align: left;
+        text-align: center;
     }
 
-    .footer-contact-info a {
+    .footer-nav-buttons {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .footer-nav-buttons ul {
+        list-style: none;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: flex-end;
         padding: 0;
     }
 
+    .footer-nav-buttons li {
+        flex: 1;
+        width: 150px;
+    }
+
+    .footer-nav-buttons a {
+        white-space: nowrap;
+        padding: 10px 18px;
+        text-align: center;
+    }
+
     /* Tables */
-    .admin-dashboard {
-        padding: 2rem;
+    .admin-dashboard,
+    .reservation-details-container {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .admin-dashboard h2 {
+        grid-column: 1 / -1;
     }
 
     .user-table {
-        padding: 2rem;
+        padding: 1rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
     }
 
     .user-table h3 {
@@ -801,9 +845,9 @@ input:focus {
     .tarifs-list,
     .options-list,
     .categories-list {
-        display: table;
-        width: 100%;
-        border-collapse: collapse;
+        display: grid;
+        grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
     }
 
     .user-item,
@@ -812,20 +856,15 @@ input:focus {
     .tarif-item,
     .option-item,
     .categorie-item {
-        display: table-row;
-        border-radius: 0;
-        margin: 0;
-        padding: 0;
-        border: none;
-    }
-
-    .user-item:nth-child(even),
-    .visit-item:nth-child(even),
-    .reservation-item:nth-child(even),
-    .tarif-item:nth-child(even),
-    .option-item:nth-child(even),
-    .categorie-item:nth-child(even) {
-        background-color: #D3A7B1;
+        border: 1px solid #562D59;
+        background-color: #DDB6BE;
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
     .user-item:hover,
@@ -837,25 +876,17 @@ input:focus {
         background-color: #CDBECA;
     }
 
-    .user-item-content,
-    .visit-item-content,
-    .reservation-item-content,
-    .tarif-info,
-    .option-details,
-    .categorie-info,
-    .user-item-actions,
-    .visit-item-actions,
-    .reservation-item-actions,
-    .tarif-actions,
-    .option-actions,
-    .categorie-actions {
-        display: table-cell;
-        padding: 12px 15px;
-        vertical-align: middle;
-        border-top: 1px solid #562D59;
-        border-bottom: 1px solid #562D59;
-        white-space: nowrap;
+
+    .user-item:nth-child(even),
+    .visit-item:nth-child(even),
+    .reservation-item:nth-child(even),
+    .tarif-item:nth-child(even),
+    .option-item:nth-child(even),
+    .categorie-item:nth-child(even) {
+        background-color: #D3A7B1;
     }
+
+
 
     .user-item-content p,
     .visit-item-content p,
@@ -870,6 +901,19 @@ input:focus {
         text-align: left;
     }
 
+    .user-item-actions,
+    .visit-item-actions,
+    .reservation-item-actions,
+    .tarif-actions,
+    .option-actions,
+    .categorie-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
     .user-item-actions .btn-principal,
     .visit-item-actions .btn-principal,
     .reservation-item-actions .btn-principal,
@@ -877,7 +921,7 @@ input:focus {
     .option-actions .btn-principal,
     .categorie-actions .btn-principal {
         display: inline-block;
-        width: auto;
+
     }
 
     /* Page de détails (par exemple /visite/1) */
@@ -906,7 +950,7 @@ input:focus {
     }
 
     /* Sections */
-    
+
     /* User Card */
     .card-user {
         max-width: 800px;
@@ -929,44 +973,35 @@ input:focus {
         padding-left: 10px;
     }
 
-    .visit-item,
-    .reservation-item,
-    .message-item {
-        padding: 15px;
-        margin-bottom: 15px;
-    }
-
     .conteneur-flex {
-        display: grid; 
-        grid-template-columns: repeat(2, 1fr); 
-        gap: 20px;
-        padding: 20px;
-    }
-    
-    .hero-section {
-        height: 50vh;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-start;
     }
 
-    .hero-content {
-        width: 80%;
+    .main-image-container {
+        flex: 1;
+        height: auto;
     }
 
-    .hero-content-titre {
-        font-size: 3.5em;
-    }
-
-    .bloc {
+    .small-images-container {
+        flex: 1;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
-        padding: 20px;
+        padding: 0 10px;
     }
 
-    #bloc1,
+    #bloc1 {
+        height: 600px;
+    }
+
     #bloc2,
     #bloc3,
-    #bloc4 {
-        height: 400px;
+    #bloc4,
+    #bloc5 {
+        height: 290px;
+        margin: 0;
     }
 
     .bloc p {
@@ -974,7 +1009,7 @@ input:focus {
         margin: 20px;
         padding: 15px;
     }
-  
+
 
     .social-reviews-container {
         flex-direction: row;
@@ -1008,5 +1043,14 @@ input:focus {
 @media (min-width: 1024px) {
     .bloc {
         grid-template-columns: repeat(4, 1fr);
+    }
+
+    .admin-dashboard,
+    .reservation-details-container {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .admin-dashboard h2 {
+        grid-column: 1 / -1;
     }
 }

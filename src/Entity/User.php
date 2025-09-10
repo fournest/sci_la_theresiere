@@ -69,17 +69,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Contact>
      */
-    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'user')]
-    private Collection $contacts;
+    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'sender', cascade: ['remove'])]
+    private Collection $sentMessages;
 
+    /**
+     * @var Collection<int, Contact>
+     */
+    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'sender', cascade: ['remove'])]
+    private Collection $receivedMessages;
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->visites = new ArrayCollection();
         $this->isActive = true;
         $this->isBanned = false;
-        $this->contacts = new ArrayCollection();
+        $this->sentMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -249,7 +256,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeVisite(Visite $visite): static
     {
         if ($this->visites->removeElement($visite)) {
-            // set the owning side to null (unless already changed)
             if ($visite->getUser() === $this) {
                 $visite->setUser(null);
             }
@@ -282,30 +288,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+
+
     /**
      * @return Collection<int, Contact>
      */
-    public function getContacts(): Collection
+    public function getSentMessages(): Collection
     {
-        return $this->contacts;
+        return $this->sentMessages;
     }
 
-    public function addContact(Contact $contact): static
+    public function addSentMessage(Contact $sentMessage): static
     {
-        if (!$this->contacts->contains($contact)) {
-            $this->contacts->add($contact);
-            $contact->setUser($this);
+        if (!$this->sentMessages->contains($sentMessage)) {
+            $this->sentMessages->add($sentMessage);
+            $sentMessage->setSender($this);
         }
 
         return $this;
     }
 
-    public function removeContact(Contact $contact): static
+    public function removeSentMessage(Contact $sentMessage): static
     {
-        if ($this->contacts->removeElement($contact)) {
-            // set the owning side to null (unless already changed)
-            if ($contact->getUser() === $this) {
-                $contact->setUser(null);
+        if ($this->sentMessages->removeElement($sentMessage)) {
+            if ($sentMessage->getSender() === $this) {
+                $sentMessage->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Contact>
+     */
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function addReceivedMessage(Contact $receivedMessage): static
+    {
+        if (!$this->receivedMessages->contains($receivedMessage)) {
+            $this->receivedMessages->add($receivedMessage);
+            $receivedMessage->setRecipient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedMessage(Contact $receivedMessage): static
+    {
+        if ($this->receivedMessages->removeElement($receivedMessage)) {
+            if ($receivedMessage->getRecipient() === $this) {
+                $receivedMessage->setRecipient(null);
             }
         }
 

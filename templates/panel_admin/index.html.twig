@@ -72,157 +72,154 @@
 				{% endfor %}
 			</ul>
 		</div>
-		{# Reste de la pagination... #}
-	</div>
-	{# Pagination #}
-	{% if totalPagesUsers > 1 %}
-		<div>
-			{% if currentPage > 1 %}
-				<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': currentPage - 1}) }}">
-					← Précédent</a>
-			{% endif %}
-			{% for p in 1..totalPagesUsers %}
-				<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': p}) }}">{{ p }}</a>
-			{% endfor %}
-			{% if currentPage < totalPagesUsers %}
-				<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': currentPage + 1}) }}">Suivant →</a>
-			{% endif %}
-		</div>
-	{% endif %}
-
-
-	{# --- Tableau des visites --- #}
-	<h2>Gestion des visites.</h2>
-	<div class="user-table">
-		<ul class="visit-list">
-			{% for visite in visites %}
-				<li class="visit-item">
-					<div class="visit-item-content">
-						<p>
-							<strong>Pseudo:</strong>
-							{{ visite.user.pseudo }}</p>
-						<p>
-							<strong>Date de la visite:</strong>
-							{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</p>
-						<p>
-							<strong>Statut:</strong>
-							{{ visite.statut }}</p>
-						<p>
-							<strong>Date de réservation souhaitée:</strong>
-							{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</p>
-					</div>
-					<div class="visit-item-actions">
-						{% if visite.statut != 'annulée' and is_granted('ROLE_ADMIN') or app.user == visite.user %}
-							<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
-								<button class="btn-principal">Annuler</button>
-							</form>
-						{% endif %}
-						{% if is_granted('ROLE_ADMIN') and visite.statut == 'en_attente' %}
-							<form method="post" action="{{ path('app_visite_validate', {'id': visite.id}) }}">
-								<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ visite.id) }}">
-								<button class="btn-principal">Valider</button>
-							</form>
-						{% endif %}
-						<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
-						<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
-					</div>
-				</li>
-			{% endfor %}
-		</ul>
-	</div>
-	{# Pagination pour les visites #}
-	{% if totalPagesVisites > 1 %}
-		<div>
-			{% if currentPage > 1 %}
-				<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': currentPage - 1}) }}">← Précédent</a>
-			{% endif %}
-			{% for p in 1..totalPagesVisites %}
-				<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': p}) }}">{{ p }}</a>
-			{% endfor %}
-
-			{% if currentPage < totalPagesVisites %}
-				<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': currentPage + 1}) }}">Suivant →</a>
-			{% endif %}
-		</div>
-	{% endif %}
-	{# {% endif %} #}
-
-	---
-
-	{# --- Tableau des réservations --- #}
-	<h2>Gestion des réservations.</h2>
-	<div class="user-table">
-		<ul class="reservation-list">
-			{% for reservation in reservations %}
-				<li class="reservation-item">
-					<div class="reservation-item-content">
-						<p>
-							<strong>Pseudo:</strong>
-							{{ reservation.user.pseudo }}</p>
-						<p>
-							<strong>Début:</strong>
-							{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</p>
-						<p>
-							<strong>Fin:</strong>
-							{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</p>
-						<p>
-							<strong>Dossier:</strong>
-							{{ reservation.dossierResa }}</p>
-						<p>
-							<strong>Statut:</strong>
-							{{ reservation.statut }}</p>
-						<p>
-							<strong>Acompte:</strong>
-							{{ reservation.acompte }}</p>
-						<p>
-							<strong>Caution:</strong>
-							{{ reservation.caution }}</p>
-						<p>
-							<strong>Catégorie:</strong>
-							{{ reservation.categorie.nom }}</p>
-						<p>
-							<strong>Options:</strong>
-							{% for option in reservation.options %}
-								{{ option.nom }}
-							{% else %}
-								Aucune option
-							{% endfor %}
-						</p>
-					</div>
-					<div class="reservation-item-actions">
-						{% if reservation.statut != 'annulee' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
-							<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-								<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-								<a class="btn-principal">Annuler</a>
-							</form>
-						{% endif %}
-						{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
-							<form method="post" action="{{ path('app_reservation_validate', {'id': reservation.id}) }}">
-								<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ reservation.id) }}">
-								<a class="btn-principal">Valider</a>
-							</form>
-						{% endif %}
-						<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-						<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-					</div>
-				</li>
-			{% endfor %}
-		</ul>
-	</div>
-</div>
-{# Pagination pour les réservations #}
-{% if totalPagesReservations > 1 %}
-	<div>
-		{% if currentPage > 1 %}
-			<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': currentPage - 1}) }}">← Précédent</a>
+		{# Pagination #}
+		{% if totalPagesUsers > 1 %}
+			<div>
+				{% if currentPage > 1 %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': currentPage - 1}) }}">
+						← Précédent</a>
+				{% endif %}
+				{% for p in 1..totalPagesUsers %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': p}) }}">{{ p }}</a>
+				{% endfor %}
+				{% if currentPage < totalPagesUsers %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': currentPage + 1}) }}">Suivant →</a>
+				{% endif %}
+			</div>
 		{% endif %}
-		{% for p in 1..totalPagesReservations %}
-			<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': p}) }}">{{ p }}</a>
-		{% endfor %}
-		{% if currentPage < totalPagesReservations %}
-			<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': currentPage + 1}) }}">Suivant →</a>
+
+
+		{# --- Tableau des visites --- #}
+		<h2>Gestion des visites.</h2>
+		<div class="user-table">
+			<ul class="visit-list">
+				{% for visite in visites %}
+					<li class="visit-item">
+						<div class="visit-item-content">
+							<p>
+								<strong>Pseudo:</strong>
+								{{ visite.user.pseudo }}</p>
+							<p>
+								<strong>Date de la visite:</strong>
+								{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</p>
+							<p>
+								<strong>Statut:</strong>
+								{{ visite.statut }}</p>
+							<p>
+								<strong>Date de réservation souhaitée:</strong>
+								{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</p>
+						</div>
+						<div class="visit-item-actions">
+							{% if visite.statut != 'annulée' and is_granted('ROLE_ADMIN') or app.user == visite.user %}
+								<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
+									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
+									<button class="btn-principal">Annuler</button>
+								</form>
+							{% endif %}
+							{% if is_granted('ROLE_ADMIN') and visite.statut == 'en_attente' %}
+								<form method="post" action="{{ path('app_visite_validate', {'id': visite.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ visite.id) }}">
+									<button class="btn-principal">Valider</button>
+								</form>
+							{% endif %}
+							<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
+							<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		{# Pagination pour les visites #}
+		{% if totalPagesVisites > 1 %}
+			<div>
+				{% if currentPage > 1 %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': currentPage - 1}) }}">← Précédent</a>
+				{% endif %}
+				{% for p in 1..totalPagesVisites %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': p}) }}">{{ p }}</a>
+				{% endfor %}
+
+				{% if currentPage < totalPagesVisites %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': currentPage + 1}) }}">Suivant →</a>
+				{% endif %}
+			</div>
+		{% endif %}
+		{# {% endif %} #}
+
+
+		{# --- Tableau des réservations --- #}
+		<h2>Gestion des réservations.</h2>
+		<div class="user-table">
+			<ul class="reservation-list">
+				{% for reservation in reservations %}
+					<li class="reservation-item">
+						<div class="reservation-item-content">
+							<p>
+								<strong>Pseudo:</strong>
+								{{ reservation.user.pseudo }}</p>
+							<p>
+								<strong>Début:</strong>
+								{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}</p>
+							<p>
+								<strong>Fin:</strong>
+								{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}</p>
+							<p>
+								<strong>Dossier:</strong>
+								{{ reservation.dossierResa }}</p>
+							<p>
+								<strong>Statut:</strong>
+								{{ reservation.statut }}</p>
+							<p>
+								<strong>Acompte:</strong>
+								{{ reservation.acompte }}</p>
+							<p>
+								<strong>Caution:</strong>
+								{{ reservation.caution }}</p>
+							<p>
+								<strong>Catégorie:</strong>
+								{{ reservation.categorie.nom }}</p>
+							<p>
+								<strong>Options:</strong>
+								{% for option in reservation.options %}
+									{{ option.nom }}
+								{% else %}
+									Aucune option
+								{% endfor %}
+							</p>
+						</div>
+						<div class="reservation-item-actions">
+							{% if reservation.statut != 'annulee' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
+								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+									<a class="btn-principal">Annuler</a>
+								</form>
+							{% endif %}
+							{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
+								<form method="post" action="{{ path('app_reservation_validate', {'id': reservation.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ reservation.id) }}">
+									<a class="btn-principal">Valider</a>
+								</form>
+							{% endif %}
+							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+							<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+		{# Pagination pour les réservations #}
+		{% if totalPagesReservations > 1 %}
+			<div>
+				{% if currentPage > 1 %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': currentPage - 1}) }}">← Précédent</a>
+				{% endif %}
+				{% for p in 1..totalPagesReservations %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': p}) }}">{{ p }}</a>
+				{% endfor %}
+				{% if currentPage < totalPagesReservations %}
+					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': currentPage + 1}) }}">Suivant →</a>
+				{% endif %}
+			</div>
 		{% endif %}
 	</div>
-{% endif %}
-{# {% endif %} #}{% endblock %}
+{% endblock %}

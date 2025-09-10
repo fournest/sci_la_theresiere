@@ -10,7 +10,14 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
+    App\Service\NotificationService:
+        arguments:
+            - '@App\Repository\ContactRepository'
+            - '@security.helper'
+    App\Twig\AppExtension:
+        tags: ['twig.extension'] 
+        arguments:
+            - '@App\Service\NotificationService'
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
