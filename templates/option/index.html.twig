@@ -24,7 +24,10 @@
 			{% endfor %}
 		</ul>
 	</div>
-
+	{# Pagination
+	<div class="navigation">
+		{{ knp_pagination_render(optionsPagination) }}
+	</div> #}
 	<a class="btn-principal" href="{{ path('app_option_new') }}">Créez une option ici</a>
 
 {% endblock %}

@@ -16,6 +16,7 @@ use App\Form\UserType;
 use App\Repository\ContactRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 
@@ -25,28 +26,64 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class UserController extends AbstractController
 {
     #[Route('/', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user, VisiteRepository $visiteRepository, ReservationRepository $reservationRepository, ContactRepository $contactRepository): Response
-    {
-
+    public function show(
+        VisiteRepository $visiteRepository,
+        ReservationRepository $reservationRepository,
+        ContactRepository $contactRepository,
+        PaginatorInterface $paginator,
+        Request $request
+    ): Response {
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw new NotFoundHttpException('Utilisateur introuvable.');
         }
 
-        $visites = $visiteRepository->findBy(['user' => $user->getId()]);
-        $reservations = $reservationRepository->findBy(['user' => $user->getId()]);
-        $contacts = $contactRepository->findBy(['user' => $user->getId()]);
+        $limit = 5;
+        $visitesQueryBuilder = $visiteRepository->createQueryBuilder('v')
+            ->where('v.user = :user')
+            ->setParameter('user', $user);
+
+        $visitesPagination = $paginator->paginate(
+            $visitesQueryBuilder,
+            $request->query->getInt('visites_page', 1),
+            $limit,
+            ['pageParameterName' => 'visites_page']
+        );
+
+
+        $reservationsQueryBuilder = $reservationRepository->createQueryBuilder('r')
+            ->where('r.user = :user')
+            ->setParameter('user', $user);
+
+        $reservationsPagination = $paginator->paginate(
+            $reservationsQueryBuilder,
+            $request->query->getInt('reservations_page', 1),
+            $limit,
+            ['pageParameterName' => 'reservations_page']
+        );
+
+
+        $contactsQueryBuilder = $contactRepository->createQueryBuilder('c')
+            ->where('c.sender = :user OR c.recipient = :user')
+            ->setParameter('user', $user);
+
+        $contactsPagination = $paginator->paginate(
+            $contactsQueryBuilder,
+            $request->query->getInt('contacts_page', 1),
+            $limit,
+            ['pageParameterName' => 'contacts_page']
+        );
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
-            'visites' => $visites,
-            'reservations' => $reservations,
-            'contacts' => $contacts,
+            'visites' => $visitesPagination,
+            'reservations' => $reservationsPagination,
+            'contacts' => $contactsPagination,
         ]);
     }
 
     #[Route('/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Security $security, User $user, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
         if (!$user instanceof User) {

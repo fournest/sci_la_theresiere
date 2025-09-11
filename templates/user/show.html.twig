@@ -59,6 +59,12 @@
 				{% endfor %}
 			</ul>
 		{% endif %}
+		{# Pagination #}
+		{% if visites.pageCount > 1 %}
+			<div class="navigation">
+				{{ knp_pagination_render(visites) }}
+			</div>
+		{% endif %}
 
 
 		{% if user.reservations is not empty %}
@@ -86,9 +92,15 @@
 				{% endfor %}
 			</ul>
 		{% endif %}
+		{# Pagination #}
+		{% if reservations.pageCount > 1 %}
+			<div class="navigation">
+				{{ knp_pagination_render(reservations) }}
+			</div>
+		{% endif %}
 
 
-		{% if user.contacts is not empty %}
+		{% if contacts is not empty %}
 			<h2>Mes messages</h2>
 			<ul class="messages-list">
 				{% for contact in contacts %}
@@ -100,6 +112,12 @@
 					</li>
 				{% endfor %}
 			</ul>
+			{# Pagination #}
+			{% if contacts.pageCount > 1 %}
+				<div class="navigation">
+					{{ knp_pagination_render(contacts) }}
+				</div>
+			{% endif %}
 		{% endif %}
 
 
@@ -109,5 +127,5 @@
 			</a>
 		{% endif %}
 	</div>
-	<a class="btn-principal"href="{{ path('app_home') }}">Retour à l'accueil</a>
+	<a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
 {% endblock %}

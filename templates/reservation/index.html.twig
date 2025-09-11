@@ -54,6 +54,12 @@
 				<p class="no-reservation">Aucune réservation trouvée.</p>
 			{% endif %}
 		</div>
+		{# Pagination #}
+		{% if reservations.pageCount > 1 %}
+			<div class="navigation">
+				{{ knp_pagination_render(reservations) }}
+			</div>
+		{% endif %}
 	</div>
 
 	<a class="btn-principal" href="{{ path('app_reservation_new') }}">Faites votre réservation maintenant</a>

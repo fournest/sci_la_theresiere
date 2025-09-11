@@ -30,7 +30,7 @@
 	{% if visite.statut != 'annulée' and is_granted('ROLE_USER') and app.user == visite.user %}
 		<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
 			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
-			<button class="btn-principal">Annuler ma visite</button>
+			<button type="submit" class="btn-principal">Annuler ma visite</button>
 		</form>
 	{% endif %}
 

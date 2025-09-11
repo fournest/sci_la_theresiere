@@ -14,6 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use App\Service\NotificationService;
+use App\Repository\UserRepository;
+use Knp\Component\Pager\PaginatorInterface;
+
+
 
 
 
@@ -24,23 +29,36 @@ final class VisiteController extends AbstractController
     #[Route(name: 'app_visite_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
 
-    public function index(VisiteRepository $visiteRepository): Response
+    public function index(VisiteRepository $visiteRepository, Request $request, PaginatorInterface $paginator ): Response
     {
         $user = $this->getUser();
 
         if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
+        
+        $queryBuilder = $visiteRepository->createQueryBuilder('v')
+            ->where('v.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('v.dateVisite', 'DESC')
+            ->getQuery();
 
-        $visites = $visiteRepository->findBy(['user' => $user]);
+
+        $visitesPagination = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            5,
+            ['pageParameterName' => 'page']
+        );
+
         return $this->render('visite/index.html.twig', [
-            'visites' => $visites,
+            'visites' => $visitesPagination,
         ]);
     }
 
     #[Route('/new', name: 'app_visite_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $VisiteRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $VisiteRepository, UserRepository $userRepository, NotificationService $notificationService): Response
     {
         $visite = new Visite();
         $currentUser = $this->getUser();
@@ -48,11 +66,10 @@ final class VisiteController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-           
+
             $isBooked = $VisiteRepository->findValidatedBookingByDate($visite->getDateVisite());
 
             if ($isBooked) {
-                // Étape 2 : Si elle est réservée, ajouter un message d'erreur et rediriger
                 $this->addFlash('error', 'Cette date est en attente de validation. Choississez une autre date ou contactez-nous.');
                 return $this->redirectToRoute('app_visite_new');
             }
@@ -67,6 +84,17 @@ final class VisiteController extends AbstractController
             $visite->setStatut('en_attente');
             $entityManager->persist($visite);
             $entityManager->flush();
+
+
+            $admin = $userRepository->findOneBy(['roles' => '["ROLE_ADMIN"]']);
+
+            if ($admin) {
+                $sender = $this->getUser();
+                $subject = "Nouvelle visite en attente";
+                $message = "Bonjour " . $admin->getPrenom() . ", une nouvelle visite est en attente de votre validation.";
+
+                $notificationService->sendMessage($sender, $admin, $subject, $message);
+            }
 
             return $this->redirectToRoute('app_visite_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -107,22 +135,29 @@ final class VisiteController extends AbstractController
 
     #[Route('/cancel/{id}', name: 'app_visite_cancel', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function cancel(Request $request, Visite $visite, EntityManagerInterface $entityManager): Response
+    public function cancel(Request $request, Visite $visite, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
 
         if (!$visite) {
             throw new NotFoundHttpException('La visite demandée n\'existe pas.');
         }
-        // Vérifie si l'utilisateur est le propriétaire de la réservation ou un administrateur
         if ($this->getUser() !== $visite->getUser() && !$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException('Vous n\'êtes pas autorisé à annuler cette visite.');
         }
 
-        // Vérifie si le token CSRF est valide
         if ($this->isCsrfTokenValid('cancel' . $visite->getId(), $request->getPayload()->getString('_token'))) {
-            // Change le statut de la réservation en "annulee"
             $visite->setStatut('annulée');
             $entityManager->flush();
+
+            $sender = $this->getUser();
+            $recipient = $visite->getUser();
+
+            if ($sender instanceof User && $recipient instanceof User) {
+                $objet = "Annulation de votre visite";
+                $message = "Bonjour " . $recipient->getPrenom() . ", votre visite a été annulée avec succès.";
+
+                $notificationService->sendMessage($sender, $recipient, $objet, $message);
+            }
 
             $this->addFlash('success', 'Votre visite a été annulée avec succès.');
         } else {
@@ -134,7 +169,7 @@ final class VisiteController extends AbstractController
 
     #[Route('/validate/{id}', name: 'app_visite_validate', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function validate(Request $request, Visite $visite, EntityManagerInterface $entityManager): Response
+    public function validate(Request $request, Visite $visite, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         if (!$visite) {
             throw new NotFoundHttpException('La visite demandée n\'existe pas.');
@@ -144,6 +179,13 @@ final class VisiteController extends AbstractController
             if ($visite->getStatut() === 'en_attente') {
                 $visite->setStatut('validée');
                 $entityManager->flush();
+
+                $sender = $this->getUser();
+                $recipient = $visite->getUser();
+                $subject = "Confirmation de votre visite";
+                $message = "Bonjour " . $recipient->getPrenom() . ", votre visite a été validée avec succès.";
+
+                $notificationService->sendMessage($sender, $recipient, $subject, $message);
 
                 $this->addFlash('success', 'La visite a été validée avec succès.');
             } else {
@@ -159,11 +201,18 @@ final class VisiteController extends AbstractController
     #[Route('/{id}', name: 'app_visite_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
 
-    public function delete(Request $request, Visite $visite, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Visite $visite, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         if ($this->isCsrfTokenValid('delete' . $visite->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($visite);
             $entityManager->flush();
+
+            $sender = $this->getUser();
+            $recipient = $visite->getUser();
+            $subject = "Suppression de votre réservation";
+            $message = "Bonjour " . $recipient->getPrenom() . ", votre réservation a été supprimée avec succès.";
+
+            $notificationService->sendMessage($sender, $recipient, $subject, $message);
         }
 
         return $this->redirectToRoute('app_visite_index', [], Response::HTTP_SEE_OTHER);

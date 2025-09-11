@@ -40,22 +40,7 @@ class ReservationRepository extends ServiceEntityRepository
         return $reservationsEnConflit === 0;
     }
 
-      public function findPaginatedByUser(User $user, int $limit, int $offset): array
-    {
-        $queryBuilder = $this->createQueryBuilder('r')
-            ->andWhere('r.user = :user')
-            ->setParameter('user', $user)
-            ->orderBy('r.id', 'DESC')
-            ->setFirstResult($offset) 
-            ->setMaxResults($limit); 
-
-        $paginator = new Paginator($queryBuilder->getQuery());
-
-        return [
-            'reservations' => $paginator->getIterator(),
-            'totalCountReservations' => $paginator->count(), 
-        ];
-    }
+    
 
 
     //    /**

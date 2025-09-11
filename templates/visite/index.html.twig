@@ -40,9 +40,15 @@
 			{% else %}
 				<p class="no-data-found">Aucune visite trouvée.</p>
 			{% endif %}
-		</div>
-	</div>
 
+		</div>
+		{# Pagination #}
+		{% if visites.pageCount > 1 %}
+			<div class="navigation">
+				{{ knp_pagination_render(visites) }}
+			</div>
+		{% endif %}
+	</div>
 
 	<a class="btn-principal" href="{{ path('app_visite_new') }}">Réservez votre visite maintenant.</a>
 {% endblock %}

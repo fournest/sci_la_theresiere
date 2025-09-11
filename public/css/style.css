@@ -221,12 +221,13 @@ footer {
     padding: 10px 15px;
     border-radius: 50px;
     font-family: 'Playball', sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     text-decoration: none;
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
     cursor: pointer;
     display: inline-block;
     text-decoration: none;
+    text-align: center;
 }
 
 /* Effet de survol */
@@ -721,6 +722,31 @@ input:focus {
     color: #4b5563;
 }
 
+.navigation {
+    padding: 1rem;
+    background-color: #DDB6BE;
+    border-radius: 0.5rem;
+    border: 1px solid #562D59;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navigation a {
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    color: #DDB6BE;
+    background-color: #562D59;
+    border: 1px solid #4b5563;
+    transition: all 0.3s ease;
+}
+
+.navigation a:hover {
+    color: #562D59;
+    background-color: #DDB6BE;
+    transform: translateY(-2px);
+}
+
 /* --- MEDIA QUERIES  --- */
 
 @media (min-width: 768px) {
@@ -817,22 +843,20 @@ input:focus {
     }
 
     /* Tables */
-    .admin-dashboard,
-    .reservation-details-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
 
     .admin-dashboard h2 {
         grid-column: 1 / -1;
     }
 
+
     .user-table {
         padding: 1rem;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
     }
 
     .user-table h3 {
@@ -845,8 +869,11 @@ input:focus {
     .tarifs-list,
     .options-list,
     .categories-list {
-        display: grid;
-        grid-template-rows: repeat(auto-fit, minmax(200px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
         gap: 20px;
     }
 
@@ -863,8 +890,7 @@ input:focus {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         text-align: left;
         display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
     }
 
     .user-item:hover,
@@ -895,7 +921,6 @@ input:focus {
     .option-details,
     .categorie-info {
         display: flex;
-        flex-direction: column;
         justify-content: center;
         gap: 5px;
         text-align: left;
@@ -1004,7 +1029,16 @@ input:focus {
         margin: 0;
     }
 
-    .bloc p {
+    #bloc1 p {
+        font-size: 3.5em;
+        margin: 20px;
+        padding: 15px;
+    }
+
+    #bloc2 p,
+    #bloc3 p,
+    #bloc4 p,
+    #bloc5 p {
         font-size: 1.5em;
         margin: 20px;
         padding: 15px;

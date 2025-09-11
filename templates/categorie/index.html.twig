@@ -23,7 +23,12 @@
 				<li class="no-categories">Aucune catégorie trouvée.</li>
 			{% endfor %}
 		</ul>
+
 	</div>
 
+	{# Pagination
+	<div class="navigation">
+		{{ knp_pagination_render(reservationsPagination) }}
+	</div> #}
 	<a class="btn-principal" href="{{ path('app_categorie_new') }}">Créez votre catégorie.</a>
 {% endblock %}

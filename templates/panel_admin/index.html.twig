@@ -71,22 +71,13 @@
 					</li>
 				{% endfor %}
 			</ul>
+			{# Pagination #}
+			{% if users.pageCount > 1 %}
+				<div class="navigation">
+					{{ knp_pagination_render(users) }}
+				</div>
+			{% endif %}
 		</div>
-		{# Pagination #}
-		{% if totalPagesUsers > 1 %}
-			<div>
-				{% if currentPage > 1 %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': currentPage - 1}) }}">
-						← Précédent</a>
-				{% endif %}
-				{% for p in 1..totalPagesUsers %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': p}) }}">{{ p }}</a>
-				{% endfor %}
-				{% if currentPage < totalPagesUsers %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'users', 'page': currentPage + 1}) }}">Suivant →</a>
-				{% endif %}
-			</div>
-		{% endif %}
 
 
 		{# --- Tableau des visites --- #}
@@ -127,24 +118,14 @@
 						</div>
 					</li>
 				{% endfor %}
+				{# Pagination #}
+				{% if visites.pageCount > 1 %}
+					<div class="navigation">
+						{{ knp_pagination_render(visites) }}
+					</div>
+				{% endif %}
 			</ul>
 		</div>
-		{# Pagination pour les visites #}
-		{% if totalPagesVisites > 1 %}
-			<div>
-				{% if currentPage > 1 %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': currentPage - 1}) }}">← Précédent</a>
-				{% endif %}
-				{% for p in 1..totalPagesVisites %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': p}) }}">{{ p }}</a>
-				{% endfor %}
-
-				{% if currentPage < totalPagesVisites %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'visites', 'page': currentPage + 1}) }}">Suivant →</a>
-				{% endif %}
-			</div>
-		{% endif %}
-		{# {% endif %} #}
 
 
 		{# --- Tableau des réservations --- #}
@@ -191,13 +172,13 @@
 							{% if reservation.statut != 'annulee' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
 								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-									<a class="btn-principal">Annuler</a>
+									<button type="submit" class="btn-principal">Annuler</button>
 								</form>
 							{% endif %}
 							{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
 								<form method="post" action="{{ path('app_reservation_validate', {'id': reservation.id}) }}">
 									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ reservation.id) }}">
-									<a class="btn-principal">Valider</a>
+									<button type="submit" class="btn-principal">Valider</button>
 								</form>
 							{% endif %}
 							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
@@ -205,21 +186,13 @@
 						</div>
 					</li>
 				{% endfor %}
-			</ul>
-		</div>
-		{# Pagination pour les réservations #}
-		{% if totalPagesReservations > 1 %}
-			<div>
-				{% if currentPage > 1 %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': currentPage - 1}) }}">← Précédent</a>
-				{% endif %}
-				{% for p in 1..totalPagesReservations %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': p}) }}">{{ p }}</a>
-				{% endfor %}
-				{% if currentPage < totalPagesReservations %}
-					<a class="btn-principal" href="{{ path('app_panel_admin', {'section': 'reservations', 'page': currentPage + 1}) }}">Suivant →</a>
+				{# Pagination #}
+				{% if reservations.pageCount > 1 %}
+					<div class="navigation">
+						{{ knp_pagination_render(reservations) }}
+					</div>
 				{% endif %}
 			</div>
-		{% endif %}
+		</ul>
 	</div>
 {% endblock %}

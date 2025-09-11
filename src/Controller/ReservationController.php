@@ -6,6 +6,7 @@ namespace App\Controller;
 use App\Entity\Reservation;
 use App\Entity\User;
 use App\Form\ReservationType;
+use App\Repository\UserRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,17 +16,15 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Service\MessageService;
-
-
-
+use App\Service\NotificationService;
+use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/reservation')]
 final class ReservationController extends AbstractController
 {
     #[Route(name: 'app_reservation_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function index(ReservationRepository $reservationRepository, Request $request): Response
+    public function index(ReservationRepository $reservationRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $user = $this->getUser();
 
@@ -33,24 +32,25 @@ final class ReservationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $limit = 5;
-        $page = max(1, (int) $request->query->get('page', 1));
-        $offset = ($page - 1) * $limit;
+       $reservationsQuery = $reservationRepository->createQueryBuilder('r')
+            ->where('r.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery();
 
-        $paginationDataReservations = $reservationRepository->findPaginatedByUser($user, $limit, $offset);
-        $reservations = $paginationDataReservations['reservations'];
-        $totalReservations = $paginationDataReservations['totalCountReservations'];
+        $reservationsPagination = $paginator->paginate(
+            $reservationsQuery,
+            $request->query->getInt('page', 1),
+            5,
+            ['pageParameterName' => 'page']
+        );
         return $this->render('reservation/index.html.twig', [
-            'currentPage' => $page,
-            'reservations' => $reservations,
-            'totalCountReservations' => $totalReservations,
-            'totalPagesReservations' => ceil($totalReservations / $limit),
+            'reservations' => $reservationsPagination,
         ]);
     }
 
     #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository, UserRepository $userRepository, NotificationService $notificationService): Response
     {
         $reservation = new Reservation();
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -73,6 +73,16 @@ final class ReservationController extends AbstractController
             $reservation->setStatut('en_attente');
             $entityManager->persist($reservation);
             $entityManager->flush();
+
+            $admin = $userRepository->findOneBy(['roles' => '["ROLE_ADMIN"]']);
+
+            if ($admin) {
+                $sender = $this->getUser();
+                $subject = "Nouvelle réservation en attente";
+                $message = "Bonjour " . $admin->getPrenom() . ", une nouvelle réservation est en attente de votre validation.";
+
+                $notificationService->sendMessage($sender, $admin, $subject, $message);
+            }
 
             $this->addFlash('success', 'Votre demande de réservation a bien été envoyée. Elle est en attente de confirmation par un administrateur.');
 
@@ -115,7 +125,7 @@ final class ReservationController extends AbstractController
 
     #[Route('/cancel/{id}', name: 'app_reservation_cancel', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, MessageService $messageService): Response
+    public function cancel(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
 
         if (!$reservation) {
@@ -129,14 +139,14 @@ final class ReservationController extends AbstractController
             $reservation->setStatut('annulée');
             $entityManager->flush();
 
-            $sender = $this->getUser(); 
-            $recipient = $reservation->getUser(); 
+            $sender = $this->getUser();
+            $recipient = $reservation->getUser();
 
             if ($sender instanceof User && $recipient instanceof User) {
                 $objet = "Annulation de votre réservation";
                 $message = "Bonjour " . $recipient->getPrenom() . ", votre réservation a été annulée avec succès.";
-                
-                $messageService->sendMessage($sender, $recipient, $objet, $message);
+
+                $notificationService->sendMessage($sender, $recipient, $objet, $message);
             }
 
             $this->addFlash('success', 'Votre réservation a été annulée avec succès.');
@@ -149,7 +159,7 @@ final class ReservationController extends AbstractController
 
     #[Route('/validate/{id}', name: 'app_reservation_validate', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function validate(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function validate(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         if (!$reservation) {
             throw new NotFoundHttpException('La réservation demandée n\'existe pas.');
@@ -159,6 +169,15 @@ final class ReservationController extends AbstractController
             if ($reservation->getStatut() === 'en_attente') {
                 $reservation->setStatut('validée');
                 $entityManager->flush();
+
+                $sender = $this->getUser();
+                $recipient = $reservation->getUser();
+                $subject = "Confirmation de votre réservation";
+                $message = "Bonjour " . $recipient->getPrenom() . ", votre réservation a été validée avec succès.";
+
+                $notificationService->sendMessage($sender, $recipient, $subject, $message);
+
+
 
                 $this->addFlash('success', 'La réservation a été validée avec succès.');
             } else {
@@ -173,11 +192,19 @@ final class ReservationController extends AbstractController
 
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
         if ($this->isCsrfTokenValid('delete' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($reservation);
             $entityManager->flush();
+
+            $sender = $this->getUser();
+            $recipient = $reservation->getUser();
+            $subject = "Suppression de votre réservation";
+            $message = "Bonjour " . $recipient->getPrenom() . ", votre réservation a été supprimée par un administrateur.";
+
+            $notificationService->sendMessage($sender, $recipient, $subject, $message);
+            $this->addFlash('success', 'La réservation a été supprimée avec succès.');
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);

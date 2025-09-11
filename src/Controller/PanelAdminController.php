@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 
 
@@ -21,37 +22,47 @@ use Doctrine\ORM\EntityManagerInterface;
 final class PanelAdminController extends AbstractController
 {
     #[Route('/panel/admin', name: 'app_panel_admin')]
-    public function index(UserRepository $userRepository, VisiteRepository $visiteRepository, ReservationRepository $reservationRepository, Request $request): Response
+    public function index(UserRepository $userRepository, VisiteRepository $visiteRepository, ReservationRepository $reservationRepository, Request $request, PaginatorInterface $paginator): Response
     {
-        $limit = 10;
-        $page = max(1, (int) $request->query->get('page', 1));
-        $offset = ($page - 1) * $limit;
+        $limit = 5;
+        $usersQuery = $userRepository->createQueryBuilder('u')
+            ->orderBy('u.id', 'ASC')
+            ->getQuery();
 
-        $totalUsers = count($userRepository->findAll());
-        $users = $userRepository->findBy([], [], $limit, $offset);
+         $usersPagination = $paginator->paginate(
+            $usersQuery,
+            $request->query->getInt('usersPage', 1),
+            $limit,
+            ['pageParameterName' => 'usersPage']
+        );
 
-        $totalVisites = count($visiteRepository->findAll());
-        $visites = $visiteRepository->findBy([], ['dateVisite' => 'DESC'], $limit, $offset);
+        $visitesQuery = $visiteRepository->createQueryBuilder('v')
+            ->orderBy('v.dateVisite', 'DESC')
+            ->getQuery();
 
-        $totalReservations = count($reservationRepository->findAll());
-        $reservations = $reservationRepository->findBy([], ['dateResaDebut' => 'DESC'], $limit, $offset);
+        $visitesPagination = $paginator->paginate(
+            $visitesQuery,
+            $request->query->getInt('visitesPage', 1),
+            $limit,
+            ['pageParameterName' => 'visitesPage']
+        );
+
+        $reservationsQuery = $reservationRepository->createQueryBuilder('r')
+            ->orderBy('r.dateResaDebut', 'DESC')
+            ->getQuery();
+        
+        $reservationsPagination = $paginator->paginate(
+            $reservationsQuery,
+            $request->query->getInt('reservationsPage', 1),
+            $limit,
+            ['pageParameterName' => 'reservationsPage']
+        );
         return $this->render('panel_admin/index.html.twig', [
             'controller_name' => 'PanelAdminController',
 
-            'users' => $users,
-            'totalUsersCount' => $totalUsers,
-
-            'visites' => $visites,
-            'totalVisitesCount' => $totalVisites,
-
-            'reservations' => $reservations,
-            'totalReservationsCount' => $totalReservations,
-
-
-
-            'totalPagesUsers' => ceil($totalUsers / $limit),
-            'totalPagesVisites' => ceil($totalVisites / $limit),
-            'totalPagesReservations' => ceil($totalReservations / $limit),
+            'users' => $usersPagination,
+            'visites' => $visitesPagination,
+            'reservations' => $reservationsPagination,
 
         ]);
     }
