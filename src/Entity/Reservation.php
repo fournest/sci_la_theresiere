@@ -42,9 +42,11 @@ class Reservation
     private ?\DateTime $dateResaFin = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
+    // Utilisateur qui a effectué cette réservation.
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
+     // Catégorie de l'événement pour la réservation de la salle.
     private ?Categorie $categorie = null;
 
     #[ORM\Column(length: 255)]
@@ -121,7 +123,9 @@ class Reservation
 
     public function addOption(Option $option): static
     {
+        // Vérification si l'option n'est pas déjà dans la collection.
         if (!$this->options->contains($option)) {
+            // Ajout.
             $this->options->add($option);
         }
 

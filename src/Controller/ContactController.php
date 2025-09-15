@@ -17,29 +17,38 @@ final class ContactController extends AbstractController
     #[Route('/contact', name: 'app_contact')]
     public function index(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Création du formulaire.
         $contact = new Contact();
         $form = $this->createForm(ContactFormType::class, $contact);
         $form->handleRequest($request);
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+            // Récupération de l'utilisateur connecté.
             $user = $this->getUser();
 
+             // Vérification si l'utilisateur est bien connecté.
             if (!$user instanceof User) {
                 $this->addFlash('error', 'Vous devez être connecté pour envoyer un message.');
                 return $this->redirectToRoute('app_login');
             }
 
+            // Association de l'utilisateur connecté comme expéditeur du message.
             $contact->setSender($user);
 
+            // Recherche d'un utilisateur avec le rôle 'ROLE_ADMIN' dans la base de données.
             $adminUser = $entityManager->getRepository(User::class)->findOneByRole('ROLE_ADMIN');
 
+            // Vérification si l'administrateur a été trouvé.
             if (!$adminUser) {
                 $this->addFlash('error', 'Impossible de trouver un administrateur pour recevoir ce message.');
                 return $this->redirectToRoute('app_contact');
             }
 
+            // Association de l'administrateur comme destinataire du message.
             $contact->setRecipient($adminUser);
 
+            // Préparation et éxecution de l'enregistrement.
             $entityManager->persist($contact);
             $entityManager->flush();
 
@@ -55,12 +64,14 @@ final class ContactController extends AbstractController
             'contactForm' => $form->createView(),
         ]);
     }
-    #[Route('/conatct/{id}', name: 'app_contact_delete', methods: ['POST'])]
+    #[Route('/contact/{id}', name: 'app_contact_delete', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($this->isCsrfTokenValid('delete' . $contact->getId(), $request->request->get('_token'))) {
+            // Préparation et éxecution de l'enregistrement.
             $entityManager->remove($contact);
             $entityManager->flush();
 

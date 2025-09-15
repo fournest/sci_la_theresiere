@@ -23,6 +23,7 @@ class Option
      * @var Collection<int, Reservation>
      */
     #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'options')]
+    // Définit une relation "plusieurs à plusieurs" avec l'entité Reservation. 'mappedBy' indique que la propriété "options" dans Reservation est le côté propriétaire de la relation.
     private Collection $reservations;
 
     public function __construct()
@@ -57,8 +58,11 @@ class Option
 
     public function addReservation(Reservation $reservation): static
     {
+          // Vérification si la réservation n'est pas déjà dans la collection.
         if (!$this->reservations->contains($reservation)) {
+             // Ajout.
             $this->reservations->add($reservation);
+             // Ajout de cette option à la réservation correspondante (côté "Reservation").
             $reservation->addOption($this);
         }
 
@@ -67,7 +71,9 @@ class Option
 
     public function removeReservation(Reservation $reservation): static
     {
+        // Retrait de l'élément de la collection.
         if ($this->reservations->removeElement($reservation)) {
+            //  Retrait de cette option dans la réservation correspondante (côté "Reservation").
             $reservation->removeOption($this);
         }
 

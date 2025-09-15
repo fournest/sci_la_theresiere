@@ -16,10 +16,11 @@
 		<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 		{% block javascripts %}
 			{% block importmap %}
-			{{ importmap('app') }}
+				{{ importmap('app') }}
 			{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
 		{% endblock %}
 	</head>
@@ -43,7 +44,7 @@
 		<main>
 			{% block body %}{% endblock %}
 		</main>
-	
+
 
 		{% block footer %}
 			{{  include('layout/footer.html.twig') }}

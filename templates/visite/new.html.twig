@@ -1,11 +1,31 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Venez visiter la salle.{% endblock %}
+{% block title %}Venez visiter la salle.
+{% endblock %}
 
 {% block body %}
-    <h1>Réservez votre visite.</h1>
+	<h1>Réservez votre visite.</h1>
 
-    {{ include('visite/_form.html.twig') }}
+	{{ include('visite/_form.html.twig') }}
 
-    <a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
+	<a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
+
+{# Calendrier interactif : section de script JavaScript #}
+
+	<script>
+    // Affichage des dates indisponibles dans la console pour le déboguage.
+		console.log({{ datesIndisponibles|json_encode|raw }});
+        // Ecouteur d'événement ( attendre le chargement complet du DOM )
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialisatioin du plugin de calendrier sur les éléments avec la classe ".js-datepicker".
+    flatpickr(".js-datepicker", {
+    dateFormat: "Y-m-d",
+    // Désactivation des dates antérieures à aujourd'hui.
+    minDate: "today",
+    locale: "fr",
+    // Désactivation des dates spécifiques passées depuis le controleur.
+    disable: {{ datesIndisponibles|json_encode|raw }}
+    });
+});
+	</script>
 {% endblock %}

@@ -11,50 +11,66 @@
 		<nav class="navbar">
 			<ul>
 				<li>
+					{# lien pour aller à la page d'accueil #}
 					<a href="{{ path('app_home') }}">Accueil</a>
 				</li>
 				<li>
+					{# Lien vers la page de visite #}
 					<a href="{{ path('app_visite_index') }}">Visite</a>
 				</li>
 				<li>
+					{# Lien vers la page de réservation #}
 					<a href="{{ path('app_reservation_index') }}">Réservation</a>
 				</li>
 				<li>
+					{# Lien vers la page de contact #}
 					<a href="{{ path('app_contact') }}">Contact</a>
 				</li>
 				<li>
+					{# Lien vers la page des tarifs #}
 					<a href="{{ path('app_tarif_index') }}">Tarifs</a>
 				</li>
+
+				{# Seulement pour les utilisateurs connectés #}
 				{% if is_granted('ROLE_USER') %}
 					<li>
+						{# Lien vers le profil de l'utilisateur actuellement connecté #}
 						<a href="{{ path('app_user_show', {'id': app.user.id}) }}">Profil</a>
 					</li>
 					<li>
+						{# Lien pour déconnecter l'utilisateur #}
 						<a href="{{ path('app_logout') }}">Déconnexion</a>
 					</li>
-
+					{# Bloc pour les utilisateurs non connectés #}
 				{% else %}
 					<li>
+						{# Lien vers la page de connexion #}
 						<a href="{{ path('app_login') }}">Connexion</a>
 					</li>
 					<li>
+						{# Lien vers la page d'inscription #}
 						<a href="{{ path('app_register') }}">Inscrivez-vous!</a>
 					</li>
 				{% endif %}
+				{# Bloc conditionnel pour les administrateurs #}
 				{% if is_granted('ROLE_ADMIN') %}
 					<li>
+						{# Lien vers l'espace administrateur #}
 						<a href="{{ path('app_panel_admin') }}">Espace administrateur</a>
 					</li>
 					<li>
+						{# Lien vers la gestion des options #}
 						<a href="{{ path('app_option_index') }}">Options</a>
 					</li>
 					<li>
+						{# Lien vers la gestion des catégories #}
 						<a href="{{ path('app_categorie_index') }}">Catégories</a>
 					</li>
 				{% endif %}
+				{# Section pour les notifications (icône d'enveloppe) #}
 				<li class="notification-item">
 					<a href="{{ path('app_messages') }}" class="notification-icon">
-						<img src="img/envelope-solid-full.svg" alt="notification">
+						<img src="{{ asset('img/envelope-solid-full.svg') }}" alt="notification">
 						{% set unreadCount = unread_messages_count() %}
 						<span class="badge">{{ unreadCount }}</span>
 					</a>

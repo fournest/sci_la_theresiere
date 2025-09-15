@@ -33,12 +33,19 @@ final class UserController extends AbstractController
         PaginatorInterface $paginator,
         Request $request
     ): Response {
+
+         // Récupération de l'utilisateur connecté depuis le service de sécurité
         $user = $this->getUser();
+         // Vérification si l'utilisateur est bien connecté.
         if (!$user instanceof User) {
             throw new NotFoundHttpException('Utilisateur introuvable.');
         }
 
+        // Pagination.
+        // Définition du nombre d'éléments par page.
         $limit = 5;
+
+        // Pagination des visites.
         $visitesQueryBuilder = $visiteRepository->createQueryBuilder('v')
             ->where('v.user = :user')
             ->setParameter('user', $user);
@@ -50,7 +57,7 @@ final class UserController extends AbstractController
             ['pageParameterName' => 'visites_page']
         );
 
-
+        // Pagination des réservations.
         $reservationsQueryBuilder = $reservationRepository->createQueryBuilder('r')
             ->where('r.user = :user')
             ->setParameter('user', $user);
@@ -63,6 +70,7 @@ final class UserController extends AbstractController
         );
 
 
+        // Pagination des contacts (notifications).
         $contactsQueryBuilder = $contactRepository->createQueryBuilder('c')
             ->where('c.sender = :user OR c.recipient = :user')
             ->setParameter('user', $user);
@@ -85,15 +93,19 @@ final class UserController extends AbstractController
     #[Route('/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+         // Récupération de l'utilisateur connecté depuis le service de sécurité
         $user = $this->getUser();
         if (!$user instanceof User) {
             throw new NotFoundHttpException('Utilisateur introuvable.');
         }
 
+        // Création du formulaire.
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement dans la base de données.
             $entityManager->flush();
 
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
@@ -110,20 +122,26 @@ final class UserController extends AbstractController
     #[Route('/{id}/desactive', name: 'app_user_desactive', methods: ['POST'])]
     public function desactive(Request $request, Security $security, User $user, EntityManagerInterface $entityManager): Response
     {
+        // Vérification si l'utilisateur actuel est un administrateur OU s'il essaie de désactiver son propre compte.
         if (!$security->isGranted('ROLE_ADMIN') && $user !== $this->getUser()) {
             throw new AccessDeniedException("Vous n'avez pas le droit de désactiver ce compte.");
         }
 
+        // Sécurisation de l'action de désactivation.
         if ($this->isCsrfTokenValid('desactive' . $user->getId(), $request->request->get('_token'))) {
+            // Désactivation.
             $user->setIsActive(false);
             $entityManager->flush();
 
+            // Si l'utilisateur désactive son propre compte, déconnection automatique.
             if ($user === $this->getUser()) {
                 $security->logout();
             }
+
             $this->addFlash('success', 'Le compte a été désactivé avec succès.');
             return $this->redirectToRoute('app_login');
         }
+
         return $this->redirectToRoute('app_user_show');
     }
 
@@ -149,17 +167,20 @@ final class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
     public function delete(Request $request, Security $security, User $user, EntityManagerInterface $entityManager): Response
     {
+        // Vérification si l'utilisateur actuel est un administrateur OU s'il essaie de désactiver son propre compte.
         if (!$security->isGranted('ROLE_ADMIN') && $user !== $this->getUser()) {
             throw new AccessDeniedException("Vous n'avez pas le droit de supprimer ce compte.");
         }
 
-
+        // Sécurisation de l'action de suppréssion.
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
             if ($user === $this->getUser()) {
                 $security->logout();
                 return $this->redirectToRoute('app_logout');
             }
+            // Suppression de l'utilisateur de la base de données.
             $entityManager->remove($user);
+            // Enregistrement de la suppression dans la base de données.
             $entityManager->flush();
             $this->addFlash('success', 'Le compte a été supprimé avec succès.');
             return $this->redirectToRoute('app_user_show');

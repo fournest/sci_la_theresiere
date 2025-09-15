@@ -76,6 +76,7 @@ class UserType extends AbstractType
                         'message' => "Veuillez saisir une adresse mail",
                     ]),
                     new Regex([
+                         // Utilise une expression régulière pour valider le format de l'email.
                         'pattern' => '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
                         'message' => "L'adresse mail indiquée est invalide",
                     ]),
@@ -87,7 +88,9 @@ class UserType extends AbstractType
                 // this is read and encoded in the controller
                 'mapped' => false,
                 'label' => 'Nouveau mot de passe :',
+                // Aide les navigateurs à suggérer un nouveau mot de passe.
                 'attr' => ['autocomplete' => 'new-password'],
+                // Le champ n'est pas obligatoire, ce qui permet à l'utilisateur de modifier son profil sans changer de mot de passe.
                 'required' => false,
                 'constraints' => [
 

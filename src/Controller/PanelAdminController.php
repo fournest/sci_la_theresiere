@@ -22,20 +22,25 @@ use Knp\Component\Pager\PaginatorInterface;
 final class PanelAdminController extends AbstractController
 {
     #[Route('/panel/admin', name: 'app_panel_admin')]
+    // Affichage de la page principale du panneau d'administration avec les listes des utilisateurs, visites et réservations.
     public function index(UserRepository $userRepository, VisiteRepository $visiteRepository, ReservationRepository $reservationRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        // Pagination.
+        // Définition du nombre d'éléments par page.
         $limit = 5;
+
+        // Pagination des utilisateurs.
         $usersQuery = $userRepository->createQueryBuilder('u')
             ->orderBy('u.id', 'ASC')
             ->getQuery();
 
-         $usersPagination = $paginator->paginate(
+        $usersPagination = $paginator->paginate(
             $usersQuery,
             $request->query->getInt('usersPage', 1),
             $limit,
             ['pageParameterName' => 'usersPage']
         );
-
+        // Pagination des visites.
         $visitesQuery = $visiteRepository->createQueryBuilder('v')
             ->orderBy('v.dateVisite', 'DESC')
             ->getQuery();
@@ -46,11 +51,11 @@ final class PanelAdminController extends AbstractController
             $limit,
             ['pageParameterName' => 'visitesPage']
         );
-
+        // Pagination des réservations.
         $reservationsQuery = $reservationRepository->createQueryBuilder('r')
             ->orderBy('r.dateResaDebut', 'DESC')
             ->getQuery();
-        
+
         $reservationsPagination = $paginator->paginate(
             $reservationsQuery,
             $request->query->getInt('reservationsPage', 1),
@@ -67,28 +72,30 @@ final class PanelAdminController extends AbstractController
         ]);
     }
 
-    // Vous aurez besoin d'une action pour "bannir" un utilisateur
+    // Action pour bannir un utilisateur
     #[Route('/user/{id}/ban', name: 'app_user_ban', methods: ['GET'])]
     public function banUser(User $user, EntityManagerInterface $entityManager): Response
     {
+        // Définition, préparation et éxecution de la mise à jour.
         $user->setIsBanned(true);
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $this->addFlash('success', "L'utilisateur a été bannis avec succès.");
+        $this->addFlash('success', "L'utilisateur a été banni avec succès.");
 
         return $this->redirectToRoute('app_panel_admin', ['section' => 'users']);
     }
 
-    // Vous aurez besoin d'une action pour "débannir" un utilisateur
+    // Action pour réintégration un utilisateur
     #[Route('/user/{id}/unban', name: 'app_user_unban', methods: ['GET'])]
     public function unbanUser(User $user, EntityManagerInterface $entityManager): Response
     {
+        // Définition, préparation et éxecution de la mise à jour.
         $user->setIsBanned(false);
         $entityManager->persist($user);
         $entityManager->flush();
 
-        $this->addFlash('success', "L'utilisateur a été débannis avec succès.");
+        $this->addFlash('success', "L'utilisateur a été réintégré avec succès.");
 
         return $this->redirectToRoute('app_panel_admin', ['section' => 'users']);
     }
@@ -96,9 +103,13 @@ final class PanelAdminController extends AbstractController
     #[Route('/user/{id}/delete', name: 'app_admin_user_delete', methods: ['POST'])]
     public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de sécurité.
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->getPayload()->getString('_token'))) {
+            // Suppression de l'utilisateur de la base de données.
             $entityManager->remove($user);
+            // Enregistrement de la suppression dans la base de données.
             $entityManager->flush();
+            
             $this->addFlash('success', 'Utilisateur supprimé avec succès.');
         }
 

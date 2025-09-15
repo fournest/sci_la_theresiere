@@ -69,19 +69,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Contact>
      */
+    // Collection des messages envoyés par cet utilisateur.
     #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'sender', cascade: ['remove'])]
     private Collection $sentMessages;
 
     /**
      * @var Collection<int, Contact>
      */
+    // Collection des messages reçus par cet utilisateur.
     #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'recipient', cascade: ['remove'])]
     private Collection $receivedMessages;
+
+    // Constructeur de la classe User.
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
         $this->visites = new ArrayCollection();
+        // Initialisation du compte comme actif par défaut.
         $this->isActive = true;
+        // Initialisation du compte comme non banni par défaut.
         $this->isBanned = false;
         $this->sentMessages = new ArrayCollection();
         $this->receivedMessages = new ArrayCollection();
@@ -219,8 +225,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addReservation(Reservation $reservation): static
     {
+        // Vérification si la réservation n'est pas déjà dans la collection.
         if (!$this->reservations->contains($reservation)) {
+            // Ajout.
             $this->reservations->add($reservation);
+            // Association de l'utilisateur à la réservation.
             $reservation->setUser($this);
         }
 
@@ -249,8 +258,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addVisite(Visite $visite): static
     {
+        // Vérification si la visite n'est pas déjà dans la collection.
         if (!$this->visites->contains($visite)) {
+            // Ajout.
             $this->visites->add($visite);
+            // Association de l'utilisateur à la visite.
             $visite->setUser($this);
         }
 
@@ -288,26 +300,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsBanned(bool $isBanned): static
     {
         $this->isBanned = $isBanned;
-        
+
         return $this;
     }
-    
-    
-    
-    
+
+
+
+
     public function getSentMessages(): Collection
     {
         return $this->sentMessages;
     }
-    
+
     public function getReceivedMessages(): Collection
     {
         return $this->receivedMessages;
     }
     public function addSentMessage(Contact $message): self
     {
+        // Vérification si la visite n'est pas déjà dans la collection.
         if (!$this->sentMessages->contains($message)) {
+            // Ajout.
             $this->sentMessages->add($message);
+            //  Définition de l'expediteur du message.
             $message->setSender($this);
         }
 
@@ -325,12 +340,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-   
+
 
     public function addReceivedMessage(Contact $message): self
     {
+        // Vérification si la visite n'est pas déjà dans la collection.
         if (!$this->receivedMessages->contains($message)) {
+            // Ajout.
             $this->receivedMessages->add($message);
+            //  Définition du destinataire du message.
             $message->setRecipient($this);
         }
 

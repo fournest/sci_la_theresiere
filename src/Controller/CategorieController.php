@@ -25,11 +25,14 @@ final class CategorieController extends AbstractController
     #[Route('/new', name: 'app_categorie_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+         // Création du formulaire.
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+             // Préparation et éxecution de l'enregistrement.
             $entityManager->persist($categorie);
             $entityManager->flush();
 
@@ -53,10 +56,13 @@ final class CategorieController extends AbstractController
     #[Route('/{id}/edit', name: 'app_categorie_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Categorie $categorie, EntityManagerInterface $entityManager): Response
     {
+         // Création du formulaire.
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
 
+         // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+            // Execution de l'enregistrement.
             $entityManager->flush();
 
             return $this->redirectToRoute('app_categorie_index', [], Response::HTTP_SEE_OTHER);
@@ -71,7 +77,9 @@ final class CategorieController extends AbstractController
     #[Route('/{id}', name: 'app_categorie_delete', methods: ['POST'])]
     public function delete(Request $request, Categorie $categorie, EntityManagerInterface $entityManager): Response
     {
+         // Sécurisation de l'action de suppression.
         if ($this->isCsrfTokenValid('delete'.$categorie->getId(), $request->getPayload()->getString('_token'))) {
+             // Préparation et éxecution de l'enregistrement.
             $entityManager->remove($categorie);
             $entityManager->flush();
         }

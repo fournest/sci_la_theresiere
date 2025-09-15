@@ -9,29 +9,29 @@
 	{{ include('reservation/_form.html.twig') }}
 
 	<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
-	
 
-<script>
-    console.log({{ datesIndisponibles|json_encode|raw }});
-document.addEventListener("DOMContentLoaded", function() {
-    flatpickr(".js-datepicker", {
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        // disable: {{ datesIndisponibles|json_encode|raw }}
-		 disable: [
-        function(date) {
-            // Récupère toutes les plages indisponibles
-            const ranges = {{ datesIndisponibles|json_encode|raw }};
-            return ranges.some(range => {
-                const start = new Date(range[0]);
-                const end   = new Date(range[1]);
-                return date >= start && date <= end;
-            });
-        }
-    ]
-    });
+
+	<script>
+		// Affichage des dates indisponibles dans la console pour le déboguage.
+console.log({{ datesIndisponibles|json_encode|raw }});
+// Ecouteur d'événement ( attendre le chargement complet du DOM )
+document.addEventListener("DOMContentLoaded", function () { // Initialisatioin du plugin de calendrier sur les éléments avec la classe ".js-datepicker".
+flatpickr(".js-datepicker", {
+dateFormat: "Y-m-d",
+// Désactivation des dates antérieures à aujourd'hui.
+minDate: "today",
+locale: "fr",
+// Récupère toutes les plages indisponibles
+disable: [function (date) {
+const ranges = {{ datesIndisponibles|json_encode|raw }};
+return ranges.some(range => {
+const start = new Date(range[0]);
+const end = new Date(range[1]);
+return date >= start && date <= end;
 });
-</script>
+}
+]
+});
+});
+	</script>
 {% endblock %}
-
-

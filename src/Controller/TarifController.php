@@ -25,12 +25,17 @@ final class TarifController extends AbstractController
     #[Route('/new', name: 'app_tarif_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+         // Création du formulaire.
         $tarif = new Tarif();
         $form = $this->createForm(TarifType::class, $tarif);
         $form->handleRequest($request);
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+
+            // Préparation des données.
             $entityManager->persist($tarif);
+            // Enregistrement dans la base de données.
             $entityManager->flush();
 
             return $this->redirectToRoute('app_tarif_index', [], Response::HTTP_SEE_OTHER);
@@ -53,10 +58,13 @@ final class TarifController extends AbstractController
     #[Route('/{id}/edit', name: 'app_tarif_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Tarif $tarif, EntityManagerInterface $entityManager): Response
     {
+         // Création du formulaire.
         $form = $this->createForm(TarifType::class, $tarif);
         $form->handleRequest($request);
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+            // Enregistrement dans la base de données.
             $entityManager->flush();
 
             return $this->redirectToRoute('app_tarif_index', [], Response::HTTP_SEE_OTHER);
@@ -71,8 +79,11 @@ final class TarifController extends AbstractController
     #[Route('/{id}', name: 'app_tarif_delete', methods: ['POST'])]
     public function delete(Request $request, Tarif $tarif, EntityManagerInterface $entityManager): Response
     {
+        // Sécurisation de l'action de suppression.
         if ($this->isCsrfTokenValid('delete'.$tarif->getId(), $request->getPayload()->getString('_token'))) {
+            // Suppression dans la base de données.
             $entityManager->remove($tarif);
+            // Enregistrement de la suppression dans la base de données.
             $entityManager->flush();
         }
 

@@ -80,6 +80,7 @@ class RegistrationFormType extends AbstractType
                         'message' => "Veuillez saisir une adresse mail",
                     ]),
                     new Regex([
+                        // Utilise une expression régulière pour valider le format de l'email.
                         'pattern' => '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
                         'message' => "L'adresse mail indiquée est invalide",
                     ]),
@@ -91,14 +92,15 @@ class RegistrationFormType extends AbstractType
                 // this is read and encoded in the controller
                 'mapped' => false,
                 'label' => 'Mot de passe :',
+                 // Aide les navigateurs à suggérer un nouveau mot de passe.
                 'attr' => ['autocomplete' => 'new-password'],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Veuillez entrer un mot de passe.',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Votre mot de passe doit contenir au moin {{ limit }} caractères',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),

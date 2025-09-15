@@ -21,6 +21,7 @@ class Categorie
     /**
      * @var Collection<int, Reservation>
      */
+
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'categorie')]
     private Collection $reservations;
 
@@ -56,8 +57,11 @@ class Categorie
 
     public function addReservation(Reservation $reservation): static
     {
+        // Vérification si la réservation n'est pas déjà dans la collection.
         if (!$this->reservations->contains($reservation)) {
+            // Ajout.
             $this->reservations->add($reservation);
+            // Définition de la catégorie de la réservation pour établir la relation inverse.
             $reservation->setCategorie($this);
         }
 

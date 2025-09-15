@@ -31,19 +31,21 @@ final class VisiteController extends AbstractController
 
     public function index(VisiteRepository $visiteRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        // Récupère l'utilisateur connecté depuis le service de sécurité
         $user = $this->getUser();
-
+        // Vérification si l'utilisateur est bien connecté.
         if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
 
+        // Création d'une requête pour récupérer les visites de l'utilisateur.
         $queryBuilder = $visiteRepository->createQueryBuilder('v')
             ->where('v.user = :user')
             ->setParameter('user', $user)
             ->orderBy('v.dateVisite', 'DESC')
             ->getQuery();
 
-
+        // Pagination des résultats de la requête.
         $visitesPagination = $paginator->paginate(
             $queryBuilder,
             $request->query->getInt('page', 1),
@@ -58,21 +60,24 @@ final class VisiteController extends AbstractController
 
     #[Route('/new', name: 'app_visite_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $VisiteRepository, UserRepository $userRepository, NotificationService $notificationService): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $visiteRepository, UserRepository $userRepository, NotificationService $notificationService): Response
     {
+        // Création du formulaire.
         $visite = new Visite();
         $currentUser = $this->getUser();
         $form = $this->createForm(VisiteType::class, $visite);
         $form->handleRequest($request);
 
+        // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
-
-            $isBooked = $VisiteRepository->findValidatedBookingByDate($visite->getDateVisite());
+            // Vérification si la date est déjà réservée ou en attente de validation.
+            $isBooked = $visiteRepository->findValidatedBookingByDate($visite->getDateVisite());
 
             if ($isBooked) {
                 $this->addFlash('error', 'Cette date est en attente de validation. Choississez une autre date ou contactez-nous.');
                 return $this->redirectToRoute('app_visite_new');
             }
+            // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilsateur est déconnecté.
             $currentUser = $this->getUser();
             if ($currentUser) {
                 $visite->setUser($currentUser);
@@ -80,12 +85,12 @@ final class VisiteController extends AbstractController
                 $this->addFlash('error', 'Vous devez être connecté pour créer une visite.');
                 return $this->redirectToRoute('app_login');
             }
-
+            // Définition du statut, préparation et execution de l'enregistrement en base de données.
             $visite->setStatut('en_attente');
             $entityManager->persist($visite);
             $entityManager->flush();
 
-
+            // Notification pour l'administrateur.
             $admin = $userRepository->findOneAdmin();
 
             if ($admin) {
@@ -95,16 +100,24 @@ final class VisiteController extends AbstractController
 
                 $notificationService->sendMessage($sender, $admin, $subject, $message);
             }
-
+            // Redirection de  l'utilisateur vers la liste de ses visites après la création.
             return $this->redirectToRoute('app_visite_index', [], Response::HTTP_SEE_OTHER);
+        }
+        // Gestion des dates de visites indisponibles.
+        $visites = $visiteRepository->findAll();
+
+        $datesIndisponibles = [];
+        foreach ($visites as $v) {
+            $datesIndisponibles[] = $v->getDateVisite()->format('Y-m-d');
         }
 
         return $this->render('visite/new.html.twig', [
             'visite' => $visite,
             'form' => $form,
+            'datesIndisponibles' => $datesIndisponibles,
         ]);
     }
-
+    // affichage d'une visite spécifique.
     #[Route('/{id}', name: 'app_visite_show', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function show(Visite $visite): Response
@@ -118,22 +131,29 @@ final class VisiteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Visite $visite, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService): Response
     {
+        // Création et soumission du formulaire.
         $form = $this->createForm(VisiteType::class, $visite);
         $form->handleRequest($request);
 
+        //  Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
             $sender = $this->getUser();
             $visiteOwner = $visite->getUser();
             $adminUser = $userRepository->findOneAdmin();
 
+            // Vérification que l'expéditeur et l'administrateur existent dans la base de données.
             if ($sender instanceof User && $adminUser instanceof User) {
+                // Notification de l'utilisateur à l'administrateur.
                 if ($sender->hasRole('ROLE_USER')) {
                     $objet = "Modification de la visite";
                     $message = "Bonjour, une visite a été modifiée par l'utilisateur " . $sender->getPseudo() . " .";
                     $notificationService->sendMessage($sender, $adminUser, $objet, $message);
-                } elseif ($sender->hasRole('ROLE_ADMIN')) {
+                }
+                // Notification de l'administrateur à l'utilisateur.
+                elseif ($sender->hasRole('ROLE_ADMIN')) {
                     $objet = "Modification de la visite";
                     if ($sender->getId() !== $visiteOwner->getId()) {
                         $message = "Bonjour " . $visiteOwner->getPseudo() . ", la visite a été modifiée par l'administrateur.";
@@ -141,7 +161,7 @@ final class VisiteController extends AbstractController
                     }
                 }
             }
-
+            // confirmation de la modification.
             $this->addFlash('success', 'Votre visite a été modifiée avec succès.');
             return $this->redirectToRoute('app_visite_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -155,28 +175,41 @@ final class VisiteController extends AbstractController
 
     #[Route('/cancel/{id}', name: 'app_visite_cancel', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function cancel(Request $request, Visite $visite, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
+    public function cancel(Request $request, Visite $visite, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService): Response
     {
-
+        // Vérification de l'existance de la visite.
         if (!$visite) {
             throw new NotFoundHttpException('La visite demandée n\'existe pas.');
         }
+        // Vérification si l'utilisateur actuel est soit le propriétaire de la visite, soit un administrateur.
+        // Si aucune de ces conditions n'est remplie, une exception AccessDeniedException est levée.
         if ($this->getUser() !== $visite->getUser() && !$this->isGranted('ROLE_ADMIN')) {
             throw new AccessDeniedException('Vous n\'êtes pas autorisé à annuler cette visite.');
         }
-
+        // Sécurisation de l'action d'annulation.
         if ($this->isCsrfTokenValid('cancel' . $visite->getId(), $request->getPayload()->getString('_token'))) {
             $visite->setStatut('annulée');
             $entityManager->flush();
-
+            // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilsateur est déconnecté.
             $sender = $this->getUser();
-            $recipient = $visite->getUser();
+            $visiteOwner = $visite->getUser();
+            $adminUser = $userRepository->findOneAdmin();
 
-            if ($sender instanceof User && $recipient instanceof User) {
-                $objet = "Annulation de votre visite";
-                $message = "Bonjour " . $recipient->getPrenom() . ", votre visite a été annulée avec succès.";
-
-                $notificationService->sendMessage($sender, $recipient, $objet, $message);
+            // Vérification que l'expéditeur et l'administrateur existent dans la base de données.
+            if ($sender instanceof User && $adminUser instanceof User) {
+                // Notification de l'utilisateur à l'administrateur.
+                if ($sender->hasRole('ROLE_USER')) {
+                    $objet = "Annulation de la visite";
+                    $message = "Bonjour, une visite a été annulée par l'utilisateur " . $sender->getPseudo() . " .";
+                    $notificationService->sendMessage($sender, $adminUser, $objet, $message);
+                    // Notification de l'administrateur à l'utilisateur.
+                } elseif ($sender->hasRole('ROLE_ADMIN')) {
+                    $objet = "Annulation de la visite";
+                    if ($sender->getId() !== $visiteOwner->getId()) {
+                        $message = "Bonjour " . $visiteOwner->getPseudo() . ", la visite a été annulée par l'administrateur.";
+                        $notificationService->sendMessage($sender, $visiteOwner, $objet, $message);
+                    }
+                }
             }
 
             $this->addFlash('success', 'Votre visite a été annulée avec succès.');
@@ -191,27 +224,33 @@ final class VisiteController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     public function validate(Request $request, Visite $visite, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
+        // Vérification de l'existance de la visite.
         if (!$visite) {
             throw new NotFoundHttpException('La visite demandée n\'existe pas.');
         }
 
+        // Vérification de sécurité.
         if ($this->isCsrfTokenValid('validate' . $visite->getId(), $request->request->get('_token'))) {
+            // Mise à jour du statut de la visite.
             if ($visite->getStatut() === 'en_attente') {
                 $visite->setStatut('validée');
                 $entityManager->flush();
 
+                // Récupération de l'expéditeur (l'administrateur) et le destinataire (le propriétaire de la visite)
+                // et envoi de notification au destinataire.
                 $sender = $this->getUser();
                 $recipient = $visite->getUser();
                 $subject = "Confirmation de votre visite";
                 $message = "Bonjour " . $recipient->getPrenom() . ", votre visite a été validée avec succès.";
 
                 $notificationService->sendMessage($sender, $recipient, $subject, $message);
-
+                // Message flash pour l'administrateur.
                 $this->addFlash('success', 'La visite a été validée avec succès.');
             } else {
                 $this->addFlash('error', 'La visite n\'est pas dans un état "en_attente" et ne peut pas être validée.');
             }
         } else {
+            // Message d'erreur si sécurité invalide.
             $this->addFlash('error', 'Jeton de sécurité invalide.');
         }
 
@@ -223,10 +262,13 @@ final class VisiteController extends AbstractController
 
     public function delete(Request $request, Visite $visite, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
+        // Vérification de l'existance de la visite.
         if ($this->isCsrfTokenValid('delete' . $visite->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($visite);
             $entityManager->flush();
 
+            // Récupération de l'expéditeur (l'administrateur) et le destinataire (le propriétaire de la visite)
+            // et envoi de notification au destinataire.
             $sender = $this->getUser();
             $recipient = $visite->getUser();
             $subject = "Suppression de votre réservation";

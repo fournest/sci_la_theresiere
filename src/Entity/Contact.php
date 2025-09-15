@@ -14,10 +14,12 @@ class Contact
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'sentMessages')]
+    // L'utilisateur qui a envoyé ce message. La relation est inversée par la propriété 'sentMessages' dans l'entité User.
     #[ORM\JoinColumn(nullable: false)]
     private ?User $sender = null;
 
     #[ORM\ManyToOne(inversedBy: 'receivedMessages')] 
+     // L'utilisateur qui a reçu ce message. La relation est inversée par la propriété 'receivedMessages' dans l'entité User.
     #[ORM\JoinColumn(nullable: false)] 
     private ?User $recipient = null;
 
@@ -28,6 +30,7 @@ class Contact
     private ?string $objet = null;
 
     #[ORM\Column(options: ["default" => false])]
+     // Un indicateur booléen pour savoir si le message a été lu par le destinataire.
     private bool $isRead = false;
 
     public function getId(): ?int

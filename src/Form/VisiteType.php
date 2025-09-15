@@ -19,10 +19,14 @@ class VisiteType extends AbstractType
             ->add('dateVisite', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de visite',
+                'attr' => ['class' => 'js-datepicker'],
+
             ])
             ->add('dateResaSouhaite', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de réservation souhaitée',
+                'attr' => ['class' => 'js-datepicker'],
+
             ])
         ;
     }

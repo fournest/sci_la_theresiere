@@ -141,6 +141,12 @@ p {
     transform: translateY(-2px);
 }
 
+.notification-icon a { 
+    display: flex;
+    align-items: center; 
+    gap: 5px; 
+}
+
 
 
 /* ----------- PIED DE PAGE --------------- */
@@ -580,6 +586,11 @@ input:focus {
     gap: 15px;
 }
 
+.lien-bloc {
+    display: block;  
+    text-decoration: none; 
+    color: inherit; 
+}
 
 
 #bloc1,

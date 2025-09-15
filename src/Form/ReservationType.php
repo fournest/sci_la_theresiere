@@ -40,15 +40,14 @@ class ReservationType extends AbstractType
                 'class' => Categorie::class,
                 'choice_label' => 'nom',
                 'multiple' => false,
-                // 'expanded' => true,
                 'label' => 'Catégories',
             ])
             ->add('options', EntityType::class, [
                 'class' => Option::class,
                 'choice_label' => 'nom',
                 'multiple' => true,
-                // 'expanded' => true,
-                'label' => 'Options',
+                'label' => 'Options (Maintenez Ctrl ou Cmd pour sélectionner plusieurs)',
+                
             ])
         ;
     }

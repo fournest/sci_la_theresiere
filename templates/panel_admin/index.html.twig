@@ -61,7 +61,7 @@
 							{% if user.isBanned == false %}
 								<a class="btn-principal" href="{{ path('app_user_ban', {'id': user.id}) }}" onclick="return confirm('Êtes-vous sûr de vouloir bannir l\'utilisateur ?');">Bannir</a>
 							{% else %}
-								<a class="btn-principal" href="{{ path('app_user_unban', {'id': user.id}) }}" onclick="return confirm('Êtes-vous sûr de vouloir débannir l\'utilisateur ?');">Débannir</a>
+								<a class="btn-principal" href="{{ path('app_user_unban', {'id': user.id}) }}" onclick="return confirm('Êtes-vous sûr de vouloir réintégrer l\'utilisateur ?');">Réintégrer</a>
 							{% endif %}
 							<form action="{{ path('app_admin_user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?');">
 								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">

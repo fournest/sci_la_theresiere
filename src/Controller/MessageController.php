@@ -14,18 +14,24 @@ final class MessageController extends AbstractController
 {
     #[Route('/messages', name: 'app_messages')]
     public function showMessages( ContactRepository $contactRepository, Security $security, EntityManagerInterface $entityManager ): Response {
+        
+        // Récupération de l'utilisateur connecté depuis le service de sécurité.
         $user = $security->getUser();
         
+         // Vérification si l'utilisateur est bien connecté.
         if (!$user instanceof User) {
             return $this->redirectToRoute('app_home');
         }
 
+        // Récupération de tous les messages non lus dont le destinataire est l'utilisateur actuel.
         $messages = $contactRepository->findBy([
             'recipient' => $user,
             'isRead' => false
         ]);
 
+        // Parcours chaque message non lu.
         foreach ($messages as $message) {
+            // Marquage du message comme lu.
             $message->setIsRead(true); 
         }
 

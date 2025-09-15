@@ -14,9 +14,11 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/option')]
 final class OptionController extends AbstractController
 {
+    // Affichage de la liste d'options.
     #[Route(name: 'app_option_index', methods: ['GET'])]
     public function index(OptionRepository $optionRepository): Response
     {
+        // Récupération de toutes les options depuis la base de données.
         return $this->render('option/index.html.twig', [
             'options' => $optionRepository->findAll(),
         ]);
@@ -25,11 +27,14 @@ final class OptionController extends AbstractController
     #[Route('/new', name: 'app_option_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Création et soumission du formulaire.
         $option = new Option();
         $form = $this->createForm(OptionType::class, $option);
         $form->handleRequest($request);
 
+        //  Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+            // Préparation et éxecution de la mise à jour.
             $entityManager->persist($option);
             $entityManager->flush();
 
@@ -53,10 +58,13 @@ final class OptionController extends AbstractController
     #[Route('/{id}/edit', name: 'app_option_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Option $option, EntityManagerInterface $entityManager): Response
     {
+        // Création du formulaire de modification, pré-rempli avec les données de l'option actuelle.
         $form = $this->createForm(OptionType::class, $option);
         $form->handleRequest($request);
 
+         //  Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+            // Execution de la mise à jour.
             $entityManager->flush();
 
             return $this->redirectToRoute('app_option_index', [], Response::HTTP_SEE_OTHER);
@@ -71,7 +79,9 @@ final class OptionController extends AbstractController
     #[Route('/{id}', name: 'app_option_delete', methods: ['POST'])]
     public function delete(Request $request, Option $option, EntityManagerInterface $entityManager): Response
     {
+        // Vérification de sécurité.
         if ($this->isCsrfTokenValid('delete'.$option->getId(), $request->getPayload()->getString('_token'))) {
+             // Préparation et éxecution de la mise à jour.
             $entityManager->remove($option);
             $entityManager->flush();
         }
