@@ -15,14 +15,18 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils, Request $request, EntityManagerInterface $em): Response
     {
-        // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
 
-        // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
         if ($error) {
-            $this->addFlash('error', 'Identifiants invalides.');
+
+            $user = $em->getRepository(User::class)->findOneBy(['email' => $lastUsername]);
+            if ($user && $user->isBanned()) {
+                $this->addFlash('error', 'Vous avez été banni par l\'administrateur, veuillez le contacter aux coordonnées ci-dessous.');
+            } else {
+                $this->addFlash('error', 'Identifiants invalides.');
+            }
         }
 
         if ($request->query->get('logout') === '1') {

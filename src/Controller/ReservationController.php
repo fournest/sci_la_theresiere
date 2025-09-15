@@ -17,6 +17,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Service\NotificationService;
+use DateTime;
+use DateTimeImmutable;
 use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/reservation')]
@@ -32,7 +34,7 @@ final class ReservationController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-       $reservationsQuery = $reservationRepository->createQueryBuilder('r')
+        $reservationsQuery = $reservationRepository->createQueryBuilder('r')
             ->where('r.user = :user')
             ->setParameter('user', $user)
             ->getQuery();
@@ -71,10 +73,15 @@ final class ReservationController extends AbstractController
                 }
             }
             $reservation->setStatut('en_attente');
+            $date = new DateTime();
+            $reservation->setDossierResa($date->format('Ymd'));
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+            $reservation->setDossierResa($date->format('Ymd') . $reservation->getId());
             $entityManager->persist($reservation);
             $entityManager->flush();
 
-            $admin = $userRepository->findOneBy(['roles' => '["ROLE_ADMIN"]']);
+            $admin = $userRepository->findOneAdmin();
 
             if ($admin) {
                 $sender = $this->getUser();
@@ -89,9 +96,22 @@ final class ReservationController extends AbstractController
             return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        $reservations = $reservationRepository->findAll();
+
+        $datesIndisponibles = [];
+        foreach ($reservations as $r) {
+            $datesIndisponibles[] = [
+                $r->getDateResaDebut()->format('Y-m-d'),
+                $r->getDateResaFin()->format('Y-m-d'),
+            ];
+        }
+
+        
+
         return $this->render('reservation/new.html.twig', [
             'reservation' => $reservation,
             'form' => $form,
+            'datesIndisponibles' => $datesIndisponibles,
         ]);
     }
 
@@ -106,7 +126,7 @@ final class ReservationController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService): Response
     {
         $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
@@ -114,9 +134,28 @@ final class ReservationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $sender = $this->getUser();
+            $reservationOwner = $reservation->getUser();
+            $adminUser = $userRepository->findOneAdmin();
+
+            if ($sender instanceof User && $adminUser instanceof User) {
+                if ($sender->hasRole('ROLE_USER')) {
+                    $objet = "Modification de la réservation";
+                    $message = "Bonjour, une réservation a été modifiée par l'utilisateur " . $sender->getPseudo() . " .";
+                    $notificationService->sendMessage($sender, $adminUser, $objet, $message);
+                } elseif ($sender->hasRole('ROLE_ADMIN')) {
+                    $objet = "Modification de la réservation";
+                    if ($sender->getId() !== $reservationOwner->getId()) {
+                        $message = "Bonjour " . $reservationOwner->getPseudo() . ", la réservation a été modifiée par l'administrateur.";
+
+                        $notificationService->sendMessage($sender, $reservationOwner, $objet, $message);
+                    }
+                }
+            }
+
+            $this->addFlash('success', 'Votre réservation a été modifiée avec succès.');
             return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
         }
-
         return $this->render('reservation/edit.html.twig', [
             'reservation' => $reservation,
             'form' => $form,

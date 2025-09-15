@@ -101,7 +101,7 @@
 								{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</p>
 						</div>
 						<div class="visit-item-actions">
-							{% if visite.statut != 'annulée' and is_granted('ROLE_ADMIN') or app.user == visite.user %}
+							{% if visite.statut != 'annulée'and visite.statut !='validée' and is_granted('ROLE_ADMIN') or app.user == visite.user %}
 								<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
 									<button class="btn-principal">Annuler</button>
@@ -114,7 +114,9 @@
 								</form>
 							{% endif %}
 							<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
-							<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+							{% if visite.statut == 'en_attente' %}
+								<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+							{% endif %}
 						</div>
 					</li>
 				{% endfor %}
@@ -169,7 +171,7 @@
 							</p>
 						</div>
 						<div class="reservation-item-actions">
-							{% if reservation.statut != 'annulee' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
+							{% if reservation.statut != 'annulée'and reservation.statut !='validée' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
 								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
 									<button type="submit" class="btn-principal">Annuler</button>
@@ -182,7 +184,9 @@
 								</form>
 							{% endif %}
 							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-							<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+							{% if reservation.statut == 'en_attente' %}
+								<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+							{% endif %}
 						</div>
 					</li>
 				{% endfor %}

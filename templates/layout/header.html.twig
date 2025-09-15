@@ -54,7 +54,7 @@
 				{% endif %}
 				<li class="notification-item">
 					<a href="{{ path('app_messages') }}" class="notification-icon">
-						<i class="fas fa-envelope"></i>
+						<img src="img/envelope-solid-full.svg" alt="notification">
 						{% set unreadCount = unread_messages_count() %}
 						<span class="badge">{{ unreadCount }}</span>
 					</a>

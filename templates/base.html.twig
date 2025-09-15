@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
 		<title>
 			{% block title %}SCI LA THÉRÈSIÈRE
 			{% endblock %}
@@ -10,9 +10,17 @@
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 		<link href="https://fonts.googleapis.com/css2?family=Ovo&family=Playball&family=Roboto&display=swap" rel="stylesheet">
-		<link rel="stylesheet" href="{{ asset('css/style.css') }}"> 
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+
+		<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 		{% block javascripts %}
-			{% block importmap %}{% endblock %}
+			{% block importmap %}
+			{{ importmap('app') }}
+			{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
+
 		{% endblock %}
 	</head>
 	<body>
@@ -35,8 +43,10 @@
 		<main>
 			{% block body %}{% endblock %}
 		</main>
+	
+
 		{% block footer %}
 			{{  include('layout/footer.html.twig') }}
 		{% endblock %}
 	</body>
-</html></body></html>
+</html>

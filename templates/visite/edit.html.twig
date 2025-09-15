@@ -5,18 +5,18 @@
 
 {% block body %}
 	<h1>Modifiez votre visite</h1>
-
-	{{ include('visite/_form.html.twig', {'button_label': 'Modifier'}) }}
-
-	{% if visite.statut != 'annulée' and is_granted('ROLE_USER') and app.user == visite.user %}
+	{% if visite.statut != 'annulée' and visite.statut !='validée' %}
+		{{ include('visite/_form.html.twig', {'button_label': 'Modifier'}) }}
+	{% endif %}
+	{% if visite.statut != 'annulée' and visite.statut !='validée' and is_granted('ROLE_USER') and app.user == visite.user %}
 		<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
 			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
 			<button type="submit" class="btn-principal">Annuler ma visite</button>
 		</form>
 	{% endif %}
 
-		<a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
-	{% if is_granted('ROLE_ADMIN') %}
+	<a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
+	{% if visite.statut == 'annulée' and is_granted('ROLE_ADMIN') %}
 		{{ include('visite/_delete_form.html.twig') }}
 	{% endif %}
 {% endblock %}

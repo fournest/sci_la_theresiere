@@ -1,11 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle réservation{% endblock %}
+{% block title %}Nouvelle réservation
+{% endblock %}
 
 {% block body %}
-    <h1>Réservez la salle</h1>
+	<h1>Réservez la salle</h1>
 
-    {{ include('reservation/_form.html.twig') }}
+	{{ include('reservation/_form.html.twig') }}
 
-   <a class="btn-principal"href="{{ path('app_reservation_index') }}">Retour à la liste</a>
+	<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
+	
+
+<script>
+    console.log({{ datesIndisponibles|json_encode|raw }});
+document.addEventListener("DOMContentLoaded", function() {
+    flatpickr(".js-datepicker", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        // disable: {{ datesIndisponibles|json_encode|raw }}
+		 disable: [
+        function(date) {
+            // Récupère toutes les plages indisponibles
+            const ranges = {{ datesIndisponibles|json_encode|raw }};
+            return ranges.some(range => {
+                const start = new Date(range[0]);
+                const end   = new Date(range[1]);
+                return date >= start && date <= end;
+            });
+        }
+    ]
+    });
+});
+</script>
 {% endblock %}
+
+

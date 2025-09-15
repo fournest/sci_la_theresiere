@@ -29,14 +29,14 @@ final class VisiteController extends AbstractController
     #[Route(name: 'app_visite_index', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
 
-    public function index(VisiteRepository $visiteRepository, Request $request, PaginatorInterface $paginator ): Response
+    public function index(VisiteRepository $visiteRepository, Request $request, PaginatorInterface $paginator): Response
     {
         $user = $this->getUser();
 
         if (!$user instanceof User) {
             return $this->redirectToRoute('app_login');
         }
-        
+
         $queryBuilder = $visiteRepository->createQueryBuilder('v')
             ->where('v.user = :user')
             ->setParameter('user', $user)
@@ -86,7 +86,7 @@ final class VisiteController extends AbstractController
             $entityManager->flush();
 
 
-            $admin = $userRepository->findOneBy(['roles' => '["ROLE_ADMIN"]']);
+            $admin = $userRepository->findOneAdmin();
 
             if ($admin) {
                 $sender = $this->getUser();
@@ -116,7 +116,7 @@ final class VisiteController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_visite_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function edit(Request $request, Visite $visite, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Visite $visite, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService): Response
     {
         $form = $this->createForm(VisiteType::class, $visite);
         $form->handleRequest($request);
@@ -124,14 +124,34 @@ final class VisiteController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
+            $sender = $this->getUser();
+            $visiteOwner = $visite->getUser();
+            $adminUser = $userRepository->findOneAdmin();
+
+            if ($sender instanceof User && $adminUser instanceof User) {
+                if ($sender->hasRole('ROLE_USER')) {
+                    $objet = "Modification de la visite";
+                    $message = "Bonjour, une visite a été modifiée par l'utilisateur " . $sender->getPseudo() . " .";
+                    $notificationService->sendMessage($sender, $adminUser, $objet, $message);
+                } elseif ($sender->hasRole('ROLE_ADMIN')) {
+                    $objet = "Modification de la visite";
+                    if ($sender->getId() !== $visiteOwner->getId()) {
+                        $message = "Bonjour " . $visiteOwner->getPseudo() . ", la visite a été modifiée par l'administrateur.";
+                        $notificationService->sendMessage($sender, $visiteOwner, $objet, $message);
+                    }
+                }
+            }
+
+            $this->addFlash('success', 'Votre visite a été modifiée avec succès.');
             return $this->redirectToRoute('app_visite_index', [], Response::HTTP_SEE_OTHER);
         }
-
         return $this->render('visite/edit.html.twig', [
             'visite' => $visite,
             'form' => $form,
         ]);
     }
+
+
 
     #[Route('/cancel/{id}', name: 'app_visite_cancel', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]

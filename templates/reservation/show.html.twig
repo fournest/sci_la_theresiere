@@ -52,15 +52,17 @@
 			</li>
 		</ul>
 	</div>
-	{% if reservation.statut != 'annulée' and is_granted('ROLE_USER') and app.user == reservation.user %}
+	{% if reservation.statut != 'annulée' and reservation.statut !='validée' and is_granted('ROLE_USER') and app.user == reservation.user %}
 		<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
 			<button class="btn-principal">Annuler ma réservation</button>
 		</form>
 	{% endif %}
-	<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-	{% if is_granted('ROLE_ADMIN') %}
-		{{ include('reservation/_delete_form.html.twig') }}
+	{% if reservation.statut == 'en_attente' %}
+		<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+		{% if is_granted('ROLE_ADMIN') %}
+			{{ include('reservation/_delete_form.html.twig') }}
+		{% endif %}
 	{% endif %}
 	<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
 {% endblock %}

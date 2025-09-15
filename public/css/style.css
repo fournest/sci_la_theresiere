@@ -661,6 +661,7 @@ input:focus {
 
 
 
+
 /* ------------------ MESSAGES FLASH ------------------ */
 .flash-messages-container {
     position: fixed;
@@ -746,6 +747,8 @@ input:focus {
     background-color: #DDB6BE;
     transform: translateY(-2px);
 }
+
+
 
 /* --- MEDIA QUERIES  --- */
 

@@ -45,7 +45,9 @@
 							</div>
 							<div class="reservation-item-actions">
 								<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-								<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+								{% if reservation.statut == 'en_attente' %}
+									<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+								{% endif %}
 							</div>
 						</li>
 					{% endfor %}

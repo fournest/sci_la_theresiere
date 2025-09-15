@@ -75,7 +75,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Contact>
      */
-    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'sender', cascade: ['remove'])]
+    #[ORM\OneToMany(targetEntity: Contact::class, mappedBy: 'recipient', cascade: ['remove'])]
     private Collection $receivedMessages;
     public function __construct()
     {
@@ -121,7 +121,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -135,6 +134,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->getRoles(), true);
     }
 
     /**
@@ -284,64 +288,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsBanned(bool $isBanned): static
     {
         $this->isBanned = $isBanned;
-
+        
         return $this;
     }
-
-
-
-    /**
-     * @return Collection<int, Contact>
-     */
+    
+    
+    
+    
     public function getSentMessages(): Collection
     {
         return $this->sentMessages;
     }
-
-    public function addSentMessage(Contact $sentMessage): static
+    
+    public function getReceivedMessages(): Collection
     {
-        if (!$this->sentMessages->contains($sentMessage)) {
-            $this->sentMessages->add($sentMessage);
-            $sentMessage->setSender($this);
+        return $this->receivedMessages;
+    }
+    public function addSentMessage(Contact $message): self
+    {
+        if (!$this->sentMessages->contains($message)) {
+            $this->sentMessages->add($message);
+            $message->setSender($this);
         }
 
         return $this;
     }
 
-    public function removeSentMessage(Contact $sentMessage): static
+    public function removeSentMessage(Contact $message): self
     {
-        if ($this->sentMessages->removeElement($sentMessage)) {
-            if ($sentMessage->getSender() === $this) {
-                $sentMessage->setSender(null);
+        if ($this->sentMessages->removeElement($message)) {
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
             }
         }
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, Contact>
-     */
-    public function getReceivedMessages(): Collection
-    {
-        return $this->receivedMessages;
-    }
+   
 
-    public function addReceivedMessage(Contact $receivedMessage): static
+    public function addReceivedMessage(Contact $message): self
     {
-        if (!$this->receivedMessages->contains($receivedMessage)) {
-            $this->receivedMessages->add($receivedMessage);
-            $receivedMessage->setRecipient($this);
+        if (!$this->receivedMessages->contains($message)) {
+            $this->receivedMessages->add($message);
+            $message->setRecipient($this);
         }
 
         return $this;
     }
 
-    public function removeReceivedMessage(Contact $receivedMessage): static
+    public function removeReceivedMessage(Contact $message): self
     {
-        if ($this->receivedMessages->removeElement($receivedMessage)) {
-            if ($receivedMessage->getRecipient() === $this) {
-                $receivedMessage->setRecipient(null);
+        if ($this->receivedMessages->removeElement($message)) {
+            if ($message->getRecipient() === $this) {
+                $message->setRecipient(null);
             }
         }
 

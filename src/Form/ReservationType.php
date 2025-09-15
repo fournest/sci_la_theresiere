@@ -21,13 +21,12 @@ class ReservationType extends AbstractType
             ->add('dateResaDebut', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de début de réservation',
+                'attr' => ['class' => 'js-datepicker'],
             ])
             ->add('dateResaFin', DateType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de fin de réservation',
-            ])
-            ->add('dossierResa', null, [
-                'label' => 'Numéro de dossier de réservation',
+                'attr' => ['class' => 'js-datepicker'],
             ])
             ->add('acompte', CheckboxType::class, [
                 'label' => 'Acompte versé ?',

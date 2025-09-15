@@ -32,7 +32,9 @@
 							</div>
 							<div class="visit-item-actions">
 								<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
-								<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+								{% if visite.statut == 'en_attente' %}
+									<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+								{% endif %}
 							</div>
 						</li>
 					{% endfor %}

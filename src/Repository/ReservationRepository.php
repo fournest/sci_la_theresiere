@@ -3,11 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Categorie;
-use App\Entity\User;
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 
 /**
@@ -39,6 +37,8 @@ class ReservationRepository extends ServiceEntityRepository
 
         return $reservationsEnConflit === 0;
     }
+
+    
 
     
 
