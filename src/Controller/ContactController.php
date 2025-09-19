@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_USER')]
 final class ContactController extends AbstractController
 {
     #[Route('/contact', name: 'app_contact')]
@@ -26,12 +27,6 @@ final class ContactController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Récupération de l'utilisateur connecté.
             $user = $this->getUser();
-
-             // Vérification si l'utilisateur est bien connecté.
-            if (!$user instanceof User) {
-                $this->addFlash('error', 'Vous devez être connecté pour envoyer un message.');
-                return $this->redirectToRoute('app_login');
-            }
 
             // Association de l'utilisateur connecté comme expéditeur du message.
             $contact->setSender($user);
@@ -65,7 +60,6 @@ final class ContactController extends AbstractController
         ]);
     }
     #[Route('/contact/{id}', name: 'app_contact_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_USER')]
     public function delete(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
 
@@ -77,7 +71,7 @@ final class ContactController extends AbstractController
 
             $this->addFlash('success', 'Le message a été supprimé avec success.');
         } else {
-             $this->addFlash('danger', 'La suppression du message a échoué.');
+            $this->addFlash('danger', 'La suppression du message a échoué.');
         }
 
         return $this->redirectToRoute('app_user_show');

@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/tarif')]
 final class TarifController extends AbstractController
@@ -23,9 +24,10 @@ final class TarifController extends AbstractController
     }
 
     #[Route('/new', name: 'app_tarif_new', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-         // Création du formulaire.
+        // Création du formulaire.
         $tarif = new Tarif();
         $form = $this->createForm(TarifType::class, $tarif);
         $form->handleRequest($request);
@@ -48,6 +50,7 @@ final class TarifController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_tarif_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
     public function show(Tarif $tarif): Response
     {
         return $this->render('tarif/show.html.twig', [
@@ -56,9 +59,10 @@ final class TarifController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_tarif_edit', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Tarif $tarif, EntityManagerInterface $entityManager): Response
     {
-         // Création du formulaire.
+        // Création du formulaire.
         $form = $this->createForm(TarifType::class, $tarif);
         $form->handleRequest($request);
 
@@ -77,10 +81,11 @@ final class TarifController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_tarif_delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Tarif $tarif, EntityManagerInterface $entityManager): Response
     {
         // Sécurisation de l'action de suppression.
-        if ($this->isCsrfTokenValid('delete'.$tarif->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $tarif->getId(), $request->getPayload()->getString('_token'))) {
             // Suppression dans la base de données.
             $entityManager->remove($tarif);
             // Enregistrement de la suppression dans la base de données.

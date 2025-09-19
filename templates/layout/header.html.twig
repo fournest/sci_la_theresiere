@@ -30,7 +30,6 @@
 					{# Lien vers la page des tarifs #}
 					<a href="{{ path('app_tarif_index') }}">Tarifs</a>
 				</li>
-
 				{# Seulement pour les utilisateurs connectés #}
 				{% if is_granted('ROLE_USER') %}
 					<li>
@@ -41,15 +40,24 @@
 						{# Lien pour déconnecter l'utilisateur #}
 						<a href="{{ path('app_logout') }}">Déconnexion</a>
 					</li>
+					{# Section pour les notifications (icône d'enveloppe) #}
+					<li class="notification-item">
+						<a href="{{ path('app_messages') }}" class="notification-icon">
+							<img src="{{ asset('img/envelope-solid-full.svg') }}" alt="notification">
+							{% set unreadCount = unread_messages_count() %}
+							<span class="badge">{{ unreadCount }}</span>
+						</a>
+					</li>
 					{# Bloc pour les utilisateurs non connectés #}
 				{% else %}
+					{# Lien vers la page d'inscription #}
+					<li>
+						<a href="{{ path('app_register') }}">
+							Inscrivez-vous!</a>
+					</li>
 					<li>
 						{# Lien vers la page de connexion #}
 						<a href="{{ path('app_login') }}">Connexion</a>
-					</li>
-					<li>
-						{# Lien vers la page d'inscription #}
-						<a href="{{ path('app_register') }}">Inscrivez-vous!</a>
 					</li>
 				{% endif %}
 				{# Bloc conditionnel pour les administrateurs #}
@@ -67,14 +75,6 @@
 						<a href="{{ path('app_categorie_index') }}">Catégories</a>
 					</li>
 				{% endif %}
-				{# Section pour les notifications (icône d'enveloppe) #}
-				<li class="notification-item">
-					<a href="{{ path('app_messages') }}" class="notification-icon">
-						<img src="{{ asset('img/envelope-solid-full.svg') }}" alt="notification">
-						{% set unreadCount = unread_messages_count() %}
-						<span class="badge">{{ unreadCount }}</span>
-					</a>
-				</li>
 			</ul>
 		</nav>
 	</div>
