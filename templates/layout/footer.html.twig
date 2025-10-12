@@ -1,12 +1,12 @@
 <footer>
 	<div class="footer-content">
 		<div class="map-container">
-			<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3256.949039379439!2d-1.6269756233482409!3d46.513958062788014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48044174a8ca067f%3A0xd1f4614a21b87145!2zU0NJIExhIFRow6lyw6hzacOocmU!5e1!3m2!1sfr!2sfr!4v1757075006812!5m2!1sfr!2sfr" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+			<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3256.949039379439!2d-1.6269756233482409!3d46.513958062788014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48044174a8ca067f%3A0xd1f4614a21b87145!2zU0NJIExhIFRow6lyw6hzacOocmU!5e1!3m2!1sfr!2sfr!4v1757075006812!5m2!1sfr!2sfr" title="Localisation de la Salle de la Thérésière" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 		</div>
 		<div class="footer-contact-info">
 			<div class="logo-container">
 				<a href="{{ path('app_home') }}">
-					<img class="logo-container" src="{{ asset('img/logo.png') }}" alt="Logo clair">
+					<img class="logo-container" src="{{ asset('img/logo.png') }}" alt="Logo de SCI LA THÉRÈSIÈRE">
 				</a>
 			</div>
 			<p>
@@ -26,7 +26,7 @@
 					<a href="">Plan du site</a>
 				</li>
 				<li>
-					<a href="">Mentions légales</a>
+					<a href="{{ path('app_legal_page_show', {'slug': 'mentions-legales'}) }}">Mentions légales</a>
 				</li>
 			</ul>
 		</nav>

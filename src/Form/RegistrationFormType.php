@@ -13,10 +13,18 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
 class RegistrationFormType extends AbstractType
 {
+    private $router;
+
+    public function __construct(UrlGeneratorInterface $router)
+    {
+        $this->router = $router;
+    }
+    
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -110,7 +118,8 @@ class RegistrationFormType extends AbstractType
                     'mapped' => false,
                     'constraints' => [
                         new IsTrue([
-                            'message' => 'Vous devez accepter nos conditions.',
+                            'label_html' => true,
+                            'label' => 'J\'accepte les <a href"'. $this->router->generate('app_mentions_legales').'"target="_blank">Mentions Légales</a> et la <a href="' . $this->router->generate('app_politique_confidentialite').'"target="_blank">Politique de Confidentialité</a>.',
                         ]),
                     ],
                 ])

@@ -63,6 +63,12 @@ final class ContactController extends AbstractController
     public function delete(Request $request, Contact $contact, EntityManagerInterface $entityManager): Response
     {
 
+        $currentUser = $this->getUser();
+
+        if ($currentUser !== $contact->getSender() && !$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('danger', 'Vous n\'êtes pas autorisé à supprimer ce message.');
+            return $this->redirectToRoute('app_user_show');
+        }
         // Vérification de la soumission et de la validation du formulaire.
         if ($this->isCsrfTokenValid('delete' . $contact->getId(), $request->request->get('_token'))) {
             // Préparation et éxecution de l'enregistrement.

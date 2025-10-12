@@ -1,0 +1,40 @@
+{% extends 'panel_admin/index.html.twig' %}
+
+{% block title %}Gestion des Documents Légaux
+{% endblock %}
+
+{% block body %}
+	<h1>Gestion des Documents Légaux</h1>
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Slug (Identifiant URL)</th>
+				<th>Titre</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for legal_page in legal_pages %}
+				<tr>
+					<td>{{ legal_page.id }}</td>
+					<td>/legal/{{ legal_page.slug }}</td>
+					<td>{{ legal_page.title }}</td>
+					<td>
+						<a href="{{ path('app_legal_page_edit', {'slug': legal_page.slug}) }}">Modifier</a>
+						<form method="post" action="{{ path('app_legal_page_delete', {'slug': legal_page.slug}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');" style="display: inline-block;">
+							<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ legal_page.id) }}">
+							<button>Supprimer</button>
+						</form>
+					</td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="5">Aucun document légal trouvé.</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<a href="{{ path('app_legal_page_new') }}">Créez un nouveau document</a>
+{% endblock %}

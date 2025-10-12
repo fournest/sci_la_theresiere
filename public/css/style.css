@@ -1,10 +1,11 @@
 /* 
-couleurs principales :
-rose poudré #DDB6BE 
-Violet Prune #562D59
-Bleu-gris foncé #526E7F
+Couleurs principales :
+Rose foncé #A27883 fond de navigations/boutons
+Violet Prune #562D59 fond sombre (footer, boutons principaux)
+Bleu-gris foncé #4C6576 texte principal (h1,h2,p, ect... sur fond clair)
+Clair #EDE8EA texte secondaire (sur fond sombre / pour constraste)
 
-polices principales :
+Polices principales :
 Ovo titres principaux et entête de section
 Playball sous-titres, citations décoratives et signatures
 Roboto Paragraphes et contenu principal
@@ -29,7 +30,7 @@ h1,
 h2,
 h3 {
     text-align: center;
-    color: #526E7F;
+    color: #4C6576;
     margin-bottom: 20px;
     font-family: 'playball';
 
@@ -41,7 +42,7 @@ h1 {
 
 p {
     text-align: center;
-    color: #526E7F;
+    color: #4C6576;
     font-size: 1rem;
     padding: 15px;
 
@@ -73,7 +74,7 @@ p {
 
 .titre {
     padding: 15px;
-    background-color: #526E7F;
+    background-color: #F8F8F8;
     border-radius: 35px;
     width: 90%;
 
@@ -81,7 +82,7 @@ p {
 
 .titre h1 {
     font-size: 2em;
-    color: #DDB6BE;
+    color: #A27883;
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -119,13 +120,13 @@ p {
 .footer-nav-buttons a,
 .notification-icon a {
     text-decoration: none;
-    color: #526E7F;
+    color: #4C6576;
     font-weight: bold;
     font-family: 'Playball';
     padding: 10px 18px;
     border-radius: 8px;
-    border: 2px solid #526E7F;
-    background-color: #DDB6BE;
+    border: 2px solid #4C6576;
+    background-color: #A27883;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     display: block;
 }
@@ -135,8 +136,8 @@ p {
 .navbar a.active,
 .footer-nav-buttons a:hover,
 .footer-nav-buttons a:focus {
-    background-color: #DDB6BE;
-    color: #526E7F;
+    background-color: #A27883;
+    color: #4C6576;
     border-color: #562D59;
     transform: translateY(-2px);
 }
@@ -150,7 +151,7 @@ p {
     top: 38%;
     left: 38%;
     background-color: #562D59;
-    color: #DDB6BE;
+    color: #EDE8EA;
     border-radius: 50%;
     padding: 2px 5px;
     font-size: 0.8em;
@@ -201,13 +202,13 @@ footer {
     width: 100%;
     height: 200px;
     display: block;
-    border: 2px solid #DDB6BE;
+    border: 2px solid #A27883;
 }
 
 .footer-contact-info {
     width: 100%;
     text-align: center;
-    color: #DDB6BE;
+    color: #EDE8EA;
 }
 
 .footer-contact-info p {
@@ -216,7 +217,7 @@ footer {
 }
 
 .footer-contact-info a {
-    color: #526E7F;
+    color: #EDE8EA;
     text-decoration: none;
     transition: color 0.3s ease;
     padding: 5px 0;
@@ -224,7 +225,7 @@ footer {
 }
 
 .footer-contact-info a:hover {
-    color: #DDB6BE;
+    color: #A27883;
     text-decoration: underline;
 }
 
@@ -232,8 +233,8 @@ footer {
 .btn-principal,
 .form-container button[type="submit"] {
     background-color: #562D59;
-    color: #DDB6BE;
-    border: 1px solid #DDB6BE;
+    color: #EDE8EA;
+    border: 1px solid #A27883;
     padding: 10px 15px;
     border-radius: 50px;
     font-family: 'Playball', sans-serif;
@@ -250,9 +251,9 @@ footer {
 .btn-principal:hover,
 .btn-principal:focus,
 .form-container button[type="submit"]:hover {
-    background-color: #DDB6BE;
+    background-color: #A27883;
     border: 1px solid #562D59;
-    color: #526E7F;
+    color: #4C6576;
     transform: translateY(-2px);
 }
 
@@ -282,7 +283,7 @@ footer {
 
 .user-table {
     border: #562d59 solid 2px;
-    background-color: #DDB6BE;
+    background-color: #A27883;
     border-radius: 8px;
     padding: 1rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -291,7 +292,7 @@ footer {
 .user-table h2,
 .user-table h3 {
     font-weight: 700;
-    color: #526E7F;
+    color: #4C6576;
     margin-bottom: 0.5rem;
 }
 
@@ -328,7 +329,7 @@ footer {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: #DDB6BE;
+    background-color: #A27883;
     border: 1px solid #562d59;
     border-radius: 8px;
     padding: 15px;
@@ -347,7 +348,7 @@ footer {
     text-align: left;
     padding: 0;
     margin: 5px 0;
-    color: #526E7F;
+    color: #4C6576;
 }
 
 /* Style pour les libellés (les en-têtes de colonnes) */
@@ -405,7 +406,7 @@ footer {
     list-style: none;
     padding: 0;
     margin: 0;
-    background-color: #DDB6BE;
+    background-color: #A27883;
     border: 2px solid #562d59;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -426,13 +427,13 @@ footer {
 
 .detail-item strong {
     font-weight: 700;
-    color: #526E7F;
+    color: #4C6576;
     text-align: left;
     flex: 1;
 }
 
 .detail-item span {
-    color: #526E7F;
+    color: #4C6576;
     text-align: right;
     flex: 1;
 }
@@ -445,26 +446,26 @@ footer {
     max-width: 100%;
     margin: 20px auto;
     padding: 20px;
-    border: 1px solid #DDB6BE;
+    border: 1px solid #A27883;
 }
 
 /* En-tête de la carte utilisateur */
 .user-info-header {
     text-align: center;
-    border-bottom: 2px solid #DDB6BE;
+    border-bottom: 2px solid #A27883;
     padding-bottom: 15px;
     margin-bottom: 15px;
 }
 
 .user-info-header h1 {
     font-size: 1.8em;
-    color: #DDB6BE;
+    color: #A27883;
     margin: 0;
 }
 
 .user-info-header h2 {
     font-size: 1.5em;
-    color: #DDB6BE;
+    color: #A27883;
     margin-top: 5px;
 }
 
@@ -482,7 +483,7 @@ footer {
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
-    border-bottom: 1px solid #DDB6BE;
+    border-bottom: 1px solid #A27883;
 }
 
 .profile-detail-item:last-child {
@@ -490,13 +491,13 @@ footer {
 }
 
 .profile-detail-item strong {
-    color: #DDB6BE;
+    color: #A27883;
     text-align: left;
     flex: 1;
 }
 
 .profile-detail-item span {
-    color: #DDB6BE;
+    color: #A27883;
     text-align: right;
     flex: 1;
 }
@@ -504,7 +505,7 @@ footer {
 .visits-list h2,
 .reservations-list h2,
 .messages-list h2 {
-    color: #DDB6BE;
+    color: #A27883;
     text-align: left;
     padding-left: 5px;
     font-size: 1.2em;
@@ -520,7 +521,7 @@ footer {
     background-color: #562D59;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid #DDB6BE;
+    border: 1px solid #A27883;
 }
 
 
@@ -530,7 +531,7 @@ label {
     display: block;
     font-family: 'Roboto', sans-serif;
     font-weight: 700;
-    color: #DDB6BE;
+    color: #A27883;
     margin-bottom: 8px;
     font-size: 1em;
 }
@@ -552,8 +553,7 @@ textarea {
 }
 
 input:focus {
-    border-color: #526E7F;
-    outline: none;
+    border-color: #4C6576;
     box-shadow: 0 0 5px rgba(86, 45, 89, 0.5);
 }
 
@@ -642,7 +642,20 @@ input:focus {
     background-image: url(../img/grange10.jpg);
 }
 
-#bloc1 p,
+#bloc1 h1 {
+    background-color: rgba(0, 0, 0, 0.6);
+    position: relative;
+    z-index: 2;
+    color: #A27883;
+    font-family: 'playball';
+    text-align: center;
+    font-size: 2em;
+    margin: 10px;
+    padding: 10px;
+}
+
+
+
 #bloc2 p,
 #bloc3 p,
 #bloc4 p,
@@ -651,7 +664,7 @@ input:focus {
     background-color: rgba(0, 0, 0, 0.6);
     position: relative;
     z-index: 2;
-    color: #DDB6BE;
+    color: #A27883;
     font-family: 'playball';
     text-align: center;
     font-size: 1.2em;
@@ -746,7 +759,7 @@ input:focus {
 
 .navigation {
     padding: 1rem;
-    background-color: #DDB6BE;
+    background-color: #A27883;
     border-radius: 0.5rem;
     border: 1px solid #562D59;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -757,7 +770,7 @@ input:focus {
     margin: 0 0.25rem;
     border-radius: 0.25rem;
     text-decoration: none;
-    color: #DDB6BE;
+    color: #A27883;
     background-color: #562D59;
     border: 1px solid #4b5563;
     transition: all 0.3s ease;
@@ -765,7 +778,7 @@ input:focus {
 
 .navigation a:hover {
     color: #562D59;
-    background-color: #DDB6BE;
+    background-color: #A27883;
     transform: translateY(-2px);
 }
 
@@ -908,7 +921,7 @@ input:focus {
     .option-item,
     .categorie-item {
         border: 1px solid #562D59;
-        background-color: #DDB6BE;
+        background-color: #A27883;
         border-radius: 8px;
         padding: 15px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -991,7 +1004,7 @@ input:focus {
     }
 
     label {
-        color: #526E7F;
+        color: #4C6576;
     }
 
     .form-check label {

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Page Légale{% endblock %}
+
+{% block body %}
+    <h1>Créer une nouvelle Page Légale</h1>
+
+    {{ include('legal_page/_form.html.twig') }}
+
+    <a href="{{ path('app_legal_page_index') }}">Retour à la liste</a>
+{% endblock %}

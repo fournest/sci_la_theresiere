@@ -2,7 +2,7 @@
 	<div class="header-container">
 		<div class="logo-container">
 			<a href="{{ path('app_home') }}">
-				<img class="logo-container" src="{{ asset('img/logo.png') }}" alt="Logo">
+				<img class="logo-container" src="{{ asset('img/logo.png') }}" alt="SCI LA THÉRÈSIÈRE - Retour à l'accueil">
 			</a>
 		</div>
 		<div class="titre">
@@ -42,10 +42,12 @@
 					</li>
 					{# Section pour les notifications (icône d'enveloppe) #}
 					<li class="notification-item">
-						<a href="{{ path('app_messages') }}" class="notification-icon">
-							<img src="{{ asset('img/envelope-solid-full.svg') }}" alt="notification">
-							{% set unreadCount = unread_messages_count() %}
+					{% set unreadCount = unread_messages_count()|default(0) %}
+						<a href="{{ path('app_messages') }}" class="notification-icon" aria-label="{{ unreadCount }} messages non lus. Voir les messages.">
+							<img src="{{ asset('img/envelope-solid-full.svg') }}" alt="" >
+							{% if unreadCount > 0 %}
 							<span class="badge">{{ unreadCount }}</span>
+							{% endif %}
 						</a>
 					</li>
 					{# Bloc pour les utilisateurs non connectés #}

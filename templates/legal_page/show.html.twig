@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du document légal{% endblock %}
+
+{% block body %}
+    <h1>Détails du document légal</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ legal_page.id }}</td>
+            </tr>
+            <tr>
+                <th>Slug (Identifiant URL)</th>
+                <td>/legal/{{ legal_page.slug }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ legal_page.title }}</td>
+            </tr>
+            <tr>
+                <th>Contenu</th>
+                <td> {{ legal_page.content|length > 200 ? legal_page.content|slice(0, 200) ~ '...' : legal_page.content }}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% if is_granted('ROLE_ADMIN') %}
+    
+    <a href="{{ path('app_legal_page_index') }}">Retour à la liste Administrateur</a>
+
+    <a href="{{ path('app_legal_page_edit', {'slug': legal_page.slug}) }}">Modifier</a>
+
+    {{ include('legal_page/_delete_form.html.twig', {'legal_page' : legal_page}) }}
+
+    {% else %}
+        <a href="{{ path('app_home')}}">Retour à l'accueil</a>
+    {% endif %}
+{% endblock %}
