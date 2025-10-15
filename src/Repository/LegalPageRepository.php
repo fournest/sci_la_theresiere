@@ -19,14 +19,14 @@ class LegalPageRepository extends ServiceEntityRepository
     public function findOneBySlug(string $slug): ?LegalPage
     {
         return $this->createQueryBuilder('l')
-          ->andWhere('l.slug = :val')
-               ->setParameter('val', $slug)
-               ->getQuery()
-               ->getOneOrNullResult()
-               ;
+            ->andWhere('l.slug = :val')
+            ->setParameter('val', $slug)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
-    //    /**
+       //    /**
     //     * @return LegalPage[] Returns an array of LegalPage objects
     //     */
     //    public function findByExampleField($value): array

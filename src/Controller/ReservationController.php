@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-
+use App\Entity\LegalPage;
 use App\Entity\Reservation;
 use App\Entity\User;
 use App\Form\ReservationType;
+use App\Repository\LegalPageRepository;
 use App\Repository\UserRepository;
 use App\Repository\ReservationRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -56,9 +57,15 @@ final class ReservationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository, UserRepository $userRepository, NotificationService $notificationService): Response
     {
+        // Récupération des URLs des pages légales
+        $cguUrl = $this->generateUrl('app_legal_page_show', ['slug' => 'conditions-generales']);
+        $pcUrl = $this->generateUrl('app_legal_page_show', ['slug' => 'politique-de-confidentialite']);
         // Création du formulaire.
         $reservation = new Reservation();
-        $form = $this->createForm(ReservationType::class, $reservation);
+        $form = $this->createForm(ReservationType::class, $reservation, [
+            'cgu_url' => $cguUrl,
+            'pc_url' => $pcUrl,
+        ]);
         $form->handleRequest($request);
 
         // Vérification de la soumission et de la validation du formulaire.
@@ -201,7 +208,7 @@ final class ReservationController extends AbstractController
             $reservation->setStatut('annulée');
             $entityManager->flush();
             // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
-             $sender = $this->getUser();
+            $sender = $this->getUser();
             $reservationOwner = $reservation->getUser();
             $adminUser = $userRepository->findOneAdmin();
 
@@ -238,14 +245,14 @@ final class ReservationController extends AbstractController
             throw new NotFoundHttpException('La réservation demandée n\'existe pas.');
         }
 
-         // Vérification de sécurité.
+        // Vérification de sécurité.
         if ($this->isCsrfTokenValid('validate' . $reservation->getId(), $request->request->get('_token'))) {
             // Mise à jour du statut de la réservation.
             if ($reservation->getStatut() === 'en_attente') {
                 $reservation->setStatut('validée');
                 $entityManager->flush();
 
-                 // Récupération de l'expéditeur (l'administrateur) et le destinataire (le propriétaire de la réservation)
+                // Récupération de l'expéditeur (l'administrateur) et le destinataire (le propriétaire de la réservation)
                 // et envoi de notification au destinataire.
                 $sender = $this->getUser();
                 $recipient = $reservation->getUser();
@@ -287,5 +294,31 @@ final class ReservationController extends AbstractController
         }
 
         return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    // Pour le contrat de location
+    #[Route('/{id}/contract', name: 'app_reservation_contract_show', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function contract(Reservation $reservation, LegalPageRepository $legalPageRepository): Response
+    {
+        // Vérification de l'autorisation
+        if ($this->getUser() !== $reservation->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw new NotFoundHttpException('Vous n\'êtes pas autoriser à consulter ce contrat.');
+        }
+
+        // Récupération le modèle de CGL
+        $cglPage = $legalPageRepository->findOneBy(['slug' => 'conditions-generales-de-location']);
+
+        if (!$cglPage) {
+            $this->addFlash('error', 'Le modèle de Conditions Générales de Location est manquant. Veuillez contacter l\'administrateur.');
+            //  Redirection
+            return $this->redirectToRoute('app_reservation_show', ['id' => $reservation->getId()]);
+        }
+        // Affichage de la vue pour les placeholders
+        return $this->render('reservation/contract.html.twig', [
+            'legal_page' => $cglPage,
+            'reservation' => $reservation,
+            'client' => $reservation->getUser(),
+        ]);
     }
 }

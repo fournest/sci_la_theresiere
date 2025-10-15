@@ -28,6 +28,22 @@
 				<strong>Statut de la réservation :</strong>
 				<span>{{ reservation.statut }}</span>
 			</li>
+			<li class="detail-item link-item">
+				<strong>Contrat/CGV :</strong>
+				<span>
+					<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link">
+						Consulter le Contrat (Accepté lors de la réservation)
+					</a>
+				</span>
+			</li>
+			<li class="detail-item link-item">
+				<strong>Politique de Confidentialité :</strong>
+				<span>
+					<a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite'}) }}" target="_blank" class="text-link">
+						Consulter la Politique de Confidentialité
+					</a>
+				</span>
+			</li>
 			<li class="detail-item">
 				<strong>Acompte :</strong>
 				<span>{{ reservation.acompte ? 'Oui' : 'Non' }}</span>
@@ -52,6 +68,11 @@
 			</li>
 		</ul>
 	</div>
+
+	{% if reservation.statut != 'validée'  %}
+		<a class="btn-principal" href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}">Voir Le contrat de Location(CGL)</a>
+	{% endif %}
+
 	{% if reservation.statut != 'annulée' and reservation.statut !='validée' and is_granted('ROLE_USER') and app.user == reservation.user %}
 		<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">

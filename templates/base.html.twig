@@ -50,5 +50,20 @@
 		{% block footer %}
 			{{  include('layout/footer.html.twig') }}
 		{% endblock %}
+		<div id="cookie_banner">
+			<p>Ce site utilise des cookies pour améliorer votre expérience. En cliquant sur "Accepter", vous consentez.
+										Consultez notre
+				<a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite' })}}" target="_blank" aria-label="Consulter notre Politique de Confidentialité">Politique de Confidentialité</a>
+			</p>
+			<div>
+				<button class="btn-refuse" aria-label="Refuser les cookies non essentiels">Refuser</button>
+				<button class="btn-accept" aria-label="Accepter tous les cookies">Accepter</button>
+			</div>
+		</div>
+
+		<script src="{{ asset('script/banner_cookies.js') }}" defer></script>
+
 	</body>
+
+
 </html>

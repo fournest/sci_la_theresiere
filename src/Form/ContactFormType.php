@@ -45,17 +45,16 @@ class ContactFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('agreeTerms', CheckboxType::class, [
-                     'label' => 'Conditions d\'utilisations :',
-                    'mapped' => false,
-                    'constraints' => [
-                        new IsTrue([
-                            'message' => 'Vous devez accepter que vos données soient traitées pour que nous puissions vous répondre.'
-                        ]),
-                    ],
-                    'label_html' => true,
-                    'label' => 'J\'autorise ce site à utiliser mes données (Nom et Email)pour me recontacter suite à ma demande.(Voir notre <a href="' . $this->router->generate('app_politique_confidentialite', [], UrlGeneratorInterface::ABSOLUTE_PATH).'"target="_blank">Politique de Confidentialité</a>.',
-                ])
+            ->add('consentementConfidentialite', CheckboxType::class, [
+                'label' => false,
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Vous devez accepter que vos données soient traitées pour nous contacter.'
+                    ]),
+                ],
+
+            ])
         ;
     }
 

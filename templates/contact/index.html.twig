@@ -13,6 +13,18 @@
 		{% endif %}
 		{{ form_start(contactForm) }}
 		{{ form_widget(contactForm) }}
+
+		{% if contactForm.consentementConfidentialite is defined %}
+
+			{{ form_widget(contactForm.consentementConfidentialite, {'attr': {'class': 'form-check-input'}}) }}
+			<label for="{{ contactForm.consentementConfidentialite.vars.id }}">
+				J'ai lu et j'accepte la
+				<a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite'}) }}" target="_blank" aria-label="Consulter la Politique de Confidentialité">Politique de Confidentialité</a>
+				concernant l'utilisation de mes données pour le traitement de ma demande
+			</label>
+			{{ form_errors(contactForm.consentementConfidentialite)}}
+		{% endif %}
+
 		<button class="btn-principal">{{ button_label|default('Envoyer') }}</button>
 		{{ form_end(contactForm) }}
 	</form>

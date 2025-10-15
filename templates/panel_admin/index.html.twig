@@ -3,8 +3,12 @@
 {% block title %}Votre tableau de bord administrateur
 {% endblock %}
 
+
 {% block body %}
 
+{% block admin_layout %}
+	{{ include('layout/admin_layout.html.twig')}}
+{% endblock %}
 	{# LISTE UTILISATEURS#}
 	<h1>Votre tableau de bord administrateur</h1>
 	<div class="admin-dashboard">
