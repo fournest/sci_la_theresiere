@@ -9,7 +9,7 @@ Le site web sallelatheresiere de la SCI La Thérèsière, créé en 2021, met en
 
 ## Description
 
-SCI La Thérèsière est une plateforme numérique conçue pour fournir aux clients potentiels toutes les informations nécessaires pour la location de la salle, que ce soit pour des réceptions privées ou des séminaires professionnels. Le site aura des calendriers de réservation en ligne pour vérifier les disponibilités.
+www.sallelatheresiere.com est une plateforme numérique conçue pour fournir aux clients potentiels toutes les informations nécessaires pour la location de la salle, que ce soit pour des réceptions privées ou des séminaires professionnels. Le site aura des calendriers de réservation en ligne pour vérifier les disponibilités.
 
 
 

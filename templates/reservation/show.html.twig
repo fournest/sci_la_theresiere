@@ -28,14 +28,17 @@
 				<strong>Statut de la réservation :</strong>
 				<span>{{ reservation.statut }}</span>
 			</li>
-			<li class="detail-item link-item">
-				<strong>Contrat/CGV :</strong>
-				<span>
-					<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link">
-						Consulter le Contrat (Accepté lors de la réservation)
-					</a>
-				</span>
-			</li>
+			{% if reservation.statut != 'en_attente' %}
+				<li class="detail-item link-item">
+					<strong>Contrat/CGV :</strong>
+					<span>
+						<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link">
+							Consulter le Contrat (Accepté lors de la réservation)
+						</a>
+					</span>
+				</li>
+			{% endif %}
+
 			<li class="detail-item link-item">
 				<strong>Politique de Confidentialité :</strong>
 				<span>
@@ -69,7 +72,7 @@
 		</ul>
 	</div>
 
-	{% if reservation.statut != 'validée'  %}
+	{% if reservation.statut != 'en_attente'  %}
 		<a class="btn-principal" href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}">Voir Le contrat de Location(CGL)</a>
 	{% endif %}
 

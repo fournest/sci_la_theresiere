@@ -23,6 +23,37 @@
 			<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 
 
+			{# --- DÉBUT INTÉGRATION TERMSFEED (Remplace l'ancienne bannière) --- #}
+
+			<!-- 1. Script de la librairie TermsFeed -->
+			<script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" charset="UTF-8"></script>
+
+			<!-- 2. Configuration et démarrage de la bannière -->
+			<script type="text/javascript" charset="UTF-8">
+				document.addEventListener('DOMContentLoaded', function () {
+cookieconsent.run({
+"notice_banner_type": "bar",
+"notice_banner_position": "bottom",
+"consent_type": "express",
+"palette": "light",
+"language": "fr",
+"page_load_consent_management": false,
+"cookie_policy_url": "{{ path('app_legal_page_show', {'slug': 'politique-de-cookies'}) }}",
+"ignore_pages": [
+"{{ path('app_legal_page_show',{'slug':'politique-de-cookies'}) }}", "{{ path('app_legal_page_show',{'slug':'mentions-legales'}) }}", "{{ path('app_legal_page_show',{'slug':'politique-de-confidentialite'}) }}"
+],
+"decline_btn_color": "#d9d9d9",
+"accept_btn_color": "#8f0000",
+"accept_option_choice_btn_color": "#8f0000",
+"text_color": "#000000",
+"post_consent_display": "bar",
+"website_name": "www.sallelathereisere.com",
+"website_privacy_policy_url": "{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite'}) }}"
+});
+});
+			</script>
+
+			<!-- FIN INTÉGRATION TERMSFEED -->
 		{% endblock %}
 	</head>
 	<body>
@@ -50,18 +81,6 @@
 		{% block footer %}
 			{{  include('layout/footer.html.twig') }}
 		{% endblock %}
-		<div id="cookie_banner">
-			<p>Ce site utilise des cookies pour améliorer votre expérience. En cliquant sur "Accepter", vous consentez.
-										Consultez notre
-				<a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite' })}}" target="_blank" aria-label="Consulter notre Politique de Confidentialité">Politique de Confidentialité</a>
-			</p>
-			<div>
-				<button class="btn-refuse" aria-label="Refuser les cookies non essentiels">Refuser</button>
-				<button class="btn-accept" aria-label="Accepter tous les cookies">Accepter</button>
-			</div>
-		</div>
-
-		<script src="{{ asset('script/banner_cookies.js') }}" defer></script>
 
 	</body>
 

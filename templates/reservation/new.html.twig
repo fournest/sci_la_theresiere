@@ -27,7 +27,11 @@ const ranges = {{ datesIndisponibles|json_encode|raw }};
 return ranges.some(range => {
 const start = new Date(range[0]);
 const end = new Date(range[1]);
-return date >= start && date <= end;
+
+start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+
+return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
 });
 }
 ]

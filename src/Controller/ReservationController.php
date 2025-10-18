@@ -57,15 +57,15 @@ final class ReservationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function new(Request $request, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository, UserRepository $userRepository, NotificationService $notificationService): Response
     {
-        // Récupération des URLs des pages légales
-        $cguUrl = $this->generateUrl('app_legal_page_show', ['slug' => 'conditions-generales']);
-        $pcUrl = $this->generateUrl('app_legal_page_show', ['slug' => 'politique-de-confidentialite']);
+
+        $currentUser = $this->getUser();
+        if (!$currentUser) {
+            $this->addFlash('warning', 'Vous devez être connecté pour effectuer une réservation.');
+            return $this->redirectToRoute('app_login');
+        }
         // Création du formulaire.
         $reservation = new Reservation();
-        $form = $this->createForm(ReservationType::class, $reservation, [
-            'cgu_url' => $cguUrl,
-            'pc_url' => $pcUrl,
-        ]);
+        $form = $this->createForm(ReservationType::class, $reservation);
         $form->handleRequest($request);
 
         // Vérification de la soumission et de la validation du formulaire.
@@ -233,7 +233,7 @@ final class ReservationController extends AbstractController
             $this->addFlash('error', 'Token de sécurité invalide.');
         }
 
-        return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_reservation_index', ['id' => $reservation->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/validate/{id}', name: 'app_reservation_validate', methods: ['POST'])]

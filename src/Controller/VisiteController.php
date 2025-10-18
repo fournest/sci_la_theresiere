@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Visite;
 use App\Entity\User;
 use App\Form\VisiteType;
+use App\Repository\ReservationRepository;
 use App\Repository\VisiteRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -60,7 +61,7 @@ final class VisiteController extends AbstractController
 
     #[Route('/new', name: 'app_visite_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $visiteRepository, UserRepository $userRepository, NotificationService $notificationService): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, VisiteRepository $visiteRepository, UserRepository $userRepository, NotificationService $notificationService, ReservationRepository $reservationRepository): Response
     {
         // Création du formulaire.
         $visite = new Visite();
@@ -105,16 +106,27 @@ final class VisiteController extends AbstractController
         }
         // Gestion des dates de visites indisponibles.
         $visites = $visiteRepository->findAll();
-
-        $datesIndisponibles = [];
+        $datesVisitesPrises = [];
         foreach ($visites as $v) {
-            $datesIndisponibles[] = $v->getDateVisite()->format('Y-m-d');
+            $datesVisitesPrises[] = $v->getDateVisite()->format('Y-m-d');
         }
 
+        $reservations = $reservationRepository->findAll();
+        $reservationRanges = [];
+
+        foreach ($reservations as $r) {
+            if ($r->getDateResaDebut() && $r->getDateResaFin() && $r->getStatut() !== 'annulée') {
+                $reservationRanges[] = [
+                    $r->getDateResaDebut()->format('Y-m-d'),
+                    $r->getDateResaFin()->format('Y-m-d'),
+                ];
+            }
+        }
         return $this->render('visite/new.html.twig', [
             'visite' => $visite,
             'form' => $form,
-            'datesIndisponibles' => $datesIndisponibles,
+            'datesVisitesPrises' => $datesVisitesPrises,
+            'reservationRanges' => $reservationRanges,
         ]);
     }
     // affichage d'une visite spécifique.

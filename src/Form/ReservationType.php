@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Validator\Constraints\IsTrue;
 
 class ReservationType extends AbstractType
 {
@@ -47,7 +48,18 @@ class ReservationType extends AbstractType
                 'choice_label' => 'nom',
                 'multiple' => true,
                 'label' => 'Options (Maintenez Ctrl ou Cmd pour sélectionner plusieurs)',
-                
+
+            ])
+
+            ->add('accepterConditions', CheckboxType::class, [
+                'label' => 'J\'accepte les conditions',
+                'mapped' => false,
+                'required' => true,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Vous devez accepter les conditions générales de location et la politique de confidentialité pour continuer'
+                    ]),
+                ],
             ])
         ;
     }

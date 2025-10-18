@@ -1,7 +1,15 @@
 <footer>
 	<div class="footer-content">
 		<div class="map-container">
-			<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3256.949039379439!2d-1.6269756233482409!3d46.513958062788014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x48044174a8ca067f%3A0xd1f4614a21b87145!2zU0NJIExhIFRow6lyw6hzacOocmU!5e1!3m2!1sfr!2sfr!4v1757075006812!5m2!1sfr!2sfr" title="Localisation de la Salle de la Thérésière" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+			<a href="https://www.google.com/maps/place/SCI+La+Th%C3%A9r%C3%A9si%C3%A8re/@46.5139581,-1.6269756,17z/data=!4m6!3m5!1s0x48044174a8ca067f:0xd1f4614a21b87145!8m2!3d46.5139581!4d-1.6269756!16s%2Fg%2F11c6k7x35q?entry=ttu" target="_blank" rel="noopener noreferrer" title="Ouvrir la carte Google Maps dans un nouvel onglet" class="map-link-container">
+				<div
+					class="map-placeholder">
+					<!-- Texte pour le placeholder -->
+					<p>Cliquez ici pour voir la carte de localisation</p>
+					<p class="small">(Ouvrir Google Maps)</p>
+					<!-- Vous pouvez ajouter une petite icône ici si vous le souhaitez -->
+				</div>
+			</a>
 		</div>
 		<div class="footer-contact-info">
 			<div class="logo-container">
@@ -22,16 +30,45 @@
 		</div>
 		<nav class="footer-nav-buttons">
 			<ul>
-					<li>
-						<a href="{{ path('app_legal_page_show', {'slug': 'mentions-legales'}) }}">Mentions légales</a>
-					</li>
-				<li>
-						<a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentilaite'}) }}">Politique de Confidentialité</a>
-					</li>
-					<li>
-						<a href="{{ path('app_legal_page_show', {'slug': 'conditions-generales-de-location'}) }}">Conditions Générales de Location</a>
-					</li>
+				<li><a href=" {{ path('app_legal_page_show',{'slug':'mentions-legales'}) }} ">Mentions légales</a></li>
+				<li><a href=" {{path('app_legal_page_show',{'slug':'politique-de-confidentialite'})}} ">Politique de Confidentialité</a></li>
+				<li><a href=" {{path('app_legal_page_show',{'slug':'conditions-generales-de-location'})}} ">Conditions Générales de Location</a></li>
+				<li><a href=" {{path('app_legal_page_show',{'slug':'politique-de-cookies'})}}  mermaid?">Politique de Cookies</a></li>
+				<li><a href="#" id="open_preferences_center" class="cookie-preferences-link">Modifier mes préférences cookies</a></li>
 			</ul>
 		</nav>
 	</div>
+	<div class="footer-bottom">
+		<p>&copy;
+			{{ "now"|date("Y") }}
+			SCI La Thérésière. Tous droits réservés.</p>
+	</div>
 </footer>
+<script>
+	// script TermsFeed pour la gestion des cookies.
+document.addEventListener('DOMContentLoaded', function () { // Gérer le clic sur le bouton "Gérer mes cookies" (pour le centre de préférences)
+const manageBtn = document.getElementById('btn-manage-cookies');
+if (manageBtn) {
+manageBtn.addEventListener('click', function () {
+if (typeof cookieconsent !== 'undefined' && typeof cookieconsent.showPreferencesCenter === 'function') {
+cookieconsent.showPreferencesCenter();
+} else {
+console.error("TermsFeed (cookieconsent) n'est pas prêt.");
+}
+});
+}
+
+// Gérer le clic sur le lien "Modifier mes préférences cookies"
+const preferencesLink = document.getElementById('open_preferences_center');
+if (preferencesLink) {
+preferencesLink.addEventListener('click', function (e) {
+e.preventDefault();
+if (typeof cookieconsent !== 'undefined' && typeof cookieconsent.showPreferencesCenter === 'function') {
+cookieconsent.showPreferencesCenter();
+} else {
+console.error("TermsFeed (cookieconsent) n'est pas prêt.");
+}
+});
+}
+});
+</script>

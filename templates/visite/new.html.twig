@@ -10,22 +10,52 @@
 
 	<a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
 
-{# Calendrier interactif : section de script JavaScript #}
+	{# Calendrier interactif : section de script JavaScript #}
 
 	<script>
-    // Affichage des dates indisponibles dans la console pour le déboguage.
-		console.log({{ datesIndisponibles|json_encode|raw }});
-        // Ecouteur d'événement ( attendre le chargement complet du DOM )
+		// Affichage des dates indisponibles dans la console pour le déboguage.
+const datesVisitesPrises = {{ datesVisitesPrises|json_encode|raw }};
+const reservationRanges = {{ reservationRanges|json_encode|raw }};
+console.log("Dates de visite ponctuelle déjà prises:", datesVisitesPrises);
+console.log("Plages de réservation (salle):", reservationRanges);
+// Ecouteur d'événement ( attendre le chargement complet du DOM )
 document.addEventListener("DOMContentLoaded", function () {
-    // Initialisatioin du plugin de calendrier sur les éléments avec la classe ".js-datepicker".
-    flatpickr(".js-datepicker", {
-    dateFormat: "Y-m-d",
-    // Désactivation des dates antérieures à aujourd'hui.
-    minDate: "today",
-    locale: "fr",
-    // Désactivation des dates spécifiques passées depuis le controleur.
-    disable: {{ datesIndisponibles|json_encode|raw }}
-    });
+
+const disableReservationRanges = function (date) {
+date.setHours(0, 0, 0, 0);
+
+return reservationRanges.some(range => {
+const start = new Date(range[0]);
+const end = new Date(range[1]);
+
+start.setHours(0, 0, 0, 0);
+end.setHours(0, 0, 0, 0);
+
+return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+})
+}
+// Initialisatioin du plugin de calendrier sur les éléments avec la classe ".js-datepicker".
+flatpickr("#visite_dateVisite", {
+dateFormat: "Y-m-d",
+// Désactivation des dates antérieures à aujourd'hui.
+minDate: "today",
+locale: "fr",
+// Désactivation des dates spécifiques passées depuis le controleur.
+disable: [
+... datesVisitesPrises
+]
+});
+flatpickr("#visite_dateResaSouhaite", {
+dateFormat: "Y-m-d",
+// Désactivation des dates antérieures à aujourd'hui.
+minDate: "today",
+locale: "fr",
+// Désactivation des dates spécifiques passées depuis le controleur.
+disable: [
+disableReservationRanges
+]
+});
+
 });
 	</script>
 {% endblock %}

@@ -1,7 +1,23 @@
-
 <form class="form-container" method="POST">
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn-principal">{{ button_label|default('Enregistrer') }}</button>
-{{ form_end(form) }}
+	{{ form_start(form) }}
+	
+    {{ form_row(form.dateResaDebut) }}
+    {{ form_row(form.dateResaFin) }}
+    {{ form_row(form.acompte) }}
+    {{ form_row(form.caution) }}
+    {{ form_row(form.categorie) }}
+    {{ form_row(form.options) }}
+
+
+
+
+	{{ form_row(form.accepterConditions, {
+        'label_html': true,
+        'label': 'J\'ai lu et j\'accepte les 
+        <a href=" '~ path('app_legal_page_show',{'slug':'conditions-generales-de-location'}) ~' " target="_blank" class="text-link">Conditions Générales de Location"</a>
+        et la <a href=" '~ path('app_legal_page_show',{'slug':'politique-de-confidentialite'}) ~' " target="_blank" class="text-link">Politique de Confidentialité</a>.'
+    })}}
+
+	<button class="btn-principal">{{ button_label|default('Enregistrer') }}</button>
+	{{ form_end(form) }}
 </form>
