@@ -6,9 +6,9 @@
 
 {% block body %}
 
-{% block admin_layout %}
-	{{ include('layout/admin_layout.html.twig')}}
-{% endblock %}
+	{% block admin_layout %}
+		{{ include('layout/admin_layout.html.twig')}}
+	{% endblock %}
 	{# LISTE UTILISATEURS#}
 	<h1>Votre tableau de bord administrateur</h1>
 	<div class="admin-dashboard">
@@ -105,7 +105,7 @@
 								{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</p>
 						</div>
 						<div class="visit-item-actions">
-							{% if visite.statut != 'annulée'and visite.statut !='validée' and is_granted('ROLE_ADMIN') or app.user == visite.user %}
+							{% if visite.statut != 'annulée'and visite.statut !='validée' and (is_granted('ROLE_ADMIN') or app.user == visite.user) %}
 								<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
 									<button class="btn-principal">Annuler</button>
@@ -175,7 +175,7 @@
 							</p>
 						</div>
 						<div class="reservation-item-actions">
-							{% if reservation.statut != 'annulée'and reservation.statut !='validée' and is_granted('ROLE_ADMIN') or app.user == reservation.user %}
+							{% if reservation.statut != 'annulée'and reservation.statut !='validée' and (is_granted('ROLE_ADMIN') or app.user == reservation.user) %}
 								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
 									<button type="submit" class="btn-principal">Annuler</button>

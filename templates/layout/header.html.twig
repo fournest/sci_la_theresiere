@@ -16,11 +16,11 @@
 				</li>
 				<li>
 					{# Lien vers la page de visite #}
-					<a href="{{ path('app_visite_index') }}">Visite</a>
+					<a href="{{ path('app_visite_index') }}">Visiter</a>
 				</li>
 				<li>
 					{# Lien vers la page de réservation #}
-					<a href="{{ path('app_reservation_index') }}">Réservation</a>
+					<a href="{{ path('app_reservation_index') }}">Réserver</a>
 				</li>
 				<li>
 					{# Lien vers la page de contact #}
@@ -38,7 +38,7 @@
 					</li>
 					<li>
 						{# Lien pour déconnecter l'utilisateur #}
-						<a href="{{ path('app_logout') }}">Déconnexion</a>
+						<a href="{{ path('app_logout') }}">Quitter</a>
 					</li>
 					{# Section pour les notifications (icône d'enveloppe) #}
 					<li class="notification-item">
@@ -66,15 +66,7 @@
 				{% if is_granted('ROLE_ADMIN') %}
 					<li>
 						{# Lien vers l'espace administrateur #}
-						<a href="{{ path('app_panel_admin') }}">Espace administrateur</a>
-					</li>
-					<li>
-						{# Lien vers la gestion des options #}
-						<a href="{{ path('app_option_index') }}">Options</a>
-					</li>
-					<li>
-						{# Lien vers la gestion des catégories #}
-						<a href="{{ path('app_categorie_index') }}">Catégories</a>
+						<a href="{{ path('app_panel_admin') }}">Admin</a>
 					</li>
 				{% endif %}
 			</ul>

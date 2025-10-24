@@ -94,7 +94,7 @@ final class LegalPageController extends AbstractController
     }
 
     
-    #[Route('/{slug}', name: 'app_legal_page_show', methods: ['GET'])]
+    #[Route('/legal/{slug}', name: 'app_legal_page_show', methods: ['GET'])]
     public function show(#[MapEntity(mapping: ['slug' => 'slug'])] LegalPage $legalPage): Response
     {
         return $this->render('legal_page/show.html.twig', [

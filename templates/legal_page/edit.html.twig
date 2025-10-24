@@ -1,14 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier la Page Légale{% endblock %}
+{% block title %}Modifier la Page Légale
+{% endblock %}
 
 {% block body %}
-    <h1>Modification de la Page Légale</h1>
+	<h1>Modification de la Page Légale</h1>
+	<div class="form-container">
 
-    {{ include('legal_page/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
-
-    {{ include('legal_page/_delete_form.html.twig') }}
-
-    <a href="{{ path('app_legal_page_index') }}">Retour à la liste</a>
-	<a href="{{ path('app_panel_admin')}}">Retour au tableau administrateur</a>
+		<div class="form-actions-footer">
+			{{ include('legal_page/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+			{{ include('legal_page/_delete_form.html.twig') }}
+		</div>
+	</div>
+	<div class="table-navigation">
+		<a class="btn-principal" href="{{ path('app_legal_page_index') }}">Retour à la liste</a>
+		<a class="btn-principal" href="{{ path('app_panel_admin')}}">Retour au tableau administrateur</a>
+	</div>
 {% endblock %}

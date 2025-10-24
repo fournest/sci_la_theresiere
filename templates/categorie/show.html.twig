@@ -1,17 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Catégories
+{% block title %}
+	{{categorie.nom}}
 {% endblock %}
 
 {% block body %}
-	<h1>Catégories</h1>
+	<h1>{{categorie.nom}}</h1>
 
 	<div class="categorie-details-container">
 		<ul class="categorie-details-list">
-			<li class="detail-item">
-				<strong>Id :</strong>
-				<span>{{ categorie.id }}</span>
-			</li>
 			<li class="detail-item">
 				<strong>Nom :</strong>
 				<span>{{ categorie.nom }}</span>

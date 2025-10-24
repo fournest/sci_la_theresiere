@@ -106,9 +106,11 @@ p {
     flex-direction: row;
     flex-wrap: wrap;
     gap: 10px;
-    width: 100%;
+    width: 50%;
     margin-top: 15px;
     justify-content: center;
+    align-items: flex-start;
+    align-content: flex-start;
 }
 
 .navbar li {
@@ -120,31 +122,42 @@ p {
 .footer-nav-buttons a,
 .notification-icon a {
     text-decoration: none;
-    color: #4C6576;
+    color: #EDE8EA;
     font-weight: bold;
+    font-size: 0.95em;
     font-family: 'Playball';
-    padding: 10px 18px;
-    border-radius: 8px;
-    border: 2px solid #4C6576;
-    background-color: #A27883;
+    padding: 8px 12px !important;
+    border-radius: 5px;
+    border: 2px solid #562D59;
+    background-color: #4C6576;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
     display: block;
+    white-space: nowrap;
 }
 
 .navbar a:hover,
 .navbar a:focus,
-.navbar a.active,
+.navbar a:active,
 .footer-nav-buttons a:hover,
 .footer-nav-buttons a:focus {
-    background-color: #A27883;
+    background-color: #EDE8EA;
     color: #4C6576;
-    border-color: #562D59;
+    border-color: #4C6576;
     transform: translateY(-2px);
 }
 
 .notification-icon img {
-    width: 30px;
-    height: auto;
+    width: auto;
+    height: 1.2em;
+    max-width: 20px;
+    vertical-align: middle;
+    filter: invert(100%);
+}
+
+.notification-icon img:hover,
+.notification-icon img:focus,
+.notification-icon img:active{
+    filter: none !important;
 }
 
 .badge {
@@ -176,10 +189,14 @@ footer {
     max-width: 1200px;
 }
 
+.footer-nav-buttons {
+    margin-top: 25px;
+}
+
 .footer-nav-buttons ul {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    text-align: center;
     gap: 15px;
     list-style: none;
     margin: 0;
@@ -189,30 +206,28 @@ footer {
 
 .footer-nav-buttons li {
     max-width: 250px;
-    width: 100%;
 }
+
 
 /* Style pour le conteneur de la carte dans le footer */
 .map-container {
-    /* Assure que le conteneur a une taille définie */
+    margin-top: 25px;
     width: 100%;
-    height: 300px; /* Ajustez la hauteur selon votre design */
-    background-color: #f0f0f0; /* Fond clair pour simuler une zone de carte */
+    height: 300px;
+    background-color: #f0f0f0;
     border: 1px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
 }
 
-/* Style pour le lien qui remplace l'iframe */
 .map-link-container {
-    display: block; /* Prend toute la taille du parent */
+    display: block;
     width: 100%;
     height: 100%;
-    text-decoration: none; /* Enlève le soulignement par défaut */
+    text-decoration: none;
     color: #333;
 }
 
-/* Style pour le contenu à l'intérieur du lien (le placeholder) */
 .map-placeholder {
     display: flex;
     flex-direction: column;
@@ -221,11 +236,10 @@ footer {
     width: 100%;
     height: 100%;
     text-align: center;
-    background-color: #e5e5e5; /* Couleur de fond légèrement différente */
+    background-color: #e5e5e5;
     transition: background-color 0.3s;
 }
 
-/* Effet au survol pour montrer que c'est cliquable */
 .map-link-container:hover .map-placeholder {
     background-color: #d0d0d0;
 }
@@ -248,7 +262,7 @@ footer {
 }
 
 .footer-contact-info p {
-    color: #EDE8EA ;
+    color: #EDE8EA;
     padding: 5px;
 }
 
@@ -279,7 +293,6 @@ footer {
     transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
     cursor: pointer;
     display: inline-block;
-    text-decoration: none;
     text-align: center;
 }
 
@@ -308,16 +321,39 @@ footer {
     margin: 5px;
 }
 
+.admin-navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0;
+}
+
+.admin-navbar ul li a {
+    padding: 10px 15px;
+    background-color: #562D59;
+    color: #EDE8EA;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+}
+
 .reservation-list-container,
-.tarif-list-container {
+.tarif-list-container,
+.legal-list-container,
+.table-navigation {
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1.5rem;
+    text-align: center;
 
 }
 
-.user-table {
+.user-table,
+.legal-table {
     border: #562d59 solid 2px;
     background-color: #A27883;
     border-radius: 8px;
@@ -361,7 +397,8 @@ footer {
 .tarif-item,
 .option-item,
 .categorie-item,
-.message-item {
+.message-item,
+.legal-item {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -378,6 +415,7 @@ footer {
 .user-item-content p,
 .visit-item-content p,
 .reservation-item-content p,
+.legal-item-content,
 .tarif-info p,
 .option-details,
 .categorie-info {
@@ -387,10 +425,16 @@ footer {
     color: #4C6576;
 }
 
+.legal-item:hover,
+.user-item:hover {
+    background-color: #f5f0f3;
+}
+
 /* Style pour les libellés (les en-têtes de colonnes) */
 .user-item-content strong,
 .visit-item-content strong,
 .reservation-item-content strong,
+.legal-item-content strong,
 .tarif-info strong,
 .option-details strong,
 .categorie-info strong {
@@ -402,6 +446,7 @@ footer {
 .user-item-actions,
 .visit-item-actions,
 .reservation-item-actions,
+.legal-item-actions,
 .tarif-actions,
 .option-actions,
 .categorie-actions {
@@ -420,6 +465,172 @@ footer {
     display: block;
     text-align: center;
 }
+
+
+.form-actions-footer {
+    text-align: center;
+}
+
+/*  pages légales/ contrat */
+
+.no-legal-page {
+    text-align: center;
+    font-style: italic;
+    color: #4C6576;
+    padding: 20px;
+}
+
+.content-scroll {
+    display: block;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #A27883;
+    border-radius: 5px;
+    background-color: #EDE8EA;
+}
+
+.legal-details-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #EDE8EA;
+    border: 2px solid #562d59;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.detail-legal-item strong {
+    font-weight: 700;
+    color: #4C6576;
+    text-align: left;
+    min-width: 150px;
+}
+
+.detail-legal-item span {
+    color: #4C6576;
+    text-align: left;
+    flex: 2;
+}
+
+/* logo du contrat */
+
+.logo-container-contract {
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
+.logo-container-contract img {
+    max-width: 100px;
+    height: auto;
+    border-radius: 50%;
+}
+
+/* affichage contrat/ pages legales*/
+
+.reservation-summary .reservation-details-list {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.reservation-summary .detail-item {
+    padding: 3px 0;
+    border-bottom: none;
+    justify-content: center;
+    background-color: transparent;
+}
+
+.reservation-summary .detail-item strong {
+    flex: none;
+    margin-right: 15px;
+    text-align: right;
+}
+
+.reservation-summary .detail-item span {
+    flex: none;
+    text-align: left;
+}
+
+.contract-content .contract-signature {
+    margin-top: 50px;
+}
+
+.contract-content .contract-signature p {
+    text-align: right !important;
+    margin-bottom: 0;
+}
+
+.contract-content .contract-parties {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 80px;
+}
+
+.contract-content .contract-parties .signature-role {
+    width: 45%;
+    text-align: center;
+    border-top: 1 px solid #4C6576;
+    padding-top: 5px;
+}
+
+.contract-content .content p {
+    margin-bottom: 15px;
+    text-align: left;
+    line-height: 1.6;
+}
+
+.contract-content .content h3 {
+    text-align: left;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+    color: #562D59;
+}
+
+.form-container.legal-page-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.legal-content-area.content-scroll {
+    border: 1px solid #ddd !important;
+    padding: 25px !important;
+    margin-top: 20px !important;
+    margin-bottom: 30px !important;
+}
+
+.legal-content-area.content-scroll p,
+.legal-content-area.content-scroll ul,
+.legal-content-area.content-scroll ol,
+.legal-content-area.content-scroll li {
+    text-align: left !important;
+    line-height: 1.6 !important;
+    margin-bottom: 15px !important;
+    font-size: 1em;
+    color: #A27883;
+}
+
+.legal-content-area.content-scroll h2,
+.legal-content-area.content-scroll h3 {
+    text-align: left !important;
+    margin-bottom: 35px !important;
+    margin-bottom: 10px !important;
+    font-family: 'Ovo' !important;
+    font-size: 1.2em !important;
+    color: #562D59 !important;
+}
+
+.legal-content-area.content-scroll strong {
+    color: #562D59 !important;
+    font-weight: bold !important;
+}
+
 
 /* ------------------ PAGES DE DÉTAILS ------------------ */
 
@@ -818,6 +1029,101 @@ input:focus {
     transform: translateY(-2px);
 }
 
+.contract-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #EDE8EA;
+    border: 1px solid #562D59;
+}
+
+.contract-container h2 {
+    color: #A27883;
+    text-align: left;
+    margin-top: 25px;
+    border-bottom: 1px solid #562D59;
+    padding-bottom: 5px;
+}
+
+.options-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.options-list li {
+    text-decoration: none;
+    margin-left: 20px;
+    line-height: 1.6;
+    padding-left: 10px;
+    position: relative;
+    border-bottom: 1px dotted #562D59;
+}
+
+.contract-content .content {
+    line-height: 1.8;
+    text-align: justify;
+    padding-top: 10px;
+}
+
+.contract-actions {
+    text-align: center;
+    margin-top: 40px;
+}
+
+@media print {
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    body,
+    .contract-container {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .contract-content .content p {
+        margin-bottom: 3px !important;
+        line-height: 1.25 !important;
+        font-size: 0.85em !important;
+    }
+
+    .contract-content .content h3 {
+        margin-top: 10px !important;
+        margin-bottom: 3px !important;
+        font-size: 1.0em !important;
+    }
+
+    .reservation-summary {
+        margin-bottom: 5px !important;
+    }
+
+    .reservation-summary h2 {
+        margin-bottom: 5px !important;
+    }
+
+    .reservation-summary .detail-legal-item {
+        margin-bottom: 2px !important;
+        font-size: 0.9em !important;
+    }
+
+    .contract-content .contract-signature {
+        margin-bottom: 40px !important;
+    }
+
+    h3,
+    h2 {
+        page-break-after: avoid !important;
+    }
+
+    .contract-content {
+        page-break-inside: auto !important;
+    }
+}
 
 
 /* --- MEDIA QUERIES  --- */
@@ -836,27 +1142,41 @@ input:focus {
         padding: 10px 20px;
     }
 
+    .logo-container {
+        flex-basis: 20%;
+        margin: 0;
+    }
+
     .titre {
         width: auto;
+        flex-basis: 50%;
+        text-align: center;
         margin: 20px;
     }
 
     .titre h1 {
         font-size: 3.5em;
         letter-spacing: 2px;
+        text-align: center;
+    }
+
+    .navbar {
+        flex-basis: 20%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     .navbar ul {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-end;
-        gap: 10px;
+        width: 100%;
+        max-width: 100%;
         margin-top: 0;
+        justify-content: center;
+        gap: 10px;
     }
 
     .navbar li {
-        width: calc(50% - 5px);
-        width: auto;
+        width: calc(50% - 10px) !important;
     }
 
     /* Footer */
@@ -868,29 +1188,28 @@ input:focus {
 
     .footer-content {
         display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
+        flex-direction: row !important;
+        justify-content: space-between;
         align-items: flex-start;
         height: 100%;
         max-width: 1200px;
         margin: 0 auto;
-        gap: 40px;
     }
 
     .map-container {
         flex-basis: 40%;
-        max-width: 500px;
-        height: 250px;
+        max-width: 300px;
+        height: 200px;
     }
 
     .footer-contact-info,
     .footer-nav-buttons {
-        flex-basis: 30%;
-        text-align: left;
+        flex-basis: 25%;
+        text-align: center;
     }
 
     .footer-contact-info p {
-        text-align: left;
+        text-align: center;
     }
 
     .footer-nav-buttons ul {
@@ -903,7 +1222,7 @@ input:focus {
     }
 
     .footer-nav-buttons li {
-        width: 100%;
+        width: 60%;
         max-width: none;
     }
 
@@ -951,6 +1270,7 @@ input:focus {
     .user-item,
     .visit-item,
     .reservation-item,
+    .legal-item,
     .tarif-item,
     .option-item,
     .categorie-item {
@@ -1000,7 +1320,7 @@ input:focus {
     .user-item-actions,
     .visit-item-actions,
     .reservation-item-actions,
-    .tarif-actions,
+    .legal-item-actions .tarif-actions,
     .option-actions,
     .categorie-actions {
         display: flex;
@@ -1013,6 +1333,7 @@ input:focus {
     .user-item-actions .btn-principal,
     .visit-item-actions .btn-principal,
     .reservation-item-actions .btn-principal,
+    .legal-item-actions .btn-principal,
     .tarif-actions .btn-principal,
     .option-actions .btn-principal,
     .categorie-actions .btn-principal {

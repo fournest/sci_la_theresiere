@@ -1,76 +1,113 @@
 {% extends 'base.html.twig' %}
 
+{% block header %}
+	<div class="no-print">
+		{{ parent() }}
+	</div>
+
+{% endblock %}
+
 {% block title %}Contrat de Location (Réservation
 	{{ reservation.dossierResa }})
 {% endblock %}
 
 {% block body %}
 
-	
 
-		<div class="contract-container">
-			<header>
-				<h1>{{ legal_page.title }}
-					- Contrat de Location</h1>
-			</header>
-			<section class="reservation-summary">
-				<h2>
-					Récapitulatif de la Réservation</h2>
-				<p>
+	<div class="contract-container">
+		<header>
+			<h1>{{ legal_page.title }}
+				- Contrat de Location</h1>
+			<div class="logo-container-contract">
+				<img src={{asset('img/logo.png')}} alt="SCI LA THÉRÈSIÈRE">
+			</div>
+		</header>
+		<section class="reservation-summary">
+			<h2>
+				Récapitulatif de la Réservation</h2>
+			<ul class="reservation-details-list">
+				<li class="detail-item">
 					<strong>Dossier n°:</strong>
-					{{ reservation.dossierResa }}</p>
-				<p></p>
-				<p>
+					{{ reservation.dossierResa }}</li>
+				<li class="detail-item">
 					<strong>Locataire :
 					</strong>
 					{{ client.nom }}
 					{{ client.prenom }}
-					({{ client.email }})</p>
-				<p>
+					({{ client.email }})</li>
+				<li class="detail-item">
 					<strong>Période de Location :</strong>
 					Du
 					{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}
 					au
 					{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}
-				</p>
-				<p>
+				</li>
+				<li class="detail-item">
 					<strong>Catégorie Réservée:</strong>
-					{{ reservation.categorie.nom }}</p>
+					{{ reservation.categorie.nom }}</li>
 
-				<p>
-					<strong>Statut:</strong>
-					{{ reservation.statut }}</p>
-			</section>
+			</ul>
+			<p>
+				<h2>Option Réservée:</h2>
+				{% if reservation.options is not empty %}
+					<ul class="option-list">
+						{% for option in reservation.options %}
+							<li>
+								<span>{{ option.nom }}</span>
+							</li>
+						{% endfor %}
+					</ul>
+				{% else %}
+					<p>Aucune option supplémentaire n'a été sélectionnée.</p>
+				{% endif %}
+			</p>
+			{# <p>
+																<strong>Tarif de base (hors options):</strong>
+																{% if tarif is defined and tarif is not null %}
+												
+																	{{ tarif.prixReservation }}
+																{% else %}
+																	(Tarif non spécifié)
+																{% endif %}
+															</p> #}
+		</section>
 
-			<section class="contract-content">
-				<h2>Conditions Contractuelles</h2>
-				{% set contractContent = legal_page.content %}
+		<section class="contract-content">
+			<h2>Conditions Contractuelles</h2>
+			{% set contractContent = legal_page.content %}
 
-				{% set contractContent = contractContent|replace({
+			{% set contractContent = contractContent|replace({
         '[[NOM_CLIENT]]': client.nom|upper,
         '[[PRENOM_CLIENT]]': client.prenom,
         '[[PSEUDO_CLIENT]]': client.nom,
-        '[[EMAIL_CLIENT]]': client.nom,
+        '[[EMAIL_CLIENT]]': client.email,
     }) %}
 
-				{% set contractContent = contractContent|replace({
+			{% set contractContent = contractContent|replace({
         '[[NUMERO_DOSSIER]]': reservation.dossierResa,
         '[[DATE_DEBUT]]': reservation.dateResaDebut|date('d/m/Y'),
         '[[DATE_FIN]]': reservation.dateResaFin|date('d/m/Y'),
         '[[CATEGORIE_RESERVEE]]': reservation.categorie.nom,
         '[[DATE_DU_JOUR]]': "now"|date('d/m/Y'),
+		'[[VILLE_CONTRAT]]': 'Talmont-Saint-Hilaire', 
     }) %}
 
-				<div class="content">
-					{{ contractContent|raw }}
-				</div>
-			</section>
-
-			<div class="contract-actions no-print">
-				<button class="btn-print" onclick="window.print();">
-					Imprimer/Télécharger le Contrat
-				</button>
-				<a class="btn" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Retour aux details</a>
+			<div class="content">
+				{{ contractContent|raw }}
 			</div>
+		</section>
+
+		<div class="contract-actions no-print">
+			<button class="btn-principal" onclick="window.print();">
+				Imprimer/Télécharger le Contrat
+			</button>
+			<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Retour aux details</a>
 		</div>
+	</div>
+{% endblock %}
+
+{% block footer %}
+	<div class="no-print">
+		{{ parent() }}
+	</div>
 {% endblock %}

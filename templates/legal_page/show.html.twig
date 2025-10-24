@@ -1,39 +1,40 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails du document légal{% endblock %}
+{% block title %}
+	{{legal_page.title}}
+{% endblock %}
 
 {% block body %}
-    <h1>Détails du document légal</h1>
+	<div class="form-container legal-page-container">
+		<h1>{{ legal_page.title }}</h1>
+		{% if is_granted('ROLE_ADMIN') %}
+			<div class="reservation-details-container">
+				<h2>Informations Techniques (Admin)</h2>
+				<ul class="legal-details-list">
+					<li class="detail-legal-item">
+						<strong>Slug (Identifiant URL) :
+						</strong>
+						<span>/legal/{{ legal_page.slug }}</span>
+					</li>
+				</ul>
+			</div>
+			<hr>
+		{% endif %}
+		<div class="legal-content-area content-scroll">
+			{{legal_page.content|raw}}
+		</div>
+		<div class="form-actions-footer">
+			{% if is_granted('ROLE_ADMIN') %}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ legal_page.id }}</td>
-            </tr>
-            <tr>
-                <th>Slug (Identifiant URL)</th>
-                <td>/legal/{{ legal_page.slug }}</td>
-            </tr>
-            <tr>
-                <th>Titre</th>
-                <td>{{ legal_page.title }}</td>
-            </tr>
-            <tr>
-                <th>Contenu</th>
-                <td> {{ legal_page.content|length > 200 ? legal_page.content|slice(0, 200) ~ '...' : legal_page.content }}</td>
-            </tr>
-        </tbody>
-    </table>
-    {% if is_granted('ROLE_ADMIN') %}
-    
-    <a href="{{ path('app_legal_page_index') }}">Retour à la liste Administrateur</a>
+				<a class="btn-principal" href="{{ path('app_legal_page_index') }}">Retour à la liste Administrateur</a>
 
-    <a href="{{ path('app_legal_page_edit', {'slug': legal_page.slug}) }}">Modifier</a>
+				<a class="btn-principal" href="{{ path('app_legal_page_edit', {'slug': legal_page.slug}) }}">Modifier</a>
 
-    {{ include('legal_page/_delete_form.html.twig', {'legal_page' : legal_page}) }}
+				{{ include('legal_page/_delete_form.html.twig', {'legal_page' : legal_page}) }}
 
-    {% else %}
-        <a href="{{ path('app_home')}}">Retour à l'accueil</a>
-    {% endif %}
+			{% else %}
+				<a class="btn-principal" href="{{ path('app_home')}}">Retour à l'accueil</a>
+			{% endif %}
+		</div>
+	</div>
 {% endblock %}

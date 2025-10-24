@@ -1,4 +1,4 @@
-<nav class="navbar">
+<nav class="navbar admin-navbar">
 	<ul>
 		<li>
 			{# Lien vers la liste des documents légaux #}
@@ -7,6 +7,14 @@
 		<li>
 			{# Lien pour créer un nouveau document légal #}
 			<a href="{{ path('app_legal_page_new') }}">Nouveau document légal</a>
+		</li>
+		<li>
+			{# Lien vers la gestion des options #}
+			<a href="{{ path('app_option_index') }}">Options</a>
+		</li>
+		<li>
+			{# Lien vers la gestion des catégories #}
+			<a href="{{ path('app_categorie_index') }}">Catégories</a>
 		</li>
 
 	</ul>

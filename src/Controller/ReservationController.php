@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\LegalPage;
 use App\Entity\Reservation;
+use App\Entity\Tarif;
 use App\Entity\User;
 use App\Form\ReservationType;
 use App\Repository\LegalPageRepository;
@@ -19,7 +19,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Service\NotificationService;
 use DateTime;
-use DateTimeImmutable;
 use Knp\Component\Pager\PaginatorInterface;
 
 #[Route('/reservation')]
@@ -299,7 +298,7 @@ final class ReservationController extends AbstractController
     // Pour le contrat de location
     #[Route('/{id}/contract', name: 'app_reservation_contract_show', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function contract(Reservation $reservation, LegalPageRepository $legalPageRepository): Response
+    public function contract(Reservation $reservation, LegalPageRepository $legalPageRepository,EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'autorisation
         if ($this->getUser() !== $reservation->getUser() && !$this->isGranted('ROLE_ADMIN')) {
@@ -308,6 +307,7 @@ final class ReservationController extends AbstractController
 
         // Récupération le modèle de CGL
         $cglPage = $legalPageRepository->findOneBy(['slug' => 'conditions-generales-de-location']);
+        $tarif = $entityManager->getRepository(Tarif::class)->find(...);
 
         if (!$cglPage) {
             $this->addFlash('error', 'Le modèle de Conditions Générales de Location est manquant. Veuillez contacter l\'administrateur.');
@@ -319,6 +319,7 @@ final class ReservationController extends AbstractController
             'legal_page' => $cglPage,
             'reservation' => $reservation,
             'client' => $reservation->getUser(),
+            'tarif' => $tarif,
         ]);
     }
 }

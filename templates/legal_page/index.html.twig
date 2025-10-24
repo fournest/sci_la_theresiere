@@ -5,37 +5,38 @@
 
 {% block body %}
 	<h1>Gestion des Documents Légaux</h1>
+	<div class="legal-list-container">
+			<ul class="legal-list">
+				{% for legal_page in legal_pages %}
+					<li class="legal-item">
+						<div class="legal-item-content">
+							<p>
+								<strong>ID:</strong>
+								{{ legal_page.id }}</p>
+							<p>
+								<strong>Titre</strong>
+								{{ legal_page.title }}</p>
+							<p>
+								<strong>Slug (URL)</strong>/legal/{{ legal_page.slug }}</p>
 
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Slug (Identifiant URL)</th>
-				<th>Titre</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{% for legal_page in legal_pages %}
-				<tr>
-					<td>{{ legal_page.id }}</td>
-					<td>/legal/{{ legal_page.slug }}</td>
-					<td>{{ legal_page.title }}</td>
-					<td>
-						<a href="{{ path('app_legal_page_edit', {'slug': legal_page.slug}) }}">Modifier</a>
-						<form method="post" action="{{ path('app_legal_page_delete', {'slug': legal_page.slug}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');" style="display: inline-block;">
-							<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ legal_page.id) }}">
-							<button>Supprimer</button>
-						</form>
-					</td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="5">Aucun document légal trouvé.</td>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
+						</div>
+						<div class="legal-item-actions">
+							<a href="{{ path('app_legal_page_edit', {'slug': legal_page.slug}) }}" class="btn-principal">Modifier</a>
+							<form method="post" action="{{ path('app_legal_page_delete', {'slug': legal_page.slug}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce document ?');" style="display: inline-block;">
+								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ legal_page.id) }}">
+								<button class="btn-principal">Supprimer</button>
+							</form>
+						</div>
+					</li>
+				{% else %}
+					<p class="no-legal-page">>Aucun document légal trouvé.</p>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+	<div class="table-navigation">
+		<a href="{{ path('app_legal_page_new') }}" class="btn-principal">Créez un nouveau document</a>
+		<a href="{{ path('app_panel_admin')}}" class="btn-principal">Retour au tableau administrateur</a>
+	</div>
 
-	<a href="{{ path('app_legal_page_new') }}">Créez un nouveau document</a>
-	<a href="{{ path('app_panel_admin')}}">Retour au tableau administrateur</a>
 {% endblock %}

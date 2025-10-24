@@ -24,11 +24,20 @@ class RegistrationFormType extends AbstractType
     {
         $this->router = $router;
     }
-    
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $mentionsLegalesUrl = $this->router->generate('app_legal_page_show', ['slug' => 'mentions-megales']);
+        $politiqueConfidentialiteUrl = $this->router->generate('app_legal_page_show', ['slug' => 'politique-de-confidentialite']);
+
+        $labelHtml = sprintf(
+            'J\'accepte les <a href="%s" target="_blank">Mentions Légales</a> et la <a href="%s" target="_blank">Politique de Confidentialité</a>.',
+            $mentionsLegalesUrl,
+            $politiqueConfidentialiteUrl
+        );
+
         $builder
-         // CHAMP : NOM
+            // CHAMP : NOM
 
             ->add('nom', null, [
                 'label' => 'Nom :',
@@ -45,7 +54,7 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
 
-             // CHAMP : PRÉNOM
+            // CHAMP : PRÉNOM
 
             ->add('prenom', null, [
                 'label' => 'Prénom :',
@@ -78,7 +87,7 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-           
+
             // CHAMP : ADRESSE MAIL
 
             ->add('email', EmailType::class, [
@@ -100,7 +109,7 @@ class RegistrationFormType extends AbstractType
                 // this is read and encoded in the controller
                 'mapped' => false,
                 'label' => 'Mot de passe :',
-                 // Aide les navigateurs à suggérer un nouveau mot de passe.
+                // Aide les navigateurs à suggérer un nouveau mot de passe.
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez entrer un mot de passe.',
@@ -112,17 +121,17 @@ class RegistrationFormType extends AbstractType
                         'max' => 4096,
                     ]),
                 ],
-                ])
-                ->add('agreeTerms', CheckboxType::class, [
-                     'label' => 'Conditions d\'utilisations :',
-                    'mapped' => false,
-                    'constraints' => [
-                        new IsTrue([
-                            'label_html' => true,
-                            'label' => 'J\'accepte les <a href"'. $this->router->generate('app_mentions_legales').'"target="_blank">Mentions Légales</a> et la <a href="' . $this->router->generate('app_politique_confidentialite').'"target="_blank">Politique de Confidentialité</a>.',
-                        ]),
-                    ],
-                ])
+            ])
+            ->add('agreeTerms', CheckboxType::class, [
+                'label' => $labelHtml,
+                'label_html' => true,
+                'mapped' => false,
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Vous devez accepter nos conditions pour vous inscrire.',
+                    ]),
+                ],
+            ])
         ;
     }
 
