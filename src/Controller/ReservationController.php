@@ -70,46 +70,43 @@ final class ReservationController extends AbstractController
         // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
             // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
-            $currentUser = $this->getUser();
-            if ($currentUser) {
-                $reservation->setUser($currentUser);
+            $reservation->setUser($currentUser);
 
-                // Récupération des informations de la réservation pour vérification.
-                $dateDebut = $reservation->getDateResaDebut();
-                $dateFin = $reservation->getDateResaFin();
-                $categorie = $reservation->getCategorie();
+            // Récupération des informations de la réservation pour vérification.
+            $dateDebut = $reservation->getDateResaDebut();
+            $dateFin = $reservation->getDateResaFin();
+            $categorie = $reservation->getCategorie();
 
-                // Vérification si la date est déjà réservée ou en attente de validation.
-                if (!$reservationRepository->isRoomAvailable($categorie, $dateDebut, $dateFin)) {
-                    $this->addFlash('error', 'Désolé, la salle n\'est pas disponible pour cette période.');
-                    return $this->redirectToRoute('app_reservation_new');
+            // Vérification si la date est déjà réservée ou en attente de validation.
+            if (!$reservationRepository->isRoomAvailable($categorie, $dateDebut, $dateFin)) {
+                $this->addFlash('error', 'Désolé, la salle n\'est pas disponible pour cette période. Veuillez ajuster les dates');
+            } else {
+                // Définition du statut, préparation et execution de l'enregistrement en base de données.
+                // Création du numéro de dossier.
+                $reservation->setStatut('en_attente');
+                $date = new DateTime();
+                $reservation->setDossierResa($date->format('Ymd'));
+                $entityManager->persist($reservation);
+                $entityManager->flush();
+                $reservation->setDossierResa($date->format('Ymd') . $reservation->getId());
+                $entityManager->persist($reservation);
+                $entityManager->flush();
+
+                // Notification pour l'administrateur.
+                $admin = $userRepository->findOneAdmin();
+
+                if ($admin) {
+                    $sender = $this->getUser();
+                    $subject = "Nouvelle réservation en attente";
+                    $message = "Bonjour " . $admin->getPrenom() . ", une nouvelle réservation est en attente de votre validation.";
+
+                    $notificationService->sendMessage($sender, $admin, $subject, $message);
                 }
+
+                $this->addFlash('success', 'Votre demande de réservation a bien été envoyée. Elle est en attente de confirmation par un administrateur.');
+                // Redirection de  l'utilisateur vers la liste de ses réservations après la création.
+                return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
             }
-            // Définition du statut, préparation et execution de l'enregistrement en base de données.
-            // Création du numéro de dossier.
-            $reservation->setStatut('en_attente');
-            $date = new DateTime();
-            $reservation->setDossierResa($date->format('Ymd'));
-            $entityManager->persist($reservation);
-            $entityManager->flush();
-            $reservation->setDossierResa($date->format('Ymd') . $reservation->getId());
-            $entityManager->persist($reservation);
-            $entityManager->flush();
-
-            // Notification pour l'administrateur.
-            $admin = $userRepository->findOneAdmin();
-
-            if ($admin) {
-                $sender = $this->getUser();
-                $subject = "Nouvelle réservation en attente";
-                $message = "Bonjour " . $admin->getPrenom() . ", une nouvelle réservation est en attente de votre validation.";
-
-                $notificationService->sendMessage($sender, $admin, $subject, $message);
-            }
-
-            $this->addFlash('success', 'Votre demande de réservation a bien été envoyée. Elle est en attente de confirmation par un administrateur.');
-            // Redirection de  l'utilisateur vers la liste de ses réservations après la création.
-            return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
         }
         // Récupération de  toutes les réservations existantes pour les indisponibilités.
         $reservations = $reservationRepository->findAll();
@@ -121,15 +118,13 @@ final class ReservationController extends AbstractController
                 $r->getDateResaFin()->format('Y-m-d'),
             ];
         }
-
-
-
         return $this->render('reservation/new.html.twig', [
             'reservation' => $reservation,
             'form' => $form,
             'datesIndisponibles' => $datesIndisponibles,
         ]);
     }
+
 
     // affichage d'une visite spécifique.
     #[Route('/{id}', name: 'app_reservation_show', methods: ['GET'])]
@@ -143,7 +138,7 @@ final class ReservationController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_reservation_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService): Response
+    public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService, ReservationRepository $reservationRepository): Response
     {
         // Création et soumission du formulaire.
         $form = $this->createForm(ReservationType::class, $reservation);
@@ -151,6 +146,21 @@ final class ReservationController extends AbstractController
 
         //  Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $dateDebut = $reservation->getDateResaDebut();
+            $dateFin = $reservation->getDateResaFin();
+            $categorie = $reservation->getCategorie();
+            $currentId = $reservation->getId();
+
+            if (!$reservationRepository->isRoomAvailable($categorie, $dateDebut, $dateFin, $currentId)) {
+                $this->addFlash('error', 'Désolé, la salle n\'est pas disponible pour cette période. Veuillez ajuster les dates');
+                return $this->render('reservation/edit.html.twig', [
+                    'reservation' => $reservation,
+                    'form' => $form,
+                    'datesIndisponibles' => $reservationRepository->getUnavailableDates($categorie, $currentId), // Récupérer à nouveau les dates
+                ]);
+            }
+            $reservation->setStatut('modifiée');
             $entityManager->flush();
 
             // Nouvelle récupération de l'utilisateur, association à la réservation créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
@@ -181,9 +191,13 @@ final class ReservationController extends AbstractController
             $this->addFlash('success', 'Votre réservation a été modifiée avec succès.');
             return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
         }
+
+        $datesIndisponibles = $reservationRepository->getUnavailableDates($reservation->getCategorie(), $reservation->getId());
+
         return $this->render('reservation/edit.html.twig', [
             'reservation' => $reservation,
             'form' => $form,
+            'datesIndisponibles' => $datesIndisponibles,
         ]);
     }
 
@@ -298,7 +312,7 @@ final class ReservationController extends AbstractController
     // Pour le contrat de location
     #[Route('/{id}/contract', name: 'app_reservation_contract_show', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function contract(Reservation $reservation, LegalPageRepository $legalPageRepository,EntityManagerInterface $entityManager): Response
+    public function contract(Reservation $reservation, LegalPageRepository $legalPageRepository, EntityManagerInterface $entityManager): Response
     {
         // Vérification de l'autorisation
         if ($this->getUser() !== $reservation->getUser() && !$this->isGranted('ROLE_ADMIN')) {

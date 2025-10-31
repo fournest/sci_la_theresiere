@@ -12,7 +12,8 @@
 			</p>
 		{% endif %}
 		{{ form_start(contactForm) }}
-		{{ form_widget(contactForm) }}
+		{{ form_row(contactForm.objet) }}
+		{{ form_row(contactForm.message) }}
 
 		{% if contactForm.consentementConfidentialite is defined %}
 
@@ -24,7 +25,7 @@
 			</label>
 			{{ form_errors(contactForm.consentementConfidentialite)}}
 		{% endif %}
-
+		{{ form_rest(contactForm) }}
 		<button class="btn-principal">{{ button_label|default('Envoyer') }}</button>
 		{{ form_end(contactForm) }}
 	</form>

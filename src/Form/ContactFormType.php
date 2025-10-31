@@ -26,6 +26,13 @@ class ContactFormType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $privacyPolicyUrl = $this->router->generate('app_legal_page_show', ['slug' => 'politique-de-confidentialite']); 
+        
+        // 2. Création du libellé HTML avec le lien
+        $consentLabel = sprintf(
+            'J\'ai lu et j\'accepte la <a href="%s" target="_blank" rel="noopener noreferrer" class="link-privacy">Politique de Confidentialité</a>.',
+            $privacyPolicyUrl
+        );
         $builder
             ->add('objet', TextType::class, [
                 'label' => 'Objet du message',
@@ -46,7 +53,8 @@ class ContactFormType extends AbstractType
                 ],
             ])
             ->add('consentementConfidentialite', CheckboxType::class, [
-                'label' => false,
+                'label' => $consentLabel,
+                'label_html' => true,
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([

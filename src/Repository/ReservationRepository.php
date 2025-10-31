@@ -6,6 +6,7 @@ use App\Entity\Categorie;
 use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use DateTimeInterface;
 
 
 /**
@@ -18,7 +19,7 @@ class ReservationRepository extends ServiceEntityRepository
         parent::__construct($registry, Reservation::class);
     }
 
-    public function isRoomAvailable(Categorie $categorie, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin): bool
+    public function isRoomAvailable(Categorie $categorie, \DateTimeInterface $dateDebut, \DateTimeInterface $dateFin, ?int $currentReservationId = null): bool
     {
         $qb = $this->createQueryBuilder('reservation');
 
@@ -26,21 +27,50 @@ class ReservationRepository extends ServiceEntityRepository
             ->select('COUNT(reservation.id)')
             ->where('reservation.categorie = :categorie')
             ->andWhere('reservation.statut IN (:statuts)')
-            ->andWhere(':dateDebut < reservation.dateResaFin')
-            ->andWhere(':dateFin > reservation.dateResaDebut')
+            ->andWhere('reservation.dateResaFin >= :dateDebut')
+            ->andWhere('reservation.dateResaDebut <= :dateFin')
             ->setParameter('categorie', $categorie)
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
-            ->setParameter('statuts', ['en_attente', 'validée'])
-            ->getQuery()
-            ->getSingleScalarResult();
-
+            ->setParameter('statuts', ['en_attente', 'validée', 'modifiée']);
+        if ($currentReservationId !== null) {
+            $qb->andWhere('reservation.id != :currentId')
+                ->setParameter('currentId', $currentReservationId);
+        }
+        $reservationsEnConflit = $qb->getQuery()->getSingleScalarResult();
         return $reservationsEnConflit === 0;
     }
 
-    
+    public function getUnavailableDates(Categorie $categorie, ?int $excludeReservationId = null): array
+    {
+        $qb = $this->createQueryBuilder('r');
 
-    
+        $qb->select('r.dateResaDebut, r.dateResaFin')
+            ->where('r.categorie = :categorie')
+            ->andWhere('r.statut IN(:statuts)')
+            ->setParameter('categorie', $categorie)
+            ->setParameter('statuts', ['en_attente', 'validée', 'modifiée']);
+
+        if ($excludeReservationId !== null) {
+            $qb->andWhere('r.id != :excludeId')
+                ->setParameter('excludeId', $excludeReservationId);
+        }
+
+        $results = $qb->getQuery()->getResult();
+        $dates = [];
+        foreach ($results as $res) {
+            $dates[] = [
+                $res['dateResaDebut']->format('Y-m-d'),
+                $res['dateResaFin']->format('Y-m-d'),
+            ];
+        }
+        return $dates;
+    }
+
+
+
+
+
 
 
     //    /**

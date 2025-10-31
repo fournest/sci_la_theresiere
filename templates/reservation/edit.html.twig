@@ -21,4 +21,58 @@
 		{% endif %}
 	{% endif %}
 
+	
+    
+    {% if reservation.statut != 'annulée' and reservation.statut != 'validée' %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                
+                // 1. Préparation des dates indisponibles au format objet (from/to)
+                const indisponibleRanges = [
+                    {% for indisponibilite in datesIndisponibles|default([]) %}
+                        {
+                            from: "{{ indisponibilite[0] }}",
+                            to: "{{ indisponibilite[1] }}"
+                        },
+                    {% endfor %}
+                ];
+                
+                // 2. Identification de la période actuelle de la réservation
+                const currentResaStart = "{{ reservation.dateResaDebut|date('Y-m-d') }}";
+                const currentResaEnd = "{{ reservation.dateResaFin|date('Y-m-d') }}";
+
+                // 3. Exclusion de la période actuelle de la liste des dates bloquées
+                const finalDisableDates = indisponibleRanges.filter(item => {
+                    // Si le début ET la fin de la plage bloquée correspondent à la réservation actuelle, on la filtre (exclut)
+                    return !(item.from === currentResaStart && item.to === currentResaEnd);
+                });
+
+                // 4. Récupération des inputs par ID 
+                var dateDebutInput = document.getElementById('reservation_dateResaDebut');
+                var dateFinInput = document.getElementById('reservation_dateResaFin');
+                
+                // 5. Initialisation de la date de fin (pour pouvoir la référencer dans fpDebut)
+                var fpFin = flatpickr(dateFinInput, {
+                    dateFormat: "Y-m-d",
+                    locale: "fr",
+                    minDate: dateDebutInput.value || "today", // Commence à la date actuelle ou aujourd'hui
+                    disable: finalDisableDates
+                });
+
+                // 6. Initialisation de la date de début
+                var fpDebut = flatpickr(dateDebutInput, {
+                    dateFormat: "Y-m-d",
+                    locale: "fr",
+                    minDate: "today",
+                    
+                    // Liaison : Si la date de début change, la date min de fin est ajustée
+                    onChange: function(selectedDates, dateStr, instance) {
+                        fpFin.set('minDate', dateStr);
+                    },
+                    
+                    disable: finalDisableDates
+                });
+            });
+        </script>
+    {% endif %}
 {% endblock %}
