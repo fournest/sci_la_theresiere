@@ -27,12 +27,23 @@
 				<strong>Statut de la réservation :</strong>
 				<span>{{ reservation.statut }}</span>
 			</li>
-			{% if reservation.statut != 'en_attente' %}
-				<li class="detail-item link-item">
-					<strong>Contrat/CGV :</strong>
+			{# LOGIQUE D'AFFICHAGE CONDITIONNELLE DES DOCUMENTS #}
+			{% if reservation.statut == 'en_attente' %}
+				<li class="detail-item link-item status-pending">
+					<strong>Conditions Générales :</strong>
+					<span>
+						<a href="{{ path('app_legal_page_show', {'slug': 'conditions-generales-de-location'}) }}" target="_blank" class="text-link">
+							Consulter les Conditions Générales de Location (CGL)
+						</a>
+					</span>
+				</li>
+			{% elseif reservation.statut == 'contrat_envoyé' or reservation.statut == 'confirmée' or reservation.statut == 'modifiée' %}
+				{# Le contrat reste accessible dans les statuts validés/modifiés aussi #}
+				<li class="detail-item link-item status-sent">
+					<strong>Contrat de Location :</strong>
 					<span>
 						<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link">
-							Consulter le Contrat (Accepté lors de la réservation)
+							Contrat finalisé (À imprimer/télécharger)
 						</a>
 					</span>
 				</li>
@@ -71,8 +82,14 @@
 		</ul>
 	</div>
 
-	{% if reservation.statut != 'en_attente'  %}
-		<a class="btn-principal" href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}">Voir Le contrat de Location(CGL)</a>
+	{% if reservation.statut == 'en_attente' %}
+		<a class="btn-principal" href="{{ path('app_legal_page_show', {'slug': 'conditions-generales-de-location'}) }}" target="_blank">
+			Voir les CGL
+		</a>
+	{% elseif reservation.statut == 'contrat_envoyé' or reservation.statut == 'confirmée' or reservation.statut == 'modifiée' %}
+		<a class="btn-principal" href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank">
+			Imprimer/Télécharger le Contrat
+		</a>
 	{% endif %}
 
 	{% if reservation.statut != 'annulée' and reservation.statut !='validée' and is_granted('ROLE_USER') and app.user == reservation.user %}
@@ -87,5 +104,9 @@
 			{{ include('reservation/_delete_form.html.twig') }}
 		{% endif %}
 	{% endif %}
-	<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
+	{% if is_granted('ROLE_ADMIN') %}
+		<a class="btn-principal" href="{{ path('app_panel_admin') }}">Retour au tableau</a>
+	{% else %}
+		<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
+	{% endif %}
 {% endblock %}

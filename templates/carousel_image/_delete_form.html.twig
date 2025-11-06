@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_carousel_image_delete', {'id': carousel_image.id}) }}" onsubmit="return confirm('Êtes-vous sûr(e) de vouloir supprimer cette image ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ carousel_image.id) }}">
+    <button type="submit" class="btn btn-danger">Supprimer</button>
+</form>

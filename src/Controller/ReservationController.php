@@ -17,7 +17,9 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use App\Service\NotificationService;
+use App\Enum\ReservationStatus;
 use DateTime;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -83,7 +85,7 @@ final class ReservationController extends AbstractController
             } else {
                 // Définition du statut, préparation et execution de l'enregistrement en base de données.
                 // Création du numéro de dossier.
-                $reservation->setStatut('en_attente');
+                $reservation->setStatut(ReservationStatus::PENDING->value);
                 $date = new DateTime();
                 $reservation->setDossierResa($date->format('Ymd'));
                 $entityManager->persist($reservation);
@@ -108,15 +110,13 @@ final class ReservationController extends AbstractController
                 return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
             }
         }
-        // Récupération de  toutes les réservations existantes pour les indisponibilités.
-        $reservations = $reservationRepository->findAll();
 
-        $datesIndisponibles = [];
-        foreach ($reservations as $r) {
-            $datesIndisponibles[] = [
-                $r->getDateResaDebut()->format('Y-m-d'),
-                $r->getDateResaFin()->format('Y-m-d'),
-            ];
+        // Récupération des dates indisponibles pour le calendrier (méthode mise à jour précédemment).
+        $categorie = $reservation->getCategorie();
+        $datesIndisponibles = []; // Initialisation à un tableau vide
+
+        if ($categorie !== null) {
+            $datesIndisponibles = $reservationRepository->getUnavailableDates($categorie);
         }
         return $this->render('reservation/new.html.twig', [
             'reservation' => $reservation,
@@ -249,41 +249,73 @@ final class ReservationController extends AbstractController
         return $this->redirectToRoute('app_reservation_index', ['id' => $reservation->getId()], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/validate/{id}', name: 'app_reservation_validate', methods: ['POST'])]
+    // NOUVELLE MÉTHODE : ENVOI DU CONTRAT
+    #[Route('/{id}/send-contract', name: 'app_reservation_send_contract', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function validate(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
+    public function sendContract(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
     {
-        // Vérification de l'existance de la réservation.
-        if (!$reservation) {
-            throw new NotFoundHttpException('La réservation demandée n\'existe pas.');
-        }
-
-        // Vérification de sécurité.
-        if ($this->isCsrfTokenValid('validate' . $reservation->getId(), $request->request->get('_token'))) {
-            // Mise à jour du statut de la réservation.
-            if ($reservation->getStatut() === 'en_attente') {
-                $reservation->setStatut('validée');
-                $entityManager->flush();
-
-                // Récupération de l'expéditeur (l'administrateur) et le destinataire (le propriétaire de la réservation)
-                // et envoi de notification au destinataire.
-                $sender = $this->getUser();
-                $recipient = $reservation->getUser();
-                $subject = "Confirmation de votre réservation";
-                $message = "Bonjour " . $recipient->getPrenom() . ", votre réservation a été validée avec succès.";
-
-                $notificationService->sendMessage($sender, $recipient, $subject, $message);
-                // Message flash pour l'administrateur.
-                $this->addFlash('success', 'La réservation a été validée avec succès.');
-            } else {
-                $this->addFlash('error', 'La réservation n\'est pas dans un état "en_attente" et ne peut pas être validée.');
-            }
-        } else {
-            // Message d'erreur si sécurité invalide.
+        // 1. Vérification du jeton CSRF de sécurité
+        if (!$this->isCsrfTokenValid('sendContract' . $reservation->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Jeton de sécurité invalide.');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
         }
 
-        return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
+        // 2. Vérification du statut
+        if ($reservation->getStatut() !== ReservationStatus::PENDING->value) {
+            $this->addFlash('warning', 'La réservation doit être en statut "en_attente" pour envoyer le contrat.');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+        }
+
+        // 3. Mise à jour du statut
+        $reservation->setStatut(ReservationStatus::CONTRACT_SENT->value); // Statut: 'contrat_envoye'
+        $entityManager->flush();
+
+        // 4. Notification de l'utilisateur
+        $recipient = $reservation->getUser();
+        $subject = "Votre contrat de réservation est disponible";
+
+        // Nous allons supposer que vous avez une route pour afficher le contrat (app_reservation_contract_show)
+        $contractLink = $this->generateUrl('app_reservation_contract_show', ['id' => $reservation->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+        $message = "Bonjour " . $recipient->getPrenom() . ", votre demande de réservation n° **" . $reservation->getDossierResa() . "** a été pré-validée. Votre contrat est prêt. Veuillez le consulter, le signer, et nous renvoyer l'acompte. Le contrat est accessible ici : " . $contractLink;
+
+        $notificationService->sendMessage($this->getUser(), $recipient, $subject, $message);
+
+        $this->addFlash('success', 'Le statut est passé à "contrat_envoye" et l\'utilisateur a été notifié.');
+
+        return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+    }
+
+    // NOUVELLE MÉTHODE : CONFIRMER (étape finale)
+    #[Route('/{id}/confirm', name: 'app_reservation_confirm', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function confirm(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService): Response
+    {
+        // 1. Vérification du jeton CSRF de sécurité
+        if (!$this->isCsrfTokenValid('confirm' . $reservation->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de sécurité invalide.');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+        }
+
+        // 2. Vérification du statut
+        if ($reservation->getStatut() !== ReservationStatus::CONTRACT_SENT->value) {
+            $this->addFlash('warning', 'La réservation doit être en statut "contrat_envoye" pour être confirmée.');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+        }
+
+        // 3. Mise à jour du statut (en 'validée' ou 'confirmee' selon votre Enum)
+        $reservation->setStatut(ReservationStatus::CONFIRMED->value); // Statut: 'confirmee'
+        $entityManager->flush();
+
+        // 4. Notification de l'utilisateur
+        $recipient = $reservation->getUser();
+        $subject = "Votre réservation est confirmée !";
+        $message = "Félicitations " . $recipient->getPrenom() . ", votre réservation n° **" . $reservation->getDossierResa() . "** est désormais confirmée !";
+
+        $notificationService->sendMessage($this->getUser(), $recipient, $subject, $message);
+
+        $this->addFlash('success', 'La réservation est maintenant confirmée. L\'utilisateur a été notifié.');
+
+        return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
     }
 
     #[Route('/{id}', name: 'app_reservation_delete', methods: ['POST'])]
@@ -321,6 +353,8 @@ final class ReservationController extends AbstractController
 
         // Récupération le modèle de CGL
         $cglPage = $legalPageRepository->findOneBy(['slug' => 'conditions-generales-de-location']);
+        // 2. Récupération du Règlement Intérieur (RI)
+        $riPage = $legalPageRepository->findOneBy(['slug' => 'reglement-interieur']);
         $tarif = $entityManager->getRepository(Tarif::class)->find(...);
 
         if (!$cglPage) {
@@ -331,6 +365,7 @@ final class ReservationController extends AbstractController
         // Affichage de la vue pour les placeholders
         return $this->render('reservation/contract.html.twig', [
             'legal_page' => $cglPage,
+            'reglement_interieur' => $riPage,
             'reservation' => $reservation,
             'client' => $reservation->getUser(),
             'tarif' => $tarif,

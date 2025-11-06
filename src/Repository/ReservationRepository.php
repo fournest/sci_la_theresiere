@@ -7,6 +7,7 @@ use App\Entity\Reservation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use DateTimeInterface;
+use App\Enum\ReservationStatus;
 
 
 /**
@@ -32,7 +33,7 @@ class ReservationRepository extends ServiceEntityRepository
             ->setParameter('categorie', $categorie)
             ->setParameter('dateDebut', $dateDebut)
             ->setParameter('dateFin', $dateFin)
-            ->setParameter('statuts', ['en_attente', 'validée', 'modifiée']);
+            ->setParameter('statuts', ReservationStatus::getBlockingStatuses());
         if ($currentReservationId !== null) {
             $qb->andWhere('reservation.id != :currentId')
                 ->setParameter('currentId', $currentReservationId);
@@ -49,7 +50,7 @@ class ReservationRepository extends ServiceEntityRepository
             ->where('r.categorie = :categorie')
             ->andWhere('r.statut IN(:statuts)')
             ->setParameter('categorie', $categorie)
-            ->setParameter('statuts', ['en_attente', 'validée', 'modifiée']);
+           ->setParameter('statuts', ReservationStatus::getBlockingStatuses());
 
         if ($excludeReservationId !== null) {
             $qb->andWhere('r.id != :excludeId')

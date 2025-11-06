@@ -1,0 +1,7 @@
+{% extends 'base.html.twig' %}
+{% block title %}Ajouter une image au carrousel{% endblock %}
+{% block body %}
+    <h1>Ajouter une nouvelle image au carrousel</h1>
+    {{ include('carousel_image/_form.html.twig') }} {# Utilise le label par défaut 'Enregistrer' ou 'Ajouter' #}
+    <a href="{{ path('app_carousel_image_index') }}" class="btn-secondary">Retour à la liste</a>
+{% endblock %}

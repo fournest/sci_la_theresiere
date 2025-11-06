@@ -1,0 +1,17 @@
+{# Incluez cette modification si vous voulez afficher l'aperçu dans le formulaire d'édition #}
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }} 
+    
+    {# Section pour afficher l'image actuelle lors de l'édition #}
+    {% if carousel_image.id is not null and carousel_image.filename is not null %}
+        <div style="margin-bottom: 15px;">
+            <p>Image actuelle :</p>
+            <img src="{{ asset('uploads/carousel/' ~ carousel_image.filename) }}" alt="Image actuelle" style="max-width: 200px; height: auto;">
+            <small class="form-text text-muted">Laisser le champ d'upload ci-dessous vide pour conserver cette image.</small>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.imageFile) }}
+    {{ form_row(form.ordre) }}
+    
+    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

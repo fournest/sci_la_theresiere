@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Images du Carrousel{% endblock %}
+
+{% block body %}
+    <h1>Liste des Images du Carrousel</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Aperçu de l'image</th> {# MODIFIÉ #}
+                <th>Nom du Fichier</th> {# AJOUTÉ pour info #}
+                <th>Ordre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for carousel_image in carousel_images %}
+            <tr>
+                <td>{{ carousel_image.id }}</td>
+                <td>
+                    {# AFFICHAGE DE L'IMAGE #}
+                    <img src="{{ asset('uploads/carousel/' ~ carousel_image.filename) }}" alt="Image Carrousel {{ carousel_image.ordre }}" style="max-height: 50px; width: auto;">
+                </td>
+                <td>{{ carousel_image.filename }}</td> {# AJOUTÉ #}
+                <td>{{ carousel_image.ordre }}</td>
+                <td>
+                    <a href="{{ path('app_carousel_image_show', {'id': carousel_image.id}) }}">Voir</a>
+                    <a href="{{ path('app_carousel_image_edit', {'id': carousel_image.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune image trouvée.</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_carousel_image_new') }}">Ajouter une nouvelle image</a>
+
+    <a href="{{ path('app_panel_admin') }}">Retour au tableau admin</a>
+
+
+    
+
+
+{% endblock %}

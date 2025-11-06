@@ -174,22 +174,46 @@
 								{% endfor %}
 							</p>
 						</div>
-						<div class="reservation-item-actions">
-							{% if reservation.statut != 'annulée'and reservation.statut !='validée' and (is_granted('ROLE_ADMIN') or app.user == reservation.user) %}
+						<div
+							class="reservation-item-actions">
+
+							{# Le lien Voir est toujours disponible en premier pour l'affichage des détails #}
+							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+
+							{# 1. Boutons d'actions Administrateur (remplace l'ancien "Valider") #}
+							{% if is_granted('ROLE_ADMIN') %}
+
+								{# Action 1/2 : Envoyer Contrat (Statut: en_attente -> contrat_envoye) #}
+								{% if reservation.statut == 'en_attente' %}
+									<form method="post" action="{{ path('app_reservation_send_contract', {'id': reservation.id}) }}" onsubmit="return confirm('Confirmer l\'envoi du contrat au client et le passage au statut « contrat_envoye » ?');">
+										<input type="hidden" name="_token" value="{{ csrf_token('sendContract' ~ reservation.id) }}">
+										<button type="submit" class="btn-principal">Envoyer Contrat</button>
+									</form>
+								{% endif %}
+
+								{# Action 2/2 : Confirmer (Statut: contrat_envoye -> confirmee) #}
+								{% if reservation.statut == 'contrat_envoye' %}
+									<form method="post" action="{{ path('app_reservation_confirm', {'id': reservation.id}) }}" onsubmit="return confirm('Confirmer la réception de l\'acompte et le passage au statut « confirmee » ?');">
+										<input type="hidden" name="_token" value="{{ csrf_token('confirm' ~ reservation.id) }}">
+										<button type="submit" class="btn-principal action-confirm">Confirmer</button>
+									</form>
+								{% endif %}
+							{% endif %}
+
+							{# 2. Bouton Modifier (pour l'utilisateur ou l'admin) #}
+							{# On permet la modification uniquement si la réservation est "en_attente" #}
+							{% if reservation.statut == 'en_attente' %}
+								<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+							{% endif %}
+
+							{# 3. Bouton Annuler #}
+							{# On permet l'annulation si le statut est un statut intermédiaire ou confirmé (non annulé) #}
+							{% set cancellableStatuses = ['en_attente', 'contrat_envoye', 'confirmee', 'modifiee'] %}
+							{% if reservation.statut in cancellableStatuses and (is_granted('ROLE_ADMIN') or app.user == reservation.user) %}
 								<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
 									<button type="submit" class="btn-principal">Annuler</button>
 								</form>
-							{% endif %}
-							{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
-								<form method="post" action="{{ path('app_reservation_validate', {'id': reservation.id}) }}">
-									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ reservation.id) }}">
-									<button type="submit" class="btn-principal">Valider</button>
-								</form>
-							{% endif %}
-							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
-							{% if reservation.statut == 'en_attente' %}
-								<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
 							{% endif %}
 						</div>
 					</li>

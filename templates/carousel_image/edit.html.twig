@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'image du carrousel{% endblock %}
+
+{% block body %}
+    <h1>Modifier l'image du carrousel</h1>
+
+    {# Le 'button_label' est passé au _form.html.twig #}
+    {{ include('carousel_image/_form.html.twig', {'button_label': 'Mettre à jour'}) }} 
+
+    <a href="{{ path('app_carousel_image_index') }}" class="btn-secondary">Retour à la liste</a> 
+    
+    {# Assurez-vous d'avoir bien modifié votre _delete_form.html.twig aussi ! #}
+    {{ include('carousel_image/_delete_form.html.twig') }}
+{% endblock %}

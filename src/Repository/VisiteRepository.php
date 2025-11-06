@@ -16,15 +16,14 @@ class VisiteRepository extends ServiceEntityRepository
         parent::__construct($registry, Visite::class);
     }
 
-    public function findValidatedBookingByDate(\DateTimeInterface $date): ?Visite
+    public function findPendingVisiteByDate(\DateTimeInterface $date): ?Visite
     {
         return $this->createQueryBuilder('v')
             ->andWhere('v.dateVisite = :date')
             ->andWhere('v.statut = :status')
             ->setParameter('date', $date->format('Y-m-d'))
-            ->setParameter('status', 'en attente')
+            ->setParameter('status', 'en_attente')
             ->getQuery()
             ->getOneOrNullResult();
     }
-
 }

@@ -4,24 +4,47 @@
 	<div class="no-print">
 		{{ parent() }}
 	</div>
-
 {% endblock %}
 
-{% block title %}Contrat de Location (Réservation
-	{{ reservation.dossierResa }})
+{% block title %}
+	{# Adapte le titre de la page (onglet du navigateur) #}
+	{% if reservation.statut == 'en_attente' %}
+		Conditions Générales de Location
+	{% else %}
+		Contrat de Location (Réservation
+		{{ reservation.dossierResa }})
+	{% endif %}
 {% endblock %}
 
 {% block body %}
 
+	{# ------------------------------------------------------------------ #}
+	{# BLOC DE REMPLACEMENT CENTRALISÉ (Dictionnaire de Placeholders) #}
+	{# Ce bloc définit tous les remplacements Twig une seule fois pour les deux documents. #}
+	{% set placeholders = {
+        '[[NOM_CLIENT]]': client.nom|upper,
+        '[[PRENOM_CLIENT]]': client.prenom,
+        '[[PSEUDO_CLIENT]]': client.pseudo,
+        '[[EMAIL_CLIENT]]': client.email,
+        '[[NUMERO_DOSSIER]]': reservation.dossierResa,
+        '[[DATE_DEBUT]]': reservation.dateResaDebut|date('d/m/Y'),
+        '[[DATE_FIN]]': reservation.dateResaFin|date('d/m/Y'),
+        '[[CATEGORIE_RESERVEE]]': reservation.categorie.nom,
+        '[[DATE_DU_JOUR]]': "now"|date('d/m/Y'),
+        '[[VILLE_CONTRAT]]': 'Talmont-Saint-Hilaire', 
+        '[[CAPACITE_MAX]]': reservation.categorie.capacite|default('Non spécifiée')
+    } %}
+	{# ------------------------------------------------------------------ #}
 
-	<div class="contract-container">
-		<header>
+
+		<div class="contract-container"> <header>
 			<h1>{{ legal_page.title }}
 				- Contrat de Location</h1>
 			<div class="logo-container-contract">
 				<img src={{asset('img/logo.png')}} alt="SCI LA THÉRÈSIÈRE">
 			</div>
 		</header>
+
 		<section class="reservation-summary">
 			<h2>
 				Récapitulatif de la Réservation</h2>
@@ -61,45 +84,51 @@
 					<p>Aucune option supplémentaire n'a été sélectionnée.</p>
 				{% endif %}
 			</p>
-			{# <p>
-																<strong>Tarif de base (hors options):</strong>
-																{% if tarif is defined and tarif is not null %}
-												
-																	{{ tarif.prixReservation }}
-																{% else %}
-																	(Tarif non spécifié)
-																{% endif %}
-															</p> #}
 		</section>
 
+		{# ------------------------------------------------------------------ #}
+		{# 1. AFFICHAGE DES CONDITIONS GÉNÉRALES DE LOCATION (CGL) #}
 		<section class="contract-content">
 			<h2>Conditions Contractuelles</h2>
-			{% set contractContent = legal_page.content %}
 
-			{% set contractContent = contractContent|replace({
-        '[[NOM_CLIENT]]': client.nom|upper,
-        '[[PRENOM_CLIENT]]': client.prenom,
-        '[[PSEUDO_CLIENT]]': client.nom,
-        '[[EMAIL_CLIENT]]': client.email,
-    }) %}
-
-			{% set contractContent = contractContent|replace({
-        '[[NUMERO_DOSSIER]]': reservation.dossierResa,
-        '[[DATE_DEBUT]]': reservation.dateResaDebut|date('d/m/Y'),
-        '[[DATE_FIN]]': reservation.dateResaFin|date('d/m/Y'),
-        '[[CATEGORIE_RESERVEE]]': reservation.categorie.nom,
-        '[[DATE_DU_JOUR]]': "now"|date('d/m/Y'),
-		'[[VILLE_CONTRAT]]': 'Talmont-Saint-Hilaire', 
-    }) %}
+			{# Application du bloc de remplacement unique aux CGL #}
+			{% set contractContent = legal_page.content|replace(placeholders) %}
 
 			<div class="content">
 				{{ contractContent|raw }}
 			</div>
 		</section>
+		{# ------------------------------------------------------------------ #}
+
+
+		{# ------------------------------------------------------------------ #}
+		{# 2. AFFICHAGE DU RÈGLEMENT INTÉRIEUR (RI) - ANNEXE #}
+			{% if reglement_interieur is defined and reglement_interieur is not null %}
+			{# 'page-break-before: always;' force le RI à commencer sur une nouvelle page en impression/PDF #}
+				<section class="contract-content reglement-interieur-content" style="page-break-before: always;"> <hr style="margin-top: 50px; margin-bottom: 50px;">
+
+				<h1>{{ reglement_interieur.title }}</h1>
+
+				{# Application du bloc de remplacement unique au RI #}
+				{% set riContent = reglement_interieur.content|replace(placeholders) %}
+
+				<div class="content">
+					{{ riContent|raw }}
+				</div>
+			</section>
+		{% endif %}
+		{# ------------------------------------------------------------------ #}
+
 
 		<div class="contract-actions no-print">
-			<button class="btn-principal" onclick="window.print();">
-				Imprimer/Télécharger le Contrat
+			<button
+				class="btn-principal" onclick="window.print();">
+				{# Adapte le texte du bouton #}
+				{% if reservation.statut == 'en_attente' %}
+					Imprimer les CGL
+				{% else %}
+					Imprimer/Télécharger le Contrat
+				{% endif %}
 			</button>
 			<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Retour aux details</a>
 		</div>
