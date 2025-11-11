@@ -15,7 +15,6 @@ final class HomeController extends AbstractController
         $carouselImages = $carouselImageRepository->findAllOrdered();
         
         return $this->render('home/index.html.twig', [
-            'controller_name' => 'HomeController',
             'carousel_images' => $carouselImages,
         ]);
     }

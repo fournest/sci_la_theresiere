@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType; // <-- Ajout de TextType
 use Symfony\Component\Validator\Constraints\File;
 
 class CarouselImageType extends AbstractType
@@ -14,7 +15,6 @@ class CarouselImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // ->add('filename')
             ->add('imageFile', FileType::class, [
                 'label' => 'Image du Carrousel (JPG, PNG)',
                 'mapped' => false,
@@ -31,6 +31,14 @@ class CarouselImageType extends AbstractType
                     ])
                 ],
             ])
+            
+            // AJOUT DU CHAMP CAPTION
+            ->add('caption', TextType::class, [
+                'label' => 'Légende de l\'image (optionnel)',
+                'required' => false,
+                'attr' => ['placeholder' => 'Ex: Une vue de la salle au lever du soleil...'],
+            ])
+
             ->add('ordre', null, [
                 'label' => 'Ordre d\'affichage',
             ])

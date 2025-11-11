@@ -26,4 +26,19 @@ class CarouselImageRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+/**
+ * Récupère une seule image par son numéro d'ordre.
+ * Peut être utilisé pour vérifier l'unicité ou récupérer un élément spécifique.
+ * @param int $ordre Le numéro d'ordre à rechercher.
+ * @return CarouselImage|null
+ */
+    public function findOneByOrdre(int $ordre): ?CarouselImage
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.ordre = :val')
+            ->setParameter('val', $ordre)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

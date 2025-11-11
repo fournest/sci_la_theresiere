@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{# REMARQUE: Ce template utilise du HTML pur. Les images s'afficheront à leur taille réelle par défaut et seront empilées verticalement. #}
+
+{% block title %}Galerie Photos de la Salle{% endblock %}
+
+{% block body %}
+
+<div>
+    <h1>Galerie Photos de la Salle</h1>
+
+    {% if carousel_images is empty %}
+        <p>Aucune photo n'est disponible pour le moment.</p>
+    {% else %}
+        
+        {# CONTENEUR SIMPLE (les images vont se suivre verticalement) #}
+        <div>
+            
+            {% for image in carousel_images %}
+                {# Chaque image est un élément simple #}
+                <div>
+                    
+                    <a href="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" target="_blank" 
+                       title="{{ image.getCaption()|default('Voir l\'image') }}">
+                        
+                        <img 
+                            src="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" 
+                            alt="{{ image.getCaption()|default('Image de la salle') }}"
+                            {# Tous les styles inline ont été retirés #}
+                        >
+                        
+                        {% if image.getCaption() is not empty %}
+                            <div>
+                                {{ image.getCaption() }}
+                            </div>
+                        {% endif %}
+                    </a>
+                    
+                    {# Ajout d'un saut de ligne simple pour séparer les grandes images #}
+                    <br><br>
+                </div>
+            {% endfor %}
+            
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -31,6 +31,23 @@ final class CarouselImageController extends AbstractController
         ]);
     }
 
+    // --- ROUTE PUBLIQUE DE LA GALERIE ---
+    // URL: /carousel
+    #[Route('/carousel', name: 'app_carousel_image_public', methods: ['GET'])]
+    /**
+     * @param CarouselImageRepository $carouselImageRepository
+     */
+    public function publicShow(CarouselImageRepository $carouselImageRepository): Response
+    {
+        // 1. Récupérer toutes les images triées par ordre
+        $images = $carouselImageRepository->findAllOrdered();
+
+        // 2. Rendre le template de la galerie (CHANGEMENT ICI)
+        return $this->render('carousel_image/public_carousel.html.twig', [
+            'carousel_images' => $images,
+        ]);
+    }
+
     // Injection de SluggerInterface pour le nommage unique des fichiers
     #[Route('/new', name: 'app_carousel_image_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]

@@ -17,9 +17,13 @@ class CarouselImage
     #[ORM\Column(length: 255)]
     private ?string $filename = null;
 
+    #[ORM\Column(length: 255, nullable: true)] // Nouveau champ pour la légende
+    private ?string $caption = null;
+
     #[ORM\Column]
     private ?int $ordre = null;
 
+    // Utilisé uniquement pour l'upload de fichier (non mappé en base de données)
     private ?File $imageFile = null;
 
     public function getId(): ?int
@@ -35,6 +39,20 @@ class CarouselImage
     public function setFilename(string $filename): static
     {
         $this->filename = $filename;
+
+        return $this;
+    }
+
+    // NOUVEL ACCESSEUR pour la légende
+    public function getCaption(): ?string
+    {
+        return $this->caption;
+    }
+
+    // NOUVEAU MUTATEUR pour la légende
+    public function setCaption(?string $caption): static
+    {
+        $this->caption = $caption;
 
         return $this;
     }
