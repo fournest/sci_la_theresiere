@@ -13,11 +13,11 @@
     {% else %}
         
         {# CONTENEUR SIMPLE (les images vont se suivre verticalement) #}
-        <div>
+        <div class="carousel-gallery">
             
             {% for image in carousel_images %}
                 {# Chaque image est un élément simple #}
-                <div>
+                <div class="carousel-item">
                     
                     <a href="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" target="_blank" 
                        title="{{ image.getCaption()|default('Voir l\'image') }}">

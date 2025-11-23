@@ -27,7 +27,7 @@ class RegistrationFormType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $mentionsLegalesUrl = $this->router->generate('app_legal_page_show', ['slug' => 'mentions-megales']);
+        $mentionsLegalesUrl = $this->router->generate('app_legal_page_show', ['slug' => 'mentions-legales']);
         $politiqueConfidentialiteUrl = $this->router->generate('app_legal_page_show', ['slug' => 'politique-de-confidentialite']);
 
         $labelHtml = sprintf(
