@@ -4,44 +4,61 @@
 {% block title %}Galerie Photos de la Salle{% endblock %}
 
 {% block body %}
-
 <div>
     <h1>Galerie Photos de la Salle</h1>
 
     {% if carousel_images is empty %}
         <p>Aucune photo n'est disponible pour le moment.</p>
     {% else %}
-        
-        {# CONTENEUR SIMPLE (les images vont se suivre verticalement) #}
         <div class="carousel-gallery">
-            
             {% for image in carousel_images %}
-                {# Chaque image est un élément simple #}
                 <div class="carousel-item">
-                    
-                    <a href="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" target="_blank" 
+                    {# On retire le target="_blank" et on ajoute la classe zoom-link #}
+                    <a href="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" 
+                       class="zoom-link"
                        title="{{ image.getCaption()|default('Voir l\'image') }}">
                         
-                        <img 
-                            src="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" 
-                            alt="{{ image.getCaption()|default('Image de la salle') }}"
-                            {# Tous les styles inline ont été retirés #}
-                        >
+                        <img src="{{ asset('uploads/carousel/' ~ image.getFilename()) }}" 
+                             alt="{{ image.getCaption()|default('Image de la salle') }}">
                         
                         {% if image.getCaption() is not empty %}
-                            <div>
-                                {{ image.getCaption() }}
+                            <div class="caption-overlay">
+                                <p>{{ image.getCaption() }}</p>
                             </div>
                         {% endif %}
                     </a>
-                    
-                    {# Ajout d'un saut de ligne simple pour séparer les grandes images #}
-                    <br><br>
                 </div>
             {% endfor %}
-            
         </div>
     {% endif %}
 </div>
 
+{# Structure de la Lightbox (invisible au départ) #}
+<div id="lightbox" class="lightbox">
+    <span class="close-lightbox">&times;</span>
+    <img class="lightbox-img" id="lightbox-img" src="" alt="Agrandissement">
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const closeBtn = document.querySelector('.close-lightbox');
+
+        // Capture le clic sur chaque image de la galerie
+        document.querySelectorAll('.zoom-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Empêche l'ouverture dans un nouvel onglet
+                lightboxImg.src = this.href;
+                lightbox.style.display = 'flex';
+            });
+        });
+
+        // Fermeture au clic sur la croix ou sur le fond sombre
+        closeBtn.addEventListener('click', () => lightbox.style.display = 'none');
+        lightbox.addEventListener('click', (e) => {
+            if (e.target !== lightboxImg) lightbox.style.display = 'none';
+        });
+    });
+</script>
 {% endblock %}

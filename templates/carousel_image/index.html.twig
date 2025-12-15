@@ -3,47 +3,66 @@
 {% block title %}Gestion des Images du Carrousel{% endblock %}
 
 {% block body %}
-    <h1>Liste des Images du Carrousel</h1>
+<div class="admin-dashboard">
+    {# Utilisation d'un titre stylisé #}
+    <h2>Gestion des Images du Carrousel</h2>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Aperçu de l'image</th> {# MODIFIÉ #}
-                <th>Nom du Fichier</th> {# AJOUTÉ pour info #}
-                <th>Ordre</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for carousel_image in carousel_images %}
-            <tr>
-                <td>{{ carousel_image.id }}</td>
-                <td>
-                    {# AFFICHAGE DE L'IMAGE #}
-                    <img src="{{ asset('uploads/carousel/' ~ carousel_image.filename) }}" alt="Image Carrousel {{ carousel_image.ordre }}" style="max-height: 50px; width: auto;">
-                </td>
-                <td>{{ carousel_image.filename }}</td> {# AJOUTÉ #}
-                <td>{{ carousel_image.ordre }}</td>
-                <td>
-                    <a href="{{ path('app_carousel_image_show', {'id': carousel_image.id}) }}">Voir</a>
-                    <a href="{{ path('app_carousel_image_edit', {'id': carousel_image.id}) }}">Modifier</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">Aucune image trouvée.</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="reservation-list-container">
+        <p class="table-navigation">
+            <a href="{{ path('app_carousel_image_new') }}" class="btn-principal">Ajouter une nouvelle image</a>
+            <a href="{{ path('app_panel_admin') }}" class="btn-principal">Retour au tableau admin</a>
+        </p>
+        
+        {# Le conteneur principal qui remplace la balise <table> sur mobile #}
+        <div class="user-table">
+            
+            <ul class="tarifs-list"> {# J'utilise tarifs-list car c'est une liste générale d'items #}
+            {% for carousel_image in carousel_images %}
+                <li class="tarif-item"> {# Chaque <li> représente une ligne/un élément #}
+                    <div class="tarif-info">
+                        {# APERÇU DE L'IMAGE #}
+                        <p>
+                            <strong>Aperçu :</strong> 
+                            <span>
+                                <img src="{{ asset('uploads/carousel/' ~ carousel_image.filename) }}" 
+                                     alt="Image Carrousel {{ carousel_image.ordre }}" 
+                                     style="max-height: 80px; width: auto; border-radius: 4px; border: 1px solid #4C6576;">
+                            </span>
+                        </p>
+                        
+                        {# NOM DU FICHIER #}
+                        <p>
+                            <strong>Nom du Fichier :</strong> 
+                            <span>{{ carousel_image.filename }}</span>
+                        </p>
+                        
+                        {# ORDRE #}
+                        <p>
+                            <strong>Ordre d'affichage :</strong> 
+                            <span>{{ carousel_image.ordre }}</span>
+                        </p>
+                        
+                        {# ID (Peut être masqué ou mis en petit) #}
+                        <p style="font-size: 0.8em; color: #562D59;">
+                            <strong>ID :</strong> 
+                            <span>{{ carousel_image.id }}</span>
+                        </p>
+                    </div>
 
-    <a href="{{ path('app_carousel_image_new') }}">Ajouter une nouvelle image</a>
+                    {# ACTIONS #}
+                    <div class="tarif-actions">
+                        <a href="{{ path('app_carousel_image_show', {'id': carousel_image.id}) }}" class="btn-principal" style="background-color: #562D59; color: #EDE8EA;">Voir</a>
+                        <a href="{{ path('app_carousel_image_edit', {'id': carousel_image.id}) }}" class="btn-principal">Modifier</a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="tarif-item" style="text-align: center;">
+                    <p>Aucune image de carrousel trouvée.</p>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
 
-    <a href="{{ path('app_panel_admin') }}">Retour au tableau admin</a>
-
-
-    
-
-
+    </div>
+</div>
 {% endblock %}

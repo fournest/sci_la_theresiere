@@ -104,16 +104,37 @@
 			<h2>Mes messages</h2>
 			<ul class="messages-list">
 				{% for contact in contacts %}
-					<li class="message-item">
-						<p>
-							<strong>Message :</strong>
-							{{ contact.message }}
-						</p>
-						<form method="post" action="{{ path('app_contact_delete', {'id': contact.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?');">
-							<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
-							<button type="submit" class="btn-principal">Supprimer</button>
-						</form>
-					</li>
+					{% if contact.recipient.id == user.id %}
+						<li class="message-item">
+							<p>
+								<strong>Objet :</strong>
+								{{ contact.objet }}<br>
+								<strong>Message :</strong>
+								{% set mots = contact.message|split(' ') %}
+								{% for mot in mots %}
+									{% if "http" in mot %}
+										{# On affiche le bouton à la place de l'URL moche #}
+										<div style="margin-top: 10px; margin-bottom: 10px;">
+											<a href="{{ mot }}" target="_blank" class="btn-principal" style="background-color: #562D59; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+												📄 Ouvrir mon contrat
+											</a>
+										</div>
+									{% else %}
+										{# On affiche le mot normal avec un petit espace #}
+										{{ mot }}
+									{% endif %}
+								{% endfor %}
+							</p>
+
+							{# On n'affiche le bouton supprimer que si l'utilisateur connecté est l'auteur #}
+							{% if app.user and contact.sender.id == app.user.id %}
+								<form method="post" action="{{ path('app_contact_delete', {'id': contact.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?');">
+									<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+									<button type="submit" class="btn-principal">Supprimer</button>
+								</form>
+							{% endif %}
+						</li>
+					{% endif %}
 				{% endfor %}
 			</ul>
 			{# Pagination #}

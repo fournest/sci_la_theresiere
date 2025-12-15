@@ -54,20 +54,18 @@ p {
 
 /* Cibler tous les liens qui ne sont pas des boutons */
 main a:not([class*="btn"]) {
-    /* Utilisation de la couleur Rose foncé (#A27883) pour la distinction */
-    color: #A27883; 
-    
-    /* 🔑 CORRECTION RGAA 3.3.1 : Ajout du soulignement obligatoire. */
-    text-decoration: underline;
-    
-    transition: color 0.3s ease;
+  /* Utilisation de la couleur Rose foncé (#A27883) pour la distinction */
+  color: #A27883;
+  transition: color 0.3s ease;
 }
 
 main a:not([class*="btn"]):hover {
-    /* Souligner est retiré au survol pour un petit effet visuel */
-    text-decoration: none; 
-    color: #EDE8EA; /* Assombrir légèrement au survol */
+  /* Souligner est retiré au survol pour un petit effet visuel */
+  text-decoration: none;
+  color: #EDE8EA;
+  /* Assombrir légèrement au survol */
 }
+
 
 /* -------------EN-TÊTE--------------- */
 .header-container {
@@ -321,7 +319,7 @@ footer {
 .btn-principal:hover,
 .btn-principal:focus,
 .form-container button[type="submit"]:hover {
-  background-color: #A27883;
+  background-color: #F0EDEE;
   border: 1px solid #562D59;
   color: #4C6576;
   transform: translateY(-2px);
@@ -342,6 +340,33 @@ footer {
   margin: 5px;
 }
 
+/* Centrage du bloc de navigation entière */
+.admin-navbar {
+  width: 100%;
+  max-width: 1200px;
+  /* Limite la largeur maximale de la navigation */
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  /* Pour centrer le contenu comme les ul/li */
+}
+
+.admin-nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0;
+  text-align: center;
+}
+
+/* Style des éléments de liste (li) */
+.admin-nav-list li {
+  margin-bottom: 15px;
+  /* Espacement vertical */
+  display: inline-block;
+  width: 90%;
+  max-width: 300px;
+}
+
 .admin-navbar ul {
   list-style: none;
   display: flex;
@@ -358,6 +383,15 @@ footer {
   border-radius: 5px;
   text-decoration: none;
   display: inline-block;
+}
+
+.admin-navbar ul li a:hover,
+.admin-navbar ul li a:focus {
+  /* Utilisation de votre couleur claire pour le fond au survol */
+  background-color: #EDE8EA;
+  color: #4C6576;
+  border-color: #4C6576;
+  transform: translateY(-2px);
 }
 
 .reservation-list-container,
@@ -1093,31 +1127,206 @@ input:focus {
   margin-top: 40px;
 }
 
+/* Force la visibilité du lien contrat/cgl */
+.text-link {
+    color: #562D59 !important; /* Ton violet sombre */
+    text-decoration: underline !important; /* Toujours souligné */
+    font-weight: bold;
+    display: inline-block;
+    padding: 2px 0;
+}
+
+.text-link:hover {
+    color: #EDE8EA !important; /* Ton rose au survol */
+    text-decoration: none !important;
+}
+
+/* Style pour le badge de statut (optionnel mais recommandé) */
+.badge-status {
+    background-color: #EDE8EA;
+    color: #4C6576;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+    border: 1px solid #A27883;
+}
+
+/* Container principal */
+.reservation-details-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 20px;
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+/* Structure en lignes */
+.detail-group {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-group:last-child {
+    border-bottom: none;
+}
+
+/* Style des libellés (à gauche) */
+.detail-group dt {
+    font-weight: bold;
+    color: #4C6576; /* Ton bleu-gris */
+    flex: 0 0 40%; /* Prend 40% de la largeur */
+}
+
+/* Style des valeurs (à droite) */
+.detail-group dd {
+    margin: 0;
+    flex: 0 0 60%; /* Prend 60% de la largeur */
+    text-align: right;
+    color: #333;
+}
+
+/* Mise en avant du lien contrat */
+.highlight-link {
+    margin: 5px -20px;
+    padding: 12px 20px !important;
+}
+
+/* Accessibilité focus */
+.text-link:focus {
+    outline: 3px solid #A27883;
+    outline-offset: 2px;
+}
+
 /* ======================================== */
-/* STYLES DU CARROUSEL / GALERIE */
+/* STYLES DU CARROUSEL / GALERIE MODERNE    */
 /* ======================================== */
 
 .carousel-gallery {
-  /* Pour un simple empilement vertical ou une grille de galerie */
-  display: flex;
-  flex-wrap: wrap;
-  /* Permet aux images de passer à la ligne */
-  gap: 20px;
-  /* Espace entre les images */
-  justify-content: center;
-  /* Centrer les éléments */
-  padding: 20px;
+  display: grid;
+  /* Utilisation de Grid pour un alignement parfait */
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 30px 10px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* 1. Définir une hauteur et largeur uniformes pour le conteneur de l'image */
 .carousel-item {
-  /* Définir une taille uniforme. Exemple : 300px x 400px sur desktop */
+  position: relative;
   width: 100%;
-  /* Par défaut, prend toute la largeur sur mobile */
-  height: 250px;
-  /* <-- HAUTEUR FIXE pour le mobile, ajustez-la ! */
+  height: 300px; /* Hauteur harmonisée */
   overflow: hidden;
-  /* Cacher la partie de l'image qui sera coupée */
+  border-radius: 20px; /* Coins très arrondis pour le côté moderne */
+  border: 2px solid #A27883; /* Rappel du Rose foncé */
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background-color: #562D59; /* Fond sombre pour éviter les flashs blancs */
+}
+
+/* Effet de survol pro */
+.carousel-item:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(86, 45, 89, 0.4); /* Ombre aux tons Prune */
+  border-color: #EDE8EA; /* Éclaircissement de la bordure */
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* L'image remplit le cadre sans déformation */
+  transition: transform 0.6s ease;
+}
+
+.carousel-item:hover img {
+  transform: scale(1.1); /* Zoom léger de l'image au survol */
+}
+
+/* Optionnel : Overlay élégant au survol */
+.carousel-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(86, 45, 89, 0.7));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.carousel-item:hover::after {
+  opacity: 1;
+}
+/* Style de l'agrandissement (Lightbox) */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 3000; /* Doit être au-dessus de tout */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+}
+
+.lightbox-img {
+    max-width: 90%;
+    max-height: 85%;
+    border-radius: 10px;
+    border: 3px solid #EDE8EA;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    color: #EDE8EA;
+    font-size: 60px;
+    cursor: pointer;
+}
+
+/* Légende sur l'image dans la galerie */
+.caption-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, 
+        rgba(26, 13, 27, 0.95) 0%,   /* Prune très sombre en bas pour le contraste */
+        rgba(86, 45, 89, 0.8) 60%,   /* Transition */
+        transparent 100%);           /* Transparent en haut */
+    
+    padding: 25px 15px 15px 15px;    /* Plus de padding en haut pour éloigner le texte du transparent */
+    text-align: center;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 5;
+}
+
+/* Style du texte à l'intérieur de la légende */
+.caption-overlay p, 
+.caption-overlay {
+    font-family: 'Playball', cursive;
+    font-size: 1.2rem; /* Légèrement plus grand pour compenser la police cursive fine */
+    
+    /* CORRECTION RGAA : On utilise le blanc pur pour un ratio de contraste maximal (> 7:1) */
+    color: #FFFFFF !important; 
+    
+    /* CORRECTION RGAA : Ombre portée plus marquée pour détacher le texte des zones claires de l'image */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9); 
+    margin: 0;
+    font-weight: 500; /* Un peu plus épais pour la lisibilité */
+}
+
+.carousel-item:hover .caption-overlay {
+    transform: translateY(0);
 }
 
 
@@ -1289,6 +1498,20 @@ input:focus {
     grid-column: 1 / -1;
   }
 
+ .admin-navbar ul {
+    width: 100% !important; /* Utilise toute la largeur disponible */
+    max-width: none !important;
+  }
+
+  .admin-navbar ul li {
+    width: auto !important; /* Permet aux boutons de s'adapter à leur texte */
+    max-width: none !important;
+  }
+
+  .admin-nav-list {
+    flex-direction: row !important; /* Force l'alignement horizontal */
+    flex-wrap: nowrap !important;   /* Empêche le retour à la ligne si possible */
+  }
 
   .user-table {
     padding: 1rem;
@@ -1516,24 +1739,27 @@ input:focus {
     font-size: 1.875rem;
   }
 
-  .carousel-item {
-    /* Par exemple, une grille de 3 images par ligne sur les grands écrans */
-    width: calc(33.333% - 14px);
-    /* (100% / 3) - un peu d'espace de gap */
-    height: 350px;
-    /* <-- HAUTEUR FIXE PLUS GRANDE */
-  }
+  .carousel-gallery {
+    /* On passe à 3 colonnes sur desktop pour un rendu plus aéré */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px;
+    padding: 40px 20px;
+}
 
+.carousel-item {
+    /* On annule le width calc car le Grid gère désormais la largeur */
+    width: 100% !important; 
+    height: 400px; /* Hauteur plus généreuse sur grand écran */
+    border-radius: 25px; /* Arrondi légèrement plus prononcé */
+}
 
-  /* 2. Appliquer les styles à l'image elle-même */
-  .carousel-item img {
-    /* L'image doit prendre 100% de l'espace de son parent (.carousel-item) */
+.carousel-item img {
+    /* On conserve ces propriétés essentielles */
     width: 100%;
     height: 100%;
-
-    /* 🔑 PROPRIÉTÉ CLÉ : L'image remplit l'espace sans déformation et coupe le surplus */
     object-fit: cover;
-  }
+    transition: transform 0.6s ease;
+}
 }
 
 

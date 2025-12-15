@@ -1,112 +1,101 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Votre réservation
+{% block title %}Votre réservation #{{ reservation.dossierResa }}
 {% endblock %}
 
 {% block body %}
 	<h1>Votre réservation</h1>
-	<div class="reservation-details-container">
-		<ul class="reservation-details-list">
-			<li class="detail-item">
-				<strong>Pseudo :</strong>
-				<span>{{ reservation.user.pseudo }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Début de réservation :</strong>
-				<span>{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('Y-m-d') : '' }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Fin de réservation :</strong>
-				<span>{{ reservation.dateResaFin ? reservation.dateResaFin|date('Y-m-d') : '' }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Dossier n° :</strong>
-				<span>{{ reservation.dossierResa }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Statut de la réservation :</strong>
-				<span>{{ reservation.statut }}</span>
-			</li>
-			{# LOGIQUE D'AFFICHAGE CONDITIONNELLE DES DOCUMENTS #}
-			{% if reservation.statut == 'en_attente' %}
-				<li class="detail-item link-item status-pending">
-					<strong>Conditions Générales :</strong>
-					<span>
-						<a href="{{ path('app_legal_page_show', {'slug': 'conditions-generales-de-location'}) }}" target="_blank" class="text-link">
-							Consulter les Conditions Générales de Location (CGL)
+
+	<div
+		class="reservation-details-container">
+		{# Utilisation de <dl> pour une meilleure accessibilité RGAA #}
+		<dl class="reservation-details-list">
+
+			<div class="detail-group">
+				<dt>Pseudo :</dt>
+				<dd>{{ reservation.user.pseudo }}</dd>
+			</div>
+
+			<div class="detail-group">
+				<dt>Dossier n° :</dt>
+				<dd>
+					<code>{{ reservation.dossierResa }}</code>
+				</dd>
+			</div>
+
+			<div class="detail-group">
+				<dt>Période :</dt>
+				<dd>Du
+					{{ reservation.dateResaDebut|date('d/m/Y') }}
+					au
+					{{ reservation.dateResaFin|date('d/m/Y') }}</dd>
+			</div>
+
+			<div class="detail-group">
+				<dt>Statut :</dt>
+				<dd>
+					<span class="badge-status" aria-label="Statut actuel : {{ reservation.statut }}">{{ reservation.statut|upper }}</span>
+				</dd>
+			</div>
+
+			{% if reservation.statut in ['contrat_envoyé', 'confirmée', 'modifiée'] %}
+				<div class="detail-group highlight-link">
+					<dt>Document :</dt>
+					<dd>
+						<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link" aria-label="Ouvrir le contrat de location dans un nouvel onglet">
+							📄 Voir le Contrat (PDF)
 						</a>
-					</span>
-				</li>
-			{% elseif reservation.statut == 'contrat_envoyé' or reservation.statut == 'confirmée' or reservation.statut == 'modifiée' %}
-				{# Le contrat reste accessible dans les statuts validés/modifiés aussi #}
-				<li class="detail-item link-item status-sent">
-					<strong>Contrat de Location :</strong>
-					<span>
-						<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link">
-							Contrat finalisé (À imprimer/télécharger)
-						</a>
-					</span>
-				</li>
+					</dd>
+				</div>
 			{% endif %}
 
-			<li class="detail-item link-item">
-				<strong>Politique de Confidentialité :</strong>
-				<span>
-					<a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite'}) }}" target="_blank" class="text-link">
-						Consulter la Politique de Confidentialité
-					</a>
-				</span>
-			</li>
-			<li class="detail-item">
-				<strong>Acompte :</strong>
-				<span>{{ reservation.acompte ? 'Oui' : 'Non' }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Caution :</strong>
-				<span>{{ reservation.caution ? 'Oui' : 'Non' }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Catégorie :</strong>
-				<span>{{ reservation.categorie.nom }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Options :</strong>
-				<span>
+			<div class="detail-group">
+				<dt>Acompte :</dt>
+				<dd>{{ reservation.acompte ? '<span class="icon-ok">✅ Reçu</span>'|raw : '<span class="icon-wait">⏳ En attente</span>'|raw }}</dd>
+			</div>
+
+			<div class="detail-group">
+				<dt>Options :</dt>
+				<dd>
 					{% for option in reservation.options %}
 						{{ option.nom }}
+						{% if not loop.last %},
+						{% endif %}
 					{% else %}
 						Aucune option
 					{% endfor %}
-				</span>
-			</li>
-		</ul>
+				</dd>
+			</div>
+		</dl>
 	</div>
 
-	{% if reservation.statut == 'en_attente' %}
-		<a class="btn-principal" href="{{ path('app_legal_page_show', {'slug': 'conditions-generales-de-location'}) }}" target="_blank">
-			Voir les CGL
-		</a>
-	{% elseif reservation.statut == 'contrat_envoyé' or reservation.statut == 'confirmée' or reservation.statut == 'modifiée' %}
-		<a class="btn-principal" href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank">
-			Imprimer/Télécharger le Contrat
-		</a>
-	{% endif %}
+	{# ZONE D'ACTIONS #}
+	<div
+		class="actions-group" style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
 
-	{% if reservation.statut != 'annulée' and reservation.statut !='validée' and is_granted('ROLE_USER') and app.user == reservation.user %}
-		<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
-			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-			<button class="btn-principal">Annuler ma réservation</button>
-		</form>
-	{% endif %}
-	{% if reservation.statut == 'en_attente' %}
-		<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
-		{% if is_granted('ROLE_ADMIN') %}
+		{# Modifier : Uniquement si en attente #}
+		{% if reservation.statut == 'en_attente' %}
+			<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" style="background-color: #4C6576; border-color: #4C6576;">
+				Modifier ma demande
+			</a>
+		{% endif %}
+
+		{# Annuler : Si pas déjà annulé ou validé définitivement #}
+		{% if reservation.statut not in ['annulée', 'validée'] and app.user == reservation.user %}
+			<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');" style="display: inline;">
+				<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+				<button class="btn-principal" style="background-color: #d9534f; border-color: #d9534f;">Annuler la réservation</button>
+			</form>
+		{% endif %}
+
+		{# Administration #}
+		{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
 			{{ include('reservation/_delete_form.html.twig') }}
 		{% endif %}
-	{% endif %}
-	{% if is_granted('ROLE_ADMIN') %}
-		<a class="btn-principal" href="{{ path('app_panel_admin') }}">Retour au tableau</a>
-	{% else %}
-		<a class="btn-principal" href="{{ path('app_reservation_index') }}">Retour à la liste</a>
-	{% endif %}
+
+		{# Bouton de Retour #}
+		<a class="btn-principal" href="{{ is_granted('ROLE_ADMIN') ? path('app_panel_admin') : path('app_reservation_index') }}">
+			Retour à la liste
+		</a>
+	</div>
 {% endblock %}

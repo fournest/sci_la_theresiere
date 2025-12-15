@@ -130,9 +130,16 @@
 					Imprimer/Télécharger le Contrat
 				{% endif %}
 			</button>
-			<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Retour aux details</a>
+			<a href="{{ path('app_reservation_show', {'id': reservation.id}) }}" class="btn-principal">
+				Retour aux détails
+			</a>
+			<small class="no-print" style="display:block; margin-top:10px; color: #4C6576;">
+				(Vous pouvez aussi simplement fermer cet onglet pour revenir au site)
+			</small>
+
 		</div>
 	</div>
+
 {% endblock %}
 
 {% block footer %}
