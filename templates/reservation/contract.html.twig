@@ -130,6 +130,19 @@
 					Imprimer/Télécharger le Contrat
 				{% endif %}
 			</button>
+			{% if reservation.statut == 'contrat envoyé' or reservation.statut == 'contrat_envoye' %}
+				<div class="signature-consent" style="margin-bottom: 15px; font-size: 0.9em; font-style: italic;">
+					En cliquant sur le bouton ci-dessous, je reconnais avoir pris connaissance des 
+					    Conditions Générales de Location ainsi que du Règlement Intérieur, et je m'engage 
+					    à en respecter toutes les clauses sans réserve.
+				</div>
+				<form method="post" action="{{ path('app_reservation_user_sign', {'id': reservation.id}) }}" style="display: inline-block; margin-left: 10px;">
+					<input type="hidden" name="_token" value="{{ csrf_token('userSign' ~ reservation.id) }}">
+					<button type="submit" class="btn-principal" style="background-color: #28a745; color: white; border: none;">
+						Accepter et Signer le contrat
+					</button>
+				</form>
+			{% endif %}
 			<a href="{{ path('app_reservation_show', {'id': reservation.id}) }}" class="btn-principal">
 				Retour aux détails
 			</a>

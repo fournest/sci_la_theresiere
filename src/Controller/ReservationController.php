@@ -285,6 +285,42 @@ final class ReservationController extends AbstractController
         return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
     }
 
+    #[Route('/{id}/validate-contract', name: 'app_reservation_validate_contract', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function validateContract(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    {
+        if (!$this->isCsrfTokenValid('validateContract' . $reservation->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton invalide.');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+        }
+
+        // On passe au statut 'contrat_valide' (ou une valeur équivalente dans ton Enum)
+        $reservation->setStatut('contrat_valide');
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le contrat a été marqué comme reçu et signé.');
+        return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+    }
+
+    #[Route('/{id}/valider-retour-contrat', name: 'app_reservation_validate_return', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function validateReturn(Request $request, Reservation $reservation, EntityManagerInterface $entityManager): Response
+    {
+        // Vérification de sécurité (Token CSRF)
+        if (!$this->isCsrfTokenValid('validateReturn' . $reservation->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de sécurité invalide.');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+        }
+
+        // On change le statut pour indiquer que le contrat est bien revenu signé
+        $reservation->setStatut(ReservationStatus::SIGNED->value);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Le contrat a été marqué comme reçu et signé. Vous pouvez maintenant confirmer la réservation.');
+
+        return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+    }
+
     // NOUVELLE MÉTHODE : CONFIRMER (étape finale)
     #[Route('/{id}/confirm', name: 'app_reservation_confirm', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -297,8 +333,8 @@ final class ReservationController extends AbstractController
         }
 
         // 2. Vérification du statut
-        if ($reservation->getStatut() !== ReservationStatus::CONTRACT_SENT->value) {
-            $this->addFlash('warning', 'La réservation doit être en statut "contrat_envoye" pour être confirmée.');
+        if ($reservation->getStatut() !== ReservationStatus::SIGNED->value) {
+            $this->addFlash('warning', 'La réservation doit être en statut "contrat_signe" pour être confirmée.');
             return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
         }
 
@@ -370,5 +406,36 @@ final class ReservationController extends AbstractController
             'client' => $reservation->getUser(),
             'tarif' => $tarif,
         ]);
+    }
+
+    #[Route('/{id}/user-sign', name: 'app_reservation_user_sign', methods: ['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function userSign(Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService, UserRepository $userRepository): Response
+    {
+        // 1. Sécurité : Vérifier que c'est bien le propriétaire de la réservation qui signe
+        if ($this->getUser() !== $reservation->getUser()) {
+            throw new AccessDeniedException('Vous ne pouvez pas signer ce contrat.');
+        }
+
+        // 2. Mise à jour du statut vers 'contrat_signe'
+        // On utilise l'Enum pour être propre
+        $reservation->setStatut(ReservationStatus::SIGNED->value);
+        $entityManager->flush();
+
+        // 3. Notification pour l'administrateur
+        $admin = $userRepository->findOneAdmin();
+        $currentUser = $this->getUser();
+
+        // Le check "instanceof User" règle ton erreur "getPseudo"
+        if ($admin && $currentUser instanceof \App\Entity\User) {
+            $subject = "Contrat signé en ligne";
+            $message = "L'utilisateur " . $currentUser->getPseudo() . " a signé son contrat pour le dossier " . $reservation->getDossierResa() . ". Vous pouvez maintenant confirmer la réservation.";
+
+            $notificationService->sendMessage($currentUser, $admin, $subject, $message);
+        }
+
+        $this->addFlash('success', 'Votre contrat a été signé et transmis avec succès.');
+
+        return $this->redirectToRoute('app_reservation_index');
     }
 }

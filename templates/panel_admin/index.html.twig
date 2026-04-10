@@ -179,22 +179,38 @@
 							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
 
 							{% if is_granted('ROLE_ADMIN') %}
+
+								{# ÉTAPE 1 : Le dossier est neuf, on envoie le contrat #}
 								{% if reservation.statut == 'en_attente' %}
 									<form method="post" action="{{ path('app_reservation_send_contract', {'id': reservation.id}) }}">
 										<input type="hidden" name="_token" value="{{ csrf_token('sendContract' ~ reservation.id) }}">
-										<button type="submit" class="btn-principal">Contrat</button>
+										<button type="submit" class="btn-principal">Envoyer le contrat</button>
 									</form>
 								{% endif %}
-								{% if reservation.statut == 'contrat_envoye' %}
+
+								{# ÉTAPE 2 : Le contrat a été envoyé, on attend le retour par courrier/mail #}
+								{% if reservation.statut == 'contrat envoyé' or reservation.statut == 'contrat_envoye' %}
+									<form method="post" action="{{ path('app_reservation_validate_return', {'id': reservation.id}) }}">
+										<input type="hidden" name="_token" value="{{ csrf_token('validateReturn' ~ reservation.id) }}">
+										<button type="submit" class="btn-principal" style="background-color: #28a745; color: white; border: none; padding: 10px; cursor: pointer;">
+											Valider Réception Contrat
+										</button>
+									</form>
+								{% endif %}
+
+								{# ÉTAPE 3 : Une fois que tu as cliqué sur le bouton ci-dessus, le statut devient 'contrat_signe' #}
+								{% if reservation.statut == 'contrat_signe' %}
 									<form method="post" action="{{ path('app_reservation_confirm', {'id': reservation.id}) }}">
 										<input type="hidden" name="_token" value="{{ csrf_token('confirm' ~ reservation.id) }}">
-										<button type="submit" class="btn-principal">Confirmer</button>
+										<button type="submit" class="btn-principal">Confirmer la réservation</button>
 									</form>
 								{% endif %}
-							{% endif %}
 
-							{% if reservation.statut == 'en_attente' %}
-								<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">Modifier</a>
+								{# ÉTAPE 4 : C'est fini, on affiche juste un indicateur #}
+								{% if reservation.statut == 'confirmee' %}
+									<span class="badge-success">✅ Réservation validée</span>
+								{% endif %}
+
 							{% endif %}
 						</div>
 					</li>
