@@ -1,81 +1,77 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{% if is_granted('ROLE_USER') %}
-		Modifier mon profil
-	{% else %}
-		Créer un nouveau profil
-	{% endif %}
+    {% if is_granted('ROLE_USER') %}
+        Modifier mon profil
+    {% else %}
+        Créer un nouveau profil
+    {% endif %}
 {% endblock %}
 
 {% block body %}
-	{{ form_errors(registrationForm) }}
+    {% if is_granted('ROLE_USER') %}
+        <h1>Profil de {{ user.pseudo }}</h1>
+    {% else %}
+        <h1>Créer un nouveau profil</h1>
+    {% endif %}
 
-	{{ form_start(registrationForm, {'attr': {'class': 'form-container'}}) }}
-	{% if is_granted('ROLE_USER') %}
-		<h1>
-			Profil de
-			{{ user.pseudo }}
-		</h1>
-		<h2>Modifier mon profil</h2>
-	{% else %}
-		<h1>Créer un nouveau profil</h1>
-	{% endif %}
-	<div class="form-group">
-		{{ form_label(registrationForm.nom) }}
-		{{ form_widget(registrationForm.nom) }}
-		{{ form_errors(registrationForm.nom) }}
-	</div>
+    <div class="user-table">
+        {{ form_start(registrationForm, {'attr': {'class': 'form-container'}}) }}
+            
+            {{ form_errors(registrationForm) }}
 
-	<div class="form-group">
-		{{ form_label(registrationForm.prenom) }}
-		{{ form_widget(registrationForm.prenom) }}
-		{{ form_errors(registrationForm.prenom) }}
-	</div>
+            <div class="form-group">
+                {{ form_row(registrationForm.nom) }}
+            </div>
 
-	<div class="form-group">
-		{{ form_label(registrationForm.pseudo) }}
-		{{ form_widget(registrationForm.pseudo) }}
-		{{ form_errors(registrationForm.pseudo) }}
-	</div>
+            <div class="form-group">
+                {{ form_row(registrationForm.prenom) }}
+            </div>
 
-	<div class="form-group">
-		{{ form_label(registrationForm.email) }}
-		{{ form_widget(registrationForm.email) }}
-		{{ form_errors(registrationForm.email) }}
-	</div>
+            <div class="form-group">
+                {{ form_row(registrationForm.pseudo) }}
+            </div>
 
-	{# Pour le mot de passe #}
-	<div class="form-group">
-		{{ form_label(registrationForm.plainPassword, 'Mot de passe') }}
-		{{ form_widget(registrationForm.plainPassword) }}
-		{{ form_errors(registrationForm.plainPassword) }}
-	</div>
+            <div class="form-group">
+                {{ form_row(registrationForm.email) }}
+            </div>
 
-	{% if registrationForm.agreeTerms is defined %}
-		<div class="form-group">
-			{{ form_row(registrationForm.agreeTerms) }}
-		</div>
-	{% endif %}
+            <div class="form-group">
+                {{ form_row(registrationForm.plainPassword, {
+                    'label': 'Mot de passe'
+                }) }}
+            </div>
 
-	{% if is_granted('ROLE_USER') %}
-		<div>
-			<a class="btn-principal" href="{{ path('app_user_show') }}">
-				Retour au profil
-			</a>
-			<button class="btn-principal" type="submit">Modifier</button>
+            {% if registrationForm.agreeTerms is defined %}
+                <div class="form-checkbox">
+                    {{ form_row(registrationForm.agreeTerms) }}
+                </div>
+            {% endif %}
 
-		{% else %}
-			<button class="btn-principal" type="submit">Enregistrez vous</button>
-		{% endif %}
-	</div>
-	{{ form_end(registrationForm) }}
+            <div class="form-actions">
+                {% if is_granted('ROLE_USER') %}
+                    <button class="btn-principal" type="submit">Enregistrer les modifications</button>
+                    <a class="btn-principal" href="{{ path('app_user_show') }}">Retour au profil</a>
+                {% else %}
+                    <button class="btn-principal" type="submit">S'enregistrer</button>
+                {% endif %}
+            </div>
+        {{ form_end(registrationForm) }}
 
-	{% if is_granted('ROLE_USER') %}
-		<form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ?');">
-			<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ app.user.id) }}">
-			<button class="btn-principal" data-delete-user-id="{{ app.user.id }}">Supprimer mon compte
-			</button>
-		</form>
-	{% endif %}
+        {% if is_granted('ROLE_USER') %}
+            <div class="danger-zone">
+                <form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre compte ?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ app.user.id) }}">
+                    <button type="submit" class="btn-principal">Supprimer mon compte</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="navigation-links">
+        {% if not is_granted('ROLE_USER') %}
+            <p>Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous</a></p>
+        {% endif %}
+        <a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
+    </div>
 {% endblock %}

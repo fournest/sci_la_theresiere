@@ -1,23 +1,42 @@
-<form class="form-container" method="POST">
-	{{ form_start(form) }}
-	
-    {{ form_row(form.dateResaDebut) }}
-    {{ form_row(form.dateResaFin) }}
-    {{ form_row(form.acompte) }}
-    {{ form_row(form.caution) }}
-    {{ form_row(form.categorie) }}
-    {{ form_row(form.options) }}
+<div class="user-table">
+    {{ form_start(form, {'attr': {'class': 'form-container'}}) }}
+        
+        <div class="form-group">
+            {{ form_row(form.dateResaDebut) }}
+        </div>
 
+        <div class="form-group">
+            {{ form_row(form.dateResaFin) }}
+        </div>
 
+        <div class="form-group">
+            {{ form_row(form.acompte) }}
+        </div>
 
+        <div class="form-group">
+            {{ form_row(form.caution) }}
+        </div>
 
-	{{ form_row(form.accepterConditions, {
-        'label_html': true,
-        'label': 'J\'ai lu et j\'accepte les 
-        <a href=" '~ path('app_legal_page_show',{'slug':'conditions-generales-de-location'}) ~' " target="_blank" class="text-link">Conditions Générales de Location"</a>
-        et la <a href=" '~ path('app_legal_page_show',{'slug':'politique-de-confidentialite'}) ~' " target="_blank" class="text-link">Politique de Confidentialité</a>.'
-    })}}
+        <div class="form-group">
+            {{ form_row(form.categorie) }}
+        </div>
 
-	<button class="btn-principal">{{ button_label|default('Enregistrer') }}</button>
-	{{ form_end(form) }}
-</form>
+        <div class="form-group">
+            {{ form_row(form.options) }}
+        </div>
+
+        <div class="form-checkbox">
+            {{ form_row(form.accepterConditions, {
+                'label_html': true,
+                'label': 'J\'ai lu et j\'accepte les <a href="'~ path('app_legal_page_show',{'slug':'conditions-generales-de-location'}) ~'" target="_blank" class="text-link">Conditions Générales de Location</a> et la <a href="'~ path('app_legal_page_show',{'slug':'politique-de-confidentialite'}) ~'" target="_blank" class="text-link">Politique de Confidentialité</a>.'
+            }) }}
+        </div>
+
+        <div class="form-actions">
+            <button class="btn-principal">
+                {{ button_label|default('Enregistrer') }}
+            </button>
+        </div>
+        
+    {{ form_end(form) }}
+</div>

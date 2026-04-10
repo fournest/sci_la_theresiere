@@ -1,101 +1,88 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Votre réservation #{{ reservation.dossierResa }}
-{% endblock %}
+{% block title %}Détails Réservation #{{ reservation.dossierResa }}{% endblock %}
 
 {% block body %}
-	<h1>Votre réservation</h1>
+    <h1>Récapitulatif de réservation</h1>
 
-	<div
-		class="reservation-details-container">
-		{# Utilisation de <dl> pour une meilleure accessibilité RGAA #}
-		<dl class="reservation-details-list">
+    <div class="user-table">
+        <div class="detail-row">
+            <span class="detail-label">Client :</span>
+            <span class="detail-value">{{ reservation.user.pseudo }}</span>
+        </div>
 
-			<div class="detail-group">
-				<dt>Pseudo :</dt>
-				<dd>{{ reservation.user.pseudo }}</dd>
-			</div>
+        <div class="detail-row">
+            <span class="detail-label">Dossier n° :</span>
+            <span class="detail-value"><code>{{ reservation.dossierResa }}</code></span>
+        </div>
 
-			<div class="detail-group">
-				<dt>Dossier n° :</dt>
-				<dd>
-					<code>{{ reservation.dossierResa }}</code>
-				</dd>
-			</div>
+        <div class="detail-row">
+            <span class="detail-label">Période :</span>
+            <span class="detail-value">Du {{ reservation.dateResaDebut|date('d/m/Y') }} au {{ reservation.dateResaFin|date('d/m/Y') }}</span>
+        </div>
 
-			<div class="detail-group">
-				<dt>Période :</dt>
-				<dd>Du
-					{{ reservation.dateResaDebut|date('d/m/Y') }}
-					au
-					{{ reservation.dateResaFin|date('d/m/Y') }}</dd>
-			</div>
+        <div class="detail-row">
+            <span class="detail-label">Statut :</span>
+            <span class="detail-value">{{ reservation.statut|upper }}</span>
+        </div>
 
-			<div class="detail-group">
-				<dt>Statut :</dt>
-				<dd>
-					<span class="badge-status" aria-label="Statut actuel : {{ reservation.statut }}">{{ reservation.statut|upper }}</span>
-				</dd>
-			</div>
+        {% if reservation.statut in ['contrat_envoyé', 'confirmée', 'modifiée'] %}
+            <div class="detail-row">
+                <span class="detail-label">Document :</span>
+                <span class="detail-value">
+                    <a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link">
+                        📄 Ouvrir mon Contrat (PDF)
+                    </a>
+                </span>
+            </div>
+        {% endif %}
 
-			{% if reservation.statut in ['contrat_envoyé', 'confirmée', 'modifiée'] %}
-				<div class="detail-group highlight-link">
-					<dt>Document :</dt>
-					<dd>
-						<a href="{{ path('app_reservation_contract_show', {'id': reservation.id}) }}" target="_blank" class="text-link" aria-label="Ouvrir le contrat de location dans un nouvel onglet">
-							📄 Voir le Contrat (PDF)
-						</a>
-					</dd>
-				</div>
-			{% endif %}
+        <div class="detail-row">
+            <span class="detail-label">Acompte :</span>
+            <span class="detail-value">
+                {{ reservation.acompte ? '✅ Reçu' : '⏳ En attente' }}
+            </span>
+        </div>
 
-			<div class="detail-group">
-				<dt>Acompte :</dt>
-				<dd>{{ reservation.acompte ? '<span class="icon-ok">✅ Reçu</span>'|raw : '<span class="icon-wait">⏳ En attente</span>'|raw }}</dd>
-			</div>
+        <div class="detail-row">
+            <span class="detail-label">Catégorie :</span>
+            <span class="detail-value">{{ reservation.categorie.nom }}</span>
+        </div>
 
-			<div class="detail-group">
-				<dt>Options :</dt>
-				<dd>
-					{% for option in reservation.options %}
-						{{ option.nom }}
-						{% if not loop.last %},
-						{% endif %}
-					{% else %}
-						Aucune option
-					{% endfor %}
-				</dd>
-			</div>
-		</dl>
-	</div>
+        <div class="detail-row">
+            <span class="detail-label">Options :</span>
+            <span class="detail-value">
+                {% for option in reservation.options %}
+                    {{ option.nom }}{% if not loop.last %}, {% endif %}
+                {% else %}
+                    Aucune option
+                {% endfor %}
+            </span>
+        </div>
+    </div>
 
-	{# ZONE D'ACTIONS #}
-	<div
-		class="actions-group" style="margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    {# ZONE D'ACTIONS #}
+    <div class="actions-container" style="text-align: center; margin-top: 30px; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
 
-		{# Modifier : Uniquement si en attente #}
-		{% if reservation.statut == 'en_attente' %}
-			<a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}" style="background-color: #4C6576; border-color: #4C6576;">
-				Modifier ma demande
-			</a>
-		{% endif %}
+        {% if reservation.statut == 'en_attente' %}
+            <a class="btn-principal" href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">
+                Modifier ma demande
+            </a>
+        {% endif %}
 
-		{# Annuler : Si pas déjà annulé ou validé définitivement #}
-		{% if reservation.statut not in ['annulée', 'validée'] and app.user == reservation.user %}
-			<form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');" style="display: inline;">
-				<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
-				<button class="btn-principal" style="background-color: #d9534f; border-color: #d9534f;">Annuler la réservation</button>
-			</form>
-		{% endif %}
+        {% if reservation.statut not in ['annulée', 'validée'] and app.user == reservation.user %}
+            <form method="post" action="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ reservation.id) }}">
+                <button type="submit" class="btn-principal" style="background-color: #A27883;">Annuler la réservation</button>
+            </form>
+        {% endif %}
 
-		{# Administration #}
-		{% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
-			{{ include('reservation/_delete_form.html.twig') }}
-		{% endif %}
+        {% if is_granted('ROLE_ADMIN') and reservation.statut == 'en_attente' %}
+            {{ include('reservation/_delete_form.html.twig') }}
+        {% endif %}
 
-		{# Bouton de Retour #}
-		<a class="btn-principal" href="{{ is_granted('ROLE_ADMIN') ? path('app_panel_admin') : path('app_reservation_index') }}">
-			Retour à la liste
-		</a>
-	</div>
+        <a class="btn-principal" href="{{ is_granted('ROLE_ADMIN') ? path('app_panel_admin') : path('app_reservation_index') }}">
+            Retour à la liste
+        </a>
+    </div>
 {% endblock %}

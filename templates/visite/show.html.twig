@@ -1,44 +1,48 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Visite
-{% endblock %}
+{% block title %}Détail de la visite{% endblock %}
 
 {% block body %}
-	<h1>Visite</h1>
+    <h1>Détails de la visite</h1>
 
-	<div class="visite-details-container">
-		<ul class="visite-details-list">
-			<li class="detail-item">
-				<strong>Votre pseudo :</strong>
-				<span>{{ visite.user.pseudo }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Statut :</strong>
-				<span>{{ visite.statut }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Date de Visite :</strong>
-				<span>{{ visite.dateVisite ? visite.dateVisite|date('d-m-Y') : '' }}</span>
-			</li>
-			<li class="detail-item">
-				<strong>Date de Réservation Souhaitée :</strong>
-				<span>{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</span>
-			</li>
-		</ul>
-	</div>
+    <div class="user-table"> {# Utilisation de la classe container pour l'encadré blanc #}
+        <div class="detail-row">
+            <span class="detail-label">Votre pseudo :</span>
+            <span class="detail-value">{{ visite.user.pseudo }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Statut :</span>
+            <span class="detail-value">{{ visite.statut|capitalize }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Date de Visite :</span>
+            <span class="detail-value">{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : 'Non définie' }}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Réservation souhaitée :</span>
+            <span class="detail-value">{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : 'N/C' }}</span>
+        </div>
+    </div>
 
-	{% if visite.statut != 'annulée' and visite.statut !='validée' and is_granted('ROLE_USER') and app.user == visite.user %}
-		<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
-			<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
-			<button type="submit" class="btn-principal">Annuler ma visite</button>
-		</form>
-	{% endif %}
+    {# Groupe d'actions centré #}
+    <div class="actions-container" style="text-align: center; margin-top: 30px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px;">
+        
+        <a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
 
-	<a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
-	{% if visite.statut == 'en_attente' %}
-		<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
-		{% if is_granted('ROLE_ADMIN') %}
-			{{ include('visite/_delete_form.html.twig') }}
-		{% endif %}
-	{% endif %}
+        {% if visite.statut == 'en_attente' %}
+            <a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
+        {% endif %}
+
+        {% if visite.statut != 'annulée' and visite.statut != 'validée' and is_granted('ROLE_USER') and app.user == visite.user %}
+            <form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette visite ?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
+                <button type="submit" class="btn-principal">Annuler ma visite</button>
+            </form>
+        {% endif %}
+
+        {% if visite.statut == 'en_attente' and is_granted('ROLE_ADMIN') %}
+            {{ include('visite/_delete_form.html.twig') }}
+        {% endif %}
+    </div>
+
 {% endblock %}

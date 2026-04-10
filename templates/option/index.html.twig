@@ -1,33 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Options
-{% endblock %}
+{% block title %}Options{% endblock %}
 
 {% block body %}
-	<h1>Options</h1>
+    <h1>Options</h1>
 
-	<div class="options-container">
-		<ul class="options-list">
-			{% for option in options %}
-				<li class="option-item">
-					<div class="option-details">
-						<strong>Nom :</strong>
-						<span>{{ option.nom }}</span>
-					</div>
-					<div class="option-actions">
-						<a class="btn-principal" href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a>
-						<a class="btn-principal" href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
-					</div>
-				</li>
-			{% else %}
-				<li class="no-options">Aucune option trouvée</li>
-			{% endfor %}
-		</ul>
-	</div>
-	{# Pagination
-	<div class="navigation">
-		{{ knp_pagination_render(optionsPagination) }}
-	</div> #}
-	<a class="btn-principal" href="{{ path('app_option_new') }}">Créez une option ici</a>
+    <div class="user-table">
+        {% if options is not empty %}
+            <ul class="visit-list">
+                {% for option in options %}
+                    <li class="visit-item">
+                        <div class="visit-item-content">
+                            <div class="detail-row">
+                                <span class="detail-label">Nom :</span>
+                                <span class="detail-value">{{ option.nom }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="visit-item-actions">
+                            <a class="btn-principal" href="{{ path('app_option_show', {'id': option.id}) }}">Voir</a>
+                            <a class="btn-principal" href="{{ path('app_option_edit', {'id': option.id}) }}">Modifier</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucune option trouvée</p>
+        {% endif %}
 
+        {# Pagination (décommentée si nécessaire plus tard) #}
+        {# 
+        <div class="navigation">
+            {{ knp_pagination_render(optionsPagination) }}
+        </div> 
+        #}
+    </div>
+
+    <div class="actions-container">
+        <a class="btn-principal" href="{{ path('app_option_new') }}">Créer une nouvelle option</a>
+    </div>
 {% endblock %}

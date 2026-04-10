@@ -1,35 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier votre profil
-{% endblock %}
-
+{% block title %}Modifier votre profil{% endblock %}
 
 {% block body %}
-	<div class="form-container">
-		<h1>
-			Profil de
-			{{ user.pseudo }}
-		</h1>
-		<h2>Modifier mon profil</h2>
+    <h1>Modifier mon profil</h1>
 
-		{{ form_start(form, {'attr': {'class': 'form-container'}}) }}
+    <div class="user-table"> {# Harmonisation du cadre blanc #}
+        <h2 style="color: #562D59; text-align: center; margin-bottom: 20px;">
+            Profil de {{ user.pseudo }}
+        </h2>
 
-		{{ form_row(form.nom) }}
-		{{ form_row(form.prenom) }}
-		{{ form_row(form.pseudo) }}
-		{{ form_row(form.email) }}
-		{{ form_row(form.plainPassword, {
-        label: 'Nouveau mot de passe'    }) }}
-		{{ form_row(form.confirmPassword) }}
-		<button type="submit" class="btn-principal">Modifier</button>
-		{{ form_end(form) }}
-		<div class="account-actions">
-			<form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre compte ? Cette action est irréversible.');">
-				<input type="hidden" name="_token" value="{{ csrf_token('desactive' ~ app.user.id) }}">
-				<button type="submit" class="btn-principal">Supprimer mon compte</button>
-			</form>
-			<a class="btn-principal" href="{{ path('app_user_show') }}" class="btn">Retour au profil</a>
-		</div>
-	</div>
-	<a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
+        {{ form_start(form, {'attr': {'class': 'form-container'}}) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.prenom) }}
+            {{ form_row(form.pseudo) }}
+            {{ form_row(form.email) }}
+            
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            <p style="text-align: left; font-size: 0.9rem; color: #4C6576; padding: 0 0 10px 0;">
+                Laissez vide pour conserver le mot de passe actuel.
+            </p>
+
+            {{ form_row(form.plainPassword, { label: 'Nouveau mot de passe' }) }}
+            {{ form_row(form.confirmPassword) }}
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button type="submit" class="btn-principal">Enregistrer les modifications</button>
+            </div>
+        {{ form_end(form) }}
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
+
+        <div class="account-actions" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+            <a class="btn-principal" href="{{ path('app_user_show') }}">Retour au profil</a>
+            
+            <form method="post" action="{{ path('app_user_desactive', {'id': app.user.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir désactiver votre compte ? Cette action est irréversible.');">
+                <input type="hidden" name="_token" value="{{ csrf_token('desactive' ~ app.user.id) }}">
+                <button type="submit" class="btn-principal" style="background-color: #A27883;">Désactiver mon compte</button>
+            </form>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
+    </div>
 {% endblock %}

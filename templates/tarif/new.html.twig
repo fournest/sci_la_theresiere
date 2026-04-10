@@ -7,5 +7,7 @@
 
     {{ include('tarif/_form.html.twig') }}
 
-    <a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
+    <div class="form-actions">
+        <a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
+    </div>
 {% endblock %}

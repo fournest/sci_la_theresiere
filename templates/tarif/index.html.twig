@@ -1,42 +1,46 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tarifs
-{% endblock %}
+{% block title %}Tarifs{% endblock %}
 
 {% block body %}
-	<h1>Tarifs</h1>
-	<div class="tarifs-list-container">
-		<div class="user-table">
-			<ul class="tarifs-list">
-				{% for tarif in tarifs %}
-					<li class="tarif-item">
-						<div class="tarif-info">
-							<p>
-								<strong>Prix de la réservation :</strong>
-								{{ tarif.prixReservation }}
-								€
-							</p>
-							<p>
-								<strong>Prix des options :</strong>
-								{{ tarif.prixOption }}
-								€
-							</p>
-						</div>
-						{% if is_granted('ROLE_ADMIN') %}
-							<div class="tarif-actions">
-								<a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
-								<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
-							</div>
-						{% endif %}
-					</li>
-				{% else %}
-					<p>Aucun tarif trouvé</p>
-				{% endfor %}
-			</ul>
-		</div>
-	</div>
-	{% if is_granted('ROLE_ADMIN') %}
-		<a class="btn-principal" href="{{ path('app_tarif_new') }}">Créez un tarif</a>
-	{% endif %}
-	<a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
+    <h1>Nos Tarifs</h1>
+
+    <div class="tarifs-list-container">
+        <div class="user-table">
+            {% if tarifs is not empty %}
+                <ul class="visit-list" style="padding: 0;"> {# On réutilise visit-list pour le style des lignes #}
+                    {% for tarif in tarifs %}
+                        <li class="visit-item">
+                            <div class="visit-item-content">
+                                <div class="detail-row">
+                                    <span class="detail-label">Prix de la réservation :</span>
+                                    <span class="detail-value">{{ tarif.prixReservation }} €</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Prix des options :</span>
+                                    <span class="detail-value">{{ tarif.prixOption }} €</span>
+                                </div>
+                            </div>
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div class="visit-item-actions">
+                                    <a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
+                                    <a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="text-align: center; padding: 20px;">Aucun tarif n'est configuré pour le moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="actions-container" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        {% if is_granted('ROLE_ADMIN') %}
+            <a class="btn-principal" href="{{ path('app_tarif_new') }}">Créer un tarif</a>
+        {% endif %}
+        <a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
+    </div>
 {% endblock %}

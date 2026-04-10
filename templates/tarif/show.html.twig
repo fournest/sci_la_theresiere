@@ -1,29 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tarif
-{% endblock %}
+{% block title %}Détails du Tarif{% endblock %}
 
 {% block body %}
-	<h1>Tarif</h1>
+    <h1>Détails du Tarif</h1>
 
-	<div class="tarif-details-container">
-		<ul class="tarif-details-list">
-			<li class="detail-item">
-				<strong>Prix de la réservation :</strong>
-				<span>{{ tarif.prixReservation }}
-					€</span>
-			</li>
-			<li class="detail-item">
-				<strong>Prix de l'option :</strong>
-				<span>{{ tarif.prixOption }}
-					€</span>
-			</li>
-		</ul>
-	</div>
+    <div class="user-table">
+        <div class="detail-row">
+            <span class="detail-label">Prix de la réservation :</span>
+            <span class="detail-value">{{ tarif.prixReservation }} €</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Prix de l'option :</span>
+            <span class="detail-value">{{ tarif.prixOption }} €</span>
+        </div>
+    </div>
 
-	<a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
-
-	<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
-
-	{{ include('tarif/_delete_form.html.twig') }}
+    <div class="actions-container" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <a class="btn-principal" href="{{ path('app_tarif_index') }}">Retour à la liste</a>
+        
+        {% if is_granted('ROLE_ADMIN') %}
+            <a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
+            {{ include('tarif/_delete_form.html.twig') }}
+        {% endif %}
+    </div>
 {% endblock %}

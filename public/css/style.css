@@ -66,6 +66,69 @@ main a:not([class*="btn"]):hover {
   /* Assombrir légèrement au survol */
 }
 
+/* Liens dans les formulaires sombres (.form-container) :
+   garantir visibilité pour :link, :visited, :hover, :focus, :active */
+.form-container a,
+.form-container a:link,
+.form-container a:visited {
+  color: #F0EDEE; /* clair sur fond sombre */
+  text-decoration: underline;
+}
+
+.form-container a:hover,
+.form-container a:focus,
+.form-container a:active {
+  color: #4C6576; /* contraste lors de l'interaction */
+  text-decoration: underline;
+}
+
+.form-container a:focus {
+  outline: 3px solid #A27883;
+  outline-offset: 2px;
+}
+
+/* Spécifique : .text-link (définie globalement avec !important) doit rester visible dans les formulaires sombres */
+.form-container a.text-link,
+.form-container a.text-link:link,
+.form-container a.text-link:visited {
+  color: #F0EDEE !important;
+  text-decoration: underline !important;
+}
+
+.form-container a.text-link:hover,
+.form-container a.text-link:focus,
+.form-container a.text-link:active {
+  color: #4C6576 !important;
+  text-decoration: underline !important;
+}
+
+/* Liens dans sections à fond clair (contrat, reservation, page-content) */
+.contract-container a,
+.legal-content-area.content-scroll a,
+.reservation-details-container a,
+.page-content a {
+  color: #562D59; /* sombre sur fond clair */
+}
+
+.contract-container a:visited,
+.legal-content-area.content-scroll a:visited,
+.reservation-details-container a:visited,
+.page-content a:visited {
+  color: #562D59; /* garder la même couleur après visite */
+}
+
+.contract-container a:hover,
+.legal-content-area.content-scroll a:hover,
+.reservation-details-container a:hover,
+.page-content a:hover,
+.contract-container a:focus,
+.legal-content-area.content-scroll a:focus,
+.reservation-details-container a:focus,
+.page-content a:focus {
+  color: #A27883;
+  text-decoration: underline;
+}
+
 
 /* -------------EN-TÊTE--------------- */
 .header-container {
@@ -118,24 +181,65 @@ main a:not([class*="btn"]):hover {
 }
 
 .navbar ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px;
-  width: 50%;
-  margin-top: 15px;
-  justify-content: center;
-  align-items: flex-start;
-  align-content: flex-start;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column; /* mobile-first : affichage vertical */
+    flex-wrap: nowrap;
+    gap: 10px;
+    width: 100%;
+    margin-top: 15px;
+    justify-content: center;
+    align-items: stretch;
+    align-content: flex-start;
 }
 
 .navbar li {
   text-align: center;
-  width: calc(50% - 5px);
+    width: 100%; /* mobile-first : chaque item prend toute la largeur */
 }
+
+  /* Tablet: try compact 2-row layout but allow vertical fallback if not enough space */
+  @media (min-width: 600px) and (max-width: 1099px) {
+    .navbar ul {
+      display: grid;
+      grid-auto-flow: column; /* fill columns top->bottom */
+      grid-template-rows: repeat(2, auto); /* two visual rows */
+      grid-auto-columns: minmax(110px, 1fr);
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      width: auto;
+      margin-top: 0;
+    }
+
+    .navbar li {
+      width: auto !important;
+    }
+  }
+
+  /* Desktop: two neat rows, aligned to the right of header (space for logo/title)
+     columns expand evenly but kept within reasonable min/max widths */
+  @media (min-width: 1100px) {
+    .navbar {
+      justify-content: flex-end;
+    }
+
+    .navbar ul {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(2, auto);
+      grid-auto-columns: minmax(140px, 1fr);
+      gap: 12px;
+      width: auto;
+      margin-top: 0;
+    }
+
+    .navbar li {
+      width: auto !important;
+    }
+  }
 
 .navbar a,
 .footer-nav-buttons a,
@@ -409,11 +513,13 @@ footer {
 
 .user-table,
 .legal-table {
-  border: #562d59 solid 2px;
-  background-color: #A27883;
+  background-color: #fdfbfc; /* mobile-first : fond clair pour lisibilité */
   border-radius: 8px;
   padding: 1rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin: 20px auto;
+  max-width: 900px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #EDE8EA;
 }
 
 .user-table h2,
@@ -629,7 +735,7 @@ footer {
 .contract-content .contract-parties .signature-role {
   width: 45%;
   text-align: center;
-  border-top: 1 px solid #4C6576;
+  border-top: 1px solid #4C6576;
   padding-top: 5px;
 }
 
@@ -802,6 +908,43 @@ footer {
   color: #A27883;
   text-align: right;
   flex: 1;
+}
+
+/* RGAA: faire ressortir le prénom et les valeurs dans les messages */
+.profile-details .detail-value {
+  color: #562D59; /* couleur sombre et contrastée */
+  font-weight: 700; /* mise en avant */
+}
+
+.message-list .detail-label {
+  color: #562D59;
+  font-weight: 700;
+}
+
+.message-list .detail-value,
+.visit-item .detail-value {
+  color: #4C6576; /* lisible sur fond clair */
+  font-weight: 600;
+}
+
+/* RGAA: accentuer les valeurs (prénom, email, etc.) dans les listes admin */
+.user-list .detail-value,
+.user-item .detail-value,
+.visit-list .detail-value,
+.reservation-list .detail-value,
+.reservation-item .detail-value {
+  color: #562D59; /* sombre et contrasté */
+  font-weight: 700;
+}
+
+/* Si la zone des messages a un fond sombre, inverser les couleurs pour garder le contraste */
+.message-list .visit-item,
+.message-list li {
+  background-color: transparent; /* ne pas forcer ici */
+}
+
+.card-user .detail-value {
+  color: #F0EDEE; /* s'il est affiché sur fond sombre (carte), utiliser clair */
 }
 
 .visits-list h2,
@@ -1329,6 +1472,78 @@ input:focus {
     transform: translateY(0);
 }
 
+/* ======================================================== */
+/* AJOUTS POUR LES NOUVELLES PAGES (PROFIL, MESSAGES, ETC.)  */
+/* ======================================================== */
+
+.user-table {
+  background-color: #fdfbfc; 
+  border-radius: 8px;
+  padding: 30px;
+  margin: 20px auto;
+  max-width: 900px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border: 1px solid #EDE8EA;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #F5F1F3;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-weight: bold;
+  color: #562D59;
+  text-align: left;
+}
+
+.detail-value {
+  color: #4C6576;
+  text-align: right;
+}
+
+.visit-list {
+  list-style: none;
+  padding: 0;
+}
+
+.visit-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #FFFFFF;
+  border-radius: 6px;
+  border-left: 5px solid #A27883;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  text-align: left;
+  font-weight: bold;
+  color: #562D59;
+}
+
+.navigation-links, .form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 25px;
+}
+
 
 @media print {
 
@@ -1428,6 +1643,8 @@ input:focus {
   }
 
   .navbar ul {
+    display: flex;
+    flex-direction: row; /* bureau : menu horizontal */
     width: 100%;
     max-width: 100%;
     margin-top: 0;
@@ -1437,6 +1654,28 @@ input:focus {
 
   .navbar li {
     width: calc(50% - 10px) !important;
+  }
+
+  /* Force two visual lines for nav on tablet/desktop using CSS Grid
+     This layout distributes items across columns so there are exactly
+     two rows (lines) regardless of number of items. */
+  @media (min-width: 768px) {
+    .navbar ul {
+      display: grid;
+      grid-auto-flow: column; /* fill columns top->bottom */
+      grid-template-rows: repeat(2, auto); /* exactly 2 rows */
+      grid-auto-columns: minmax(120px, 1fr); /* columns expand evenly */
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      width: auto;
+    }
+
+    .navbar li {
+      width: auto !important;
+      text-align: center;
+      display: block;
+    }
   }
 
   /* Footer */
@@ -1518,9 +1757,9 @@ input:focus {
     gap: 20px;
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column; /* garder la disposition en colonne pour la vue show */
+    justify-content: flex-start;
+    align-items: stretch;
   }
 
   .user-table h3 {
@@ -1594,7 +1833,8 @@ input:focus {
   .user-item-actions,
   .visit-item-actions,
   .reservation-item-actions,
-  .legal-item-actions .tarif-actions,
+  .legal-item-actions,
+  .tarif-actions,
   .option-actions,
   .categorie-actions {
     display: flex;
@@ -1632,12 +1872,16 @@ input:focus {
     padding: 30px;
   }
 
-  label {
+  /* Labels : conserver contraste pour formulaires sombres (.form-container) */
+  .form-group label,
+  .detail-label {
     color: #4C6576;
   }
 
-  .form-check label {
-    color: #333;
+  /* Labels à l'intérieur des .form-container (fond sombre) doivent rester clairs */
+  .form-container label,
+  .form-container .form-check label {
+    color: #F0EDEE;
   }
 
   /* Sections */
@@ -1662,25 +1906,6 @@ input:focus {
   .messages-list h2 {
     font-size: 1.5em;
     padding-left: 10px;
-  }
-
-  .conteneur-flex {
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .main-image-container {
-    flex: 1;
-    height: auto;
-  }
-
-  .small-images-container {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
   }
 
   #bloc1 {
@@ -1739,18 +1964,108 @@ input:focus {
     font-size: 1.875rem;
   }
 
+  /* Mobile-first layout: stacked */
+  .conteneur-flex {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .main-image-container,
+  .small-images-container {
+    width: 100%;
+  }
+
+  .main-image-container {
+    order: 1;
+  }
+
+  .small-images-container {
+    order: 2;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  /* Desktop: two-column layout with larger main image */
+  @media (min-width: 992px) {
+    .conteneur-flex {
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .main-image-container {
+      flex: 2;
+      min-width: 0;
+    }
+
+    .small-images-container {
+        flex: 1;
+        display: grid;
+        /* Right column: present the 4 small blocks as a 2x2 grid */
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 1fr;
+        gap: 18px;
+        max-width: 360px;
+    }
+
+      /* Force social icons / avis à apparaître sous la galerie complète
+         (occupent toute la largeur) afin qu'ils ne se positionnent pas
+         à côté des blocs sur grand écran. */
+      .social-reviews-container {
+        order: 99; /* placer après le conteneur principal */
+        width: 100%;
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        align-items: center;
+      }
+  }
+
+  /* Carousel gallery defaults */
   .carousel-gallery {
-    /* On passe à 3 colonnes sur desktop pour un rendu plus aéré */
-    grid-template-columns: repeat(3, 1fr); 
+    grid-template-columns: repeat(3, 1fr);
     gap: 30px;
     padding: 40px 20px;
-}
+  }
 
 .carousel-item {
     /* On annule le width calc car le Grid gère désormais la largeur */
     width: 100% !important; 
     height: 400px; /* Hauteur plus généreuse sur grand écran */
     border-radius: 25px; /* Arrondi légèrement plus prononcé */
+}
+
+/* Réglages responsives supplémentaires */
+@media (max-width: 1100px) {
+  .conteneur-flex { max-width: 980px; padding: 8px; }
+  #bloc1 { height: 480px; }
+  #bloc2, #bloc3, #bloc4, #bloc5 { height: 240px; }
+  .carousel-gallery { grid-template-columns: repeat(2, 1fr); padding: 30px 12px; }
+}
+
+@media (max-width: 768px) {
+  .conteneur-flex { flex-direction: column; gap: 12px; padding: 10px; }
+  .main-image-container { order: 1; }
+  .small-images-container { order: 2; grid-template-columns: repeat(2, 1fr); }
+  #bloc1 { height: 320px; }
+  #bloc2, #bloc3, #bloc4, #bloc5 { height: 180px; }
+  .carousel-gallery { grid-template-columns: repeat(2, 1fr); padding: 20px 8px; }
+}
+
+@media (max-width: 420px) {
+  .small-images-container { grid-template-columns: 1fr; }
+  #bloc1 { height: 260px; }
+  #bloc2, #bloc3, #bloc4, #bloc5 { height: 160px; }
+  .carousel-gallery { grid-template-columns: 1fr; padding: 12px 6px; }
 }
 
 .carousel-item img {

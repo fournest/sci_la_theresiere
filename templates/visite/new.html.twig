@@ -1,61 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Venez visiter la salle.
-{% endblock %}
+{% block title %}Venez visiter la salle{% endblock %}
 
 {% block body %}
-	<h1>Réservez votre visite.</h1>
+    <h1>Réservez votre visite</h1>
 
-	{{ include('visite/_form.html.twig') }}
+    <div class="user-table"> {# On utilise la même classe pour avoir le cadre blanc et l'ombre #}
+        <div style="padding: 10px;">
+            {{ include('visite/_form.html.twig') }}
+        </div>
+    </div>
 
-	<a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
+    <div class="actions-container" style="text-align: center; margin-top: 20px;">
+        <a class="btn-principal" href="{{ path('app_visite_index') }}">Retour à la liste</a>
+    </div>
 
-	{# Calendrier interactif : section de script JavaScript #}
+    {# Calendrier interactif : section de script JavaScript (Inchangé) #}
+    <script>
+        const datesVisitesPrises = {{ datesVisitesPrises|json_encode|raw }};
+        const reservationRanges = {{ reservationRanges|json_encode|raw }};
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            const disableReservationRanges = function (date) {
+                date.setHours(0, 0, 0, 0);
+                return reservationRanges.some(range => {
+                    const start = new Date(range[0]);
+                    const end = new Date(range[1]);
+                    start.setHours(0, 0, 0, 0);
+                    end.setHours(0, 0, 0, 0);
+                    return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
+                })
+            }
 
-	<script>
-		// Affichage des dates indisponibles dans la console pour le déboguage.
-const datesVisitesPrises = {{ datesVisitesPrises|json_encode|raw }};
-const reservationRanges = {{ reservationRanges|json_encode|raw }};
-console.log("Dates de visite ponctuelle déjà prises:", datesVisitesPrises);
-console.log("Plages de réservation (salle):", reservationRanges);
-// Ecouteur d'événement ( attendre le chargement complet du DOM )
-document.addEventListener("DOMContentLoaded", function () {
+            flatpickr("#visite_dateVisite", {
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                locale: "fr",
+                disable: [...datesVisitesPrises]
+            });
 
-const disableReservationRanges = function (date) {
-date.setHours(0, 0, 0, 0);
-
-return reservationRanges.some(range => {
-const start = new Date(range[0]);
-const end = new Date(range[1]);
-
-start.setHours(0, 0, 0, 0);
-end.setHours(0, 0, 0, 0);
-
-return date.getTime() >= start.getTime() && date.getTime() <= end.getTime();
-})
-}
-// Initialisatioin du plugin de calendrier sur les éléments avec la classe ".js-datepicker".
-flatpickr("#visite_dateVisite", {
-dateFormat: "Y-m-d",
-// Désactivation des dates antérieures à aujourd'hui.
-minDate: "today",
-locale: "fr",
-// Désactivation des dates spécifiques passées depuis le controleur.
-disable: [
-... datesVisitesPrises
-]
-});
-flatpickr("#visite_dateResaSouhaite", {
-dateFormat: "Y-m-d",
-// Désactivation des dates antérieures à aujourd'hui.
-minDate: "today",
-locale: "fr",
-// Désactivation des dates spécifiques passées depuis le controleur.
-disable: [
-disableReservationRanges
-]
-});
-
-});
-	</script>
+            flatpickr("#visite_dateResaSouhaite", {
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                locale: "fr",
+                disable: [disableReservationRanges]
+            });
+        });
+    </script>
 {% endblock %}
