@@ -85,7 +85,7 @@ final class VisiteController extends AbstractController
                 return $this->redirectToRoute('app_login');
             }
             // Définition du statut, préparation et execution de l'enregistrement en base de données.
-            $visite->setStatut('en_attente');
+            $visite->setStatut(ReservationStatus::PENDING->value);
             $entityManager->persist($visite);
             $entityManager->flush();
 
@@ -132,6 +132,8 @@ final class VisiteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function show(Visite $visite): Response
     {
+        $this->denyVisiteAccess($visite);
+
         return $this->render('visite/show.html.twig', [
             'visite' => $visite,
         ]);
@@ -141,6 +143,8 @@ final class VisiteController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Visite $visite, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService): Response
     {
+        $this->denyVisiteAccess($visite);
+
         // Création et soumission du formulaire.
         $form = $this->createForm(VisiteType::class, $visite);
         $form->handleRequest($request);
@@ -266,5 +270,12 @@ final class VisiteController extends AbstractController
         }
 
         return $this->redirectToRoute('app_visite_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function denyVisiteAccess(Visite $visite): void
+    {
+        if ($this->getUser() !== $visite->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('Vous n\'êtes pas autorisé à accéder à cette visite.');
+        }
     }
 }

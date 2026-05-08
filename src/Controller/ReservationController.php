@@ -66,7 +66,11 @@ final class ReservationController extends AbstractController
         }
         // Création du formulaire.
         $reservation = new Reservation();
-        $form = $this->createForm(ReservationType::class, $reservation);
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+        $form = $this->createForm(ReservationType::class, $reservation, [
+            'include_financial_fields' => $isAdmin,
+            'require_accept_conditions' => true,
+        ]);
         $form->handleRequest($request);
 
         // Vérification de la soumission et de la validation du formulaire.
@@ -83,6 +87,11 @@ final class ReservationController extends AbstractController
             if (!$reservationRepository->isRoomAvailable($categorie, $dateDebut, $dateFin)) {
                 $this->addFlash('error', 'Désolé, la salle n\'est pas disponible pour cette période. Veuillez ajuster les dates');
             } else {
+                if (!$isAdmin) {
+                    // Verrouille les flags financiers côté serveur pour les utilisateurs standards.
+                    $reservation->setAcompte(false);
+                    $reservation->setCaution(false);
+                }
                 // Définition du statut, préparation et execution de l'enregistrement en base de données.
                 // Création du numéro de dossier.
                 $reservation->setStatut(ReservationStatus::PENDING->value);
@@ -131,6 +140,8 @@ final class ReservationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function show(Reservation $reservation): Response
     {
+        $this->denyReservationAccess($reservation);
+
         return $this->render('reservation/show.html.twig', [
             'reservation' => $reservation,
         ]);
@@ -140,8 +151,17 @@ final class ReservationController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function edit(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, UserRepository $userRepository, NotificationService $notificationService, ReservationRepository $reservationRepository): Response
     {
+        $this->denyReservationAccess($reservation);
+
+        $isAdmin = $this->isGranted('ROLE_ADMIN');
+        $initialAcompte = $reservation->isAcompte();
+        $initialCaution = $reservation->isCaution();
+
         // Création et soumission du formulaire.
-        $form = $this->createForm(ReservationType::class, $reservation);
+        $form = $this->createForm(ReservationType::class, $reservation, [
+            'include_financial_fields' => $isAdmin,
+            'require_accept_conditions' => false,
+        ]);
         $form->handleRequest($request);
 
         //  Vérification de la soumission et de la validation du formulaire.
@@ -160,7 +180,13 @@ final class ReservationController extends AbstractController
                     'datesIndisponibles' => $reservationRepository->getUnavailableDates($categorie, $currentId), // Récupérer à nouveau les dates
                 ]);
             }
-            $reservation->setStatut('modifiée');
+            if (!$isAdmin) {
+                // Protège les champs financiers même en cas de payload forgé.
+                $reservation->setAcompte((bool) $initialAcompte);
+                $reservation->setCaution((bool) $initialCaution);
+            }
+
+            $reservation->setStatut(ReservationStatus::MODIFIED->value);
             $entityManager->flush();
 
             // Nouvelle récupération de l'utilisateur, association à la réservation créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
@@ -218,7 +244,7 @@ final class ReservationController extends AbstractController
 
         // Sécurisation de l'action d'annulation.
         if ($this->isCsrfTokenValid('cancel' . $reservation->getId(), $request->getPayload()->getString('_token'))) {
-            $reservation->setStatut('annulée');
+            $reservation->setStatut(ReservationStatus::CANCELLED->value);
             $entityManager->flush();
             // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
             $sender = $this->getUser();
@@ -294,8 +320,12 @@ final class ReservationController extends AbstractController
             return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
         }
 
-        // On passe au statut 'contrat_valide' (ou une valeur équivalente dans ton Enum)
-        $reservation->setStatut('contrat_valide');
+        if ($reservation->getStatut() !== ReservationStatus::CONTRACT_SENT->value) {
+            $this->addFlash('warning', 'La réservation doit être en statut "contrat envoyé".');
+            return $this->redirectToRoute('app_panel_admin', ['section' => 'reservations']);
+        }
+
+        $reservation->setStatut(ReservationStatus::SIGNED->value);
         $entityManager->flush();
 
         $this->addFlash('success', 'Le contrat a été marqué comme reçu et signé.');
@@ -391,7 +421,7 @@ final class ReservationController extends AbstractController
         $cglPage = $legalPageRepository->findOneBy(['slug' => 'conditions-generales-de-location']);
         // 2. Récupération du Règlement Intérieur (RI)
         $riPage = $legalPageRepository->findOneBy(['slug' => 'reglement-interieur']);
-        $tarif = $entityManager->getRepository(Tarif::class)->find(...);
+        $tarif = $entityManager->getRepository(Tarif::class)->findOneBy([], ['id' => 'DESC']);
 
         if (!$cglPage) {
             $this->addFlash('error', 'Le modèle de Conditions Générales de Location est manquant. Veuillez contacter l\'administrateur.');
@@ -410,11 +440,16 @@ final class ReservationController extends AbstractController
 
     #[Route('/{id}/user-sign', name: 'app_reservation_user_sign', methods: ['POST'])]
     #[IsGranted('ROLE_USER')]
-    public function userSign(Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService, UserRepository $userRepository): Response
+    public function userSign(Request $request, Reservation $reservation, EntityManagerInterface $entityManager, NotificationService $notificationService, UserRepository $userRepository): Response
     {
         // 1. Sécurité : Vérifier que c'est bien le propriétaire de la réservation qui signe
         if ($this->getUser() !== $reservation->getUser()) {
             throw new AccessDeniedException('Vous ne pouvez pas signer ce contrat.');
+        }
+
+        if (!$this->isCsrfTokenValid('userSign' . $reservation->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton de sécurité invalide.');
+            return $this->redirectToRoute('app_reservation_contract_show', ['id' => $reservation->getId()]);
         }
 
         // 2. Mise à jour du statut vers 'contrat_signe'
@@ -437,5 +472,12 @@ final class ReservationController extends AbstractController
         $this->addFlash('success', 'Votre contrat a été signé et transmis avec succès.');
 
         return $this->redirectToRoute('app_reservation_index');
+    }
+
+    private function denyReservationAccess(Reservation $reservation): void
+    {
+        if ($this->getUser() !== $reservation->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('Vous n\'êtes pas autorisé à accéder à cette réservation.');
+        }
     }
 }

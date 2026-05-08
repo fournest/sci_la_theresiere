@@ -1,72 +1,90 @@
 <footer>
-	<div class="footer-content">
-		<div class="map-container">
-			<a href="https://www.google.com/maps/place/SCI+La+Th%C3%A9r%C3%A9si%C3%A8re/@46.5139581,-1.6269756,17z/data=!4m6!3m5!1s0x48044174a8ca067f:0xd1f4614a21b87145!8m2!3d46.5139581!4d-1.6269756!16s%2Fg%2F11c6k7x35q?entry=ttu" target="_blank" rel="noopener noreferrer" title="Ouvrir la carte Google Maps dans un nouvel onglet" class="map-link-container">
-				<div
-					class="map-placeholder">
-					<p>Cliquez ici pour voir la carte de localisation</p>
-					<p class="small">(Ouvrir Google Maps)</p>
-				</div>
-			</a>
-		</div>
-		<div class="footer-contact-info">
-			<div class="logo-container">
-				<a href="{{ path('app_home') }}">
-					<img src="{{ asset('img/logo.png') }}" alt="Logo de SCI LA THÉRÈSIÈRE">
-				</a>
-			</div>
-			<p>
-				{{ societe.nom }}<br>
-				{{ societe.adresse }}<br>
-				{{ societe.code_postal }}
-				{{ societe.ville }}<br>
-				Tél :
-				{{ societe.telephone }}<br>
-				Email :
-				<a href="mailto:{{ societe.email }}">{{ societe.email }}</a>
-			</p>
-		</div>
-		<nav class="footer-nav-buttons">
-			<ul>
-				<li><a href=" {{ path('app_legal_page_show',{'slug':'mentions-legales'}) }} ">Mentions légales</a></li>
-				<li><a href=" {{path('app_legal_page_show',{'slug':'politique-de-confidentialite'})}} ">Confidentialité</a></li>
-				<li><a href=" {{path('app_legal_page_show',{'slug':'conditions-generales-de-location'})}} ">CGL</a></li>
-				<li><a href=" {{path('app_legal_page_show',{'slug':'politique-de-cookies'})}} ">Cookies</a></li>
-				<li><a href="#" id="open_preferences_center" class="cookie-preferences-link">Gérer mes cookies</a></li>
-			</ul>
-		</nav>
-	</div>
-	<div class="footer-bottom">
-		<p>&copy;
-			{{ "now"|date("Y") }}
-			SCI La Thérésière. Tous droits réservés.</p>
-	</div>
-</footer>
-<script>
-	// script TermsFeed pour la gestion des cookies.
-document.addEventListener('DOMContentLoaded', function () { // Gérer le clic sur le bouton "Gérer mes cookies" (pour le centre de préférences)
-const manageBtn = document.getElementById('btn-manage-cookies');
-if (manageBtn) {
-manageBtn.addEventListener('click', function () {
-if (typeof cookieconsent !== 'undefined' && typeof cookieconsent.showPreferencesCenter === 'function') {
-cookieconsent.showPreferencesCenter();
-} else {
-console.error("TermsFeed (cookieconsent) n'est pas prêt.");
-}
-});
-}
+    <div class="footer-content">
+        <div class="map-container">
+            {# Correction du lien Google Maps (l'URL précédente était invalide) #}
+            <a href="https://www.google.com/maps?q={{ societe.adresse|url_encode }},{{ societe.code_postal|url_encode }}+{{ societe.ville|url_encode }}" 
+               target="_blank" rel="noopener noreferrer" 
+               title="Ouvrir la carte Google Maps dans un nouvel onglet" 
+               class="map-link-container">
+                <div class="map-placeholder">
+                    <p>Cliquez ici pour voir la carte de localisation</p>
+                    <p class="small">(Ouvrir Google Maps)</p>
+                </div>
+            </a>
+        </div>
 
-// Gérer le clic sur le lien "Modifier mes préférences cookies"
-const preferencesLink = document.getElementById('open_preferences_center');
-if (preferencesLink) {
-preferencesLink.addEventListener('click', function (e) {
-e.preventDefault();
-if (typeof cookieconsent !== 'undefined' && typeof cookieconsent.showPreferencesCenter === 'function') {
-cookieconsent.showPreferencesCenter();
-} else {
-console.error("TermsFeed (cookieconsent) n'est pas prêt.");
-}
-});
-}
+        <div class="footer-contact-info">
+            <div class="logo-container">
+                <a href="{{ path('app_home') }}">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo de SCI LA THÉRÈSIÈRE">
+                </a>
+            </div>
+            <p>
+                <strong>{{ societe.nom }}</strong><br>
+                {{ societe.adresse }}<br>
+                {{ societe.code_postal }} {{ societe.ville }}<br>
+                Tél : {{ societe.telephone }}<br>
+                Email : <a href="mailto:{{ societe.email }}">{{ societe.email }}</a>
+            </p>
+        </div>
+
+        <nav class="footer-nav-buttons">
+            <ul>
+                {# Nettoyage des espaces inutiles dans les path() #}
+                <li><a href="{{ path('app_legal_page_show', {'slug': 'mentions-legales'}) }}">Mentions légales</a></li>
+                <li><a href="{{ path('app_legal_page_show', {'slug': 'politique-de-confidentialite'}) }}">Confidentialité</a></li>
+                <li><a href="{{ path('app_legal_page_show', {'slug': 'conditions-generales-de-location'}) }}">CGL</a></li>
+                <li><a href="{{ path('app_legal_page_show', {'slug': 'politique-de-cookies'}) }}">Cookies</a></li>
+                <li><a href="#" id="open_preferences_center" class="cookie-preferences-link">Gérer mes cookies</a></li>
+            </ul>
+        </nav>
+    </div>
+
+   <div class="footer-bottom">
+    <p>© {{ "now"|date("Y") }} SCI La Thérésière. Tous droits réservés.</p>
+    
+    {# <div class="s1-digital-credits" style="margin-top: 15px; padding: 12px; background-color: #f9f9f9; border-radius: 8px; display: inline-block; min-width: 250px;"> #}
+        <p class="s1-digital-credits">
+            Maintenance & Support : <strong>S1 Digital</strong>
+        </p>
+        
+        <p class="s1-digital-credits">
+            <a href="mailto:contact@s1digital.fr" style="color: #005088; text-decoration: none; font-weight: 600; border-bottom: 1px solid #005088;">
+                📩 contact@s1digital.fr
+            </a>
+        </p>
+        
+        <p class="s1-digital-credits">
+            Société en cours de formation
+        </p>
+
+        {# Le lien pour tes testeurs (proches) #}
+        <div class="s1-digital-credits">
+            <a href="{{ path('app_ticket_new') }}" >
+                🚀 Envoyer un retour / Ticket
+            </a>
+        </div>
+    </div>
+</div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const openPreferences = function (e) {
+        if (e) e.preventDefault();
+        if (typeof cookieconsent !== 'undefined' && typeof cookieconsent.showPreferencesCenter === 'function') {
+            cookieconsent.showPreferencesCenter();
+        } else {
+            console.error("TermsFeed (cookieconsent) n'est pas prêt.");
+        }
+    };
+
+    // Bouton de gestion
+    const manageBtn = document.getElementById('btn-manage-cookies');
+    if (manageBtn) manageBtn.addEventListener('click', openPreferences);
+
+    // Lien de préférences
+    const preferencesLink = document.getElementById('open_preferences_center');
+    if (preferencesLink) preferencesLink.addEventListener('click', openPreferences);
 });
 </script>

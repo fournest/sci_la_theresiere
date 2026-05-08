@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Address;
 
 #[IsGranted('ROLE_USER')]
 final class ContactController extends AbstractController
@@ -81,5 +84,30 @@ final class ContactController extends AbstractController
         }
 
         return $this->redirectToRoute('app_user_show');
+    }
+
+    #[Route('/ticket-technique', name: 'app_ticket_new')]
+    public function ticket(Request $request, MailerInterface $mailer): Response
+    {
+        // On force la sécurité : seul un utilisateur connecté peut envoyer un ticket
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        if ($request->isMethod('POST')) {
+            $message = $request->request->get('message');
+            $user = $this->getUser();
+
+            $email = (new Email())
+                ->from(new Address('contact@s1digital.fr', 'Système de gestion de la Thérésière'))
+                ->to('contact@s1digital.fr')
+                ->subject('🛠️ BUG TECHNIQUE - SCI La Thérésière')
+                ->text("Signalement de : " . $user->getUserIdentifier() . "\n\nDescription du problème :\n" . $message);
+
+            $mailer->send($email);
+
+            $this->addFlash('success', 'Ton ticket technique a bien été envoyé à S1 Digital !');
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('contact/ticket.html.twig');
     }
 }

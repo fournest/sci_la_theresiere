@@ -1,19 +1,17 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}Votre tableau de bord administrateur
-{% endblock %}
+{% endblock title %}
 
 {% block body %}
-
 	{% block admin_layout %}
-		{{ include('layout/admin_layout.html.twig')}}
-	{% endblock %}
+		{{ include("layout/admin_layout.html.twig") }}
+	{% endblock admin_layout %}
 
 	<h1>Votre tableau de bord administrateur</h1>
 
 	<div
 		class="admin-dashboard">
-
 		{# --- SECTION UTILISATEURS --- #}
 		<h2>Gestion des utilisateurs.</h2>
 		<div class="user-table">
@@ -26,72 +24,39 @@
 								<span class="detail-value">{{ user.pseudo }}</span>
 							</div>
 							<div class="detail-row">
-								<span class="detail-label">Nom:</span>
-								<span class="detail-value">{{ user.nom }}</span>
-							</div>
-							<div class="detail-row">
-								<span class="detail-label">Prénom:</span>
-								<span class="detail-value">{{ user.prenom }}</span>
-							</div>
-							<div class="detail-row">
 								<span class="detail-label">Email:</span>
 								<span class="detail-value">{{ user.email }}</span>
 							</div>
 							<div class="detail-row">
 								<span class="detail-label">Statut:</span>
 								<span class="detail-value">
-									{% if user.isActive %}
-										<span class="status-active">Activé</span>
-									{% else %}
-										<span class="status-inactive">Désactivé</span>
+									{% if user.isActive %}Activé{% else %}Désactivé
 									{% endif %}
 								</span>
 							</div>
-							<div class="detail-row">
-								<span class="detail-label">Banni:</span>
-								<span class="detail-value">
-									{% if user.isBanned %}
-										<span class="banned-yes">Oui</span>
-									{% else %}
-										<span class="banned-no">Non</span>
-									{% endif %}
-								</span>
-							</div>
-							{% if is_granted('ROLE_ADMIN') %}
-								<div class="detail-row">
-									<span class="detail-label">Rôles:</span>
-									<span class="detail-value">
-										{% for role in user.roles %}
-											{% if role == 'ROLE_ADMIN' %}
-												Admin
-											{% elseif role == 'ROLE_USER' %}
-												Utilisateur
-											{% else %}
-												{{ role }}
-											{% endif %}
-										{% endfor %}
-									</span>
-								</div>
-							{% endif %}
 						</div>
-
 						<div class="user-item-actions">
 							{% if user.isBanned == false %}
-								<a class="btn-principal" href="{{ path('app_user_ban', {'id': user.id}) }}" onclick="return confirm('Êtes-vous sûr de vouloir bannir l\'utilisateur ?');">Bannir</a>
+								<a class="btn-principal" href="{{ path('app_user_ban', {'id': user.id}) }}" onclick="return confirm('Bannir ?');">Bannir</a>
 							{% else %}
-								<a class="btn-principal" href="{{ path('app_user_unban', {'id': user.id}) }}" onclick="return confirm('Êtes-vous sûr de vouloir réintégrer l\'utilisateur ?');">Réintégrer</a>
+								<a class="btn-principal" href="{{ path('app_user_unban', {'id': user.id}) }}" onclick="return confirm('Réintégrer ?');">Réintégrer</a>
 							{% endif %}
-							<form action="{{ path('app_admin_user_delete', {'id': user.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?');">
+
+							{# --- LE BOUTON SUPPRIMER (À RAJOUTER / VÉRIFIER) --- #}
+							<form
+								action="{{ path('app_admin_user_delete', {'id': user.id}) }}" method="post" style="display:inline" onsubmit="return confirm('⚠️ ATTENTION : Supprimer définitivement cet utilisateur ?');">
+								{# Très important : le token doit correspondre à celui attendu dans le contrôleur #}
 								<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-								<button class="btn-principal" type="submit">Supprimer</button>
+								<button class="btn-principal" type="submit" style="background-color: #dc3545; color: white; border: none; border-radius: 4px; padding: 10px; cursor: pointer;">
+									🗑️ Supprimer
+								</button>
 							</form>
+							<a class="btn-principal" href="{{ path('app_user_show', {'id': user.id}) }}">Voir</a>
 						</div>
 					</li>
 				{% endfor %}
 			</ul>
-			{% if users.pageCount > 1 %}
-				<div class="navigation">{{ knp_pagination_render(users) }}</div>
-			{% endif %}
+			<div class="navigation">{{ knp_pagination_render(users) }}</div>
 		</div>
 
 		{# --- SECTION VISITES --- #}
@@ -107,41 +72,47 @@
 							</div>
 							<div class="detail-row">
 								<span class="detail-label">Date visite:</span>
-								<span class="detail-value">{{ visite.dateVisite ? visite.dateVisite|date('d/m/Y') : '' }}</span>
+								<span class="detail-value">📅
+									{{ visite.dateVisite ? visite.dateVisite|date("d/m/Y") : 'À définir' }}</span>
 							</div>
 							<div class="detail-row">
 								<span class="detail-label">Statut:</span>
-								<span class="detail-value">{{ visite.statut }}</span>
-							</div>
-							<div class="detail-row">
-								<span class="detail-label">Date souhaitée:</span>
-								<span class="detail-value">{{ visite.dateResaSouhaite ? visite.dateResaSouhaite|date('d/m/Y') : '' }}</span>
+								<span class="detail-value">
+									{% if visite.statut|lower == 'en_attente' %}
+										⏳
+										<span style="color: orange;">En attente</span>
+									{% elseif visite.statut|lower == 'validée' or visite.statut|lower == 'validee' %}
+										✅
+										<span style="color: green;">Validée</span>
+									{% elseif visite.statut|lower == 'annulée' or visite.statut|lower == 'annulee' %}
+										❌
+										<span style="color: red;">Annulée</span>
+									{% else %}
+										🔵
+										{{ visite.statut }}
+									{% endif %}
+								</span>
 							</div>
 						</div>
 						<div class="visit-item-actions">
 							{% if visite.statut != 'annulée' and visite.statut !='validée' %}
-								<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Annuler cette visite ?');">
+								<form method="post" action="{{ path('app_visite_cancel', {'id': visite.id}) }}" onsubmit="return confirm('Annuler cette visite ?');" style="display:inline">
 									<input type="hidden" name="_token" value="{{ csrf_token('cancel' ~ visite.id) }}">
 									<button class="btn-principal">Annuler</button>
 								</form>
 							{% endif %}
 							{% if is_granted('ROLE_ADMIN') and visite.statut == 'en_attente' %}
-								<form method="post" action="{{ path('app_visite_validate', {'id': visite.id}) }}">
+								<form method="post" action="{{ path('app_visite_validate', {'id': visite.id}) }}" style="display:inline">
 									<input type="hidden" name="_token" value="{{ csrf_token('validate' ~ visite.id) }}">
 									<button class="btn-principal">Valider</button>
 								</form>
 							{% endif %}
 							<a class="btn-principal" href="{{ path('app_visite_show', {'id': visite.id}) }}">Voir</a>
-							{% if visite.statut == 'en_attente' %}
-								<a class="btn-principal" href="{{ path('app_visite_edit', {'id': visite.id}) }}">Modifier</a>
-							{% endif %}
 						</div>
 					</li>
 				{% endfor %}
 			</ul>
-			{% if visites.pageCount > 1 %}
-				<div class="navigation">{{ knp_pagination_render(visites) }}</div>
-			{% endif %}
+			<div class="navigation">{{ knp_pagination_render(visites) }}</div>
 		</div>
 
 		{# --- SECTION RÉSERVATIONS --- #}
@@ -149,76 +120,118 @@
 		<div class="user-table">
 			<ul class="reservation-list">
 				{% for reservation in reservations %}
-					<li class="reservation-item">
-						<div class="reservation-item-content">
-							<div class="detail-row">
-								<span class="detail-label">Pseudo:</span>
-								<span class="detail-value">{{ reservation.user.pseudo }}</span>
+					<li class="reservation-item" style="border-bottom: 1px solid #eee; padding: 20px 0;">
+						<div
+							class="reservation-item-content" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+							{# Colonne Gauche : Infos Base #}
+							<div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>👤 Pseudo:</strong>
+									</span>
+									<span class="detail-value">{{ reservation.user.pseudo }}</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>📂 Dossier:</strong>
+									</span>
+									<span class="detail-value">{{ reservation.dossierResa }}</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>🏠 Catégorie:</strong>
+									</span>
+									<span class="detail-value">{{ reservation.categorie ? reservation.categorie.nom : 'N/C' }}</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>📅 Période:</strong>
+									</span>
+									<span class="detail-value">{{ reservation.dateResaDebut|date('d/m/Y') }}
+										➔
+										{{ reservation.dateResaFin|date('d/m/Y') }}</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>⚙️ Options:</strong>
+									</span>
+									<span class="detail-value">
+										{% if reservation.options is not empty %}
+											{% for option in reservation.options %}
+												<small>{{ option.nom }}</small>
+												{% if not loop.last %},
+												{% endif %}
+											{% endfor %}
+										{% else %}
+											<span style="color: #999;">Aucune</span>
+										{% endif %}
+									</span>
+								</div>
 							</div>
-							<div class="detail-row">
-								<span class="detail-label">Période:</span>
-								<span class="detail-value">Du
-									{{ reservation.dateResaDebut|date('d/m/Y') }}
-									au
-									{{ reservation.dateResaFin|date('d/m/Y') }}</span>
-							</div>
-							<div class="detail-row">
-								<span class="detail-label">Dossier:</span>
-								<span class="detail-value">{{ reservation.dossierResa }}</span>
-							</div>
-							<div class="detail-row">
-								<span class="detail-label">Statut:</span>
-								<span class="detail-value">{{ reservation.statut }}</span>
-							</div>
-							<div class="detail-row">
-								<span class="detail-label">Catégorie:</span>
-								<span class="detail-value">{{ reservation.categorie.nom }}</span>
+
+							{# Colonne Droite : Statuts et Paiements #}
+							<div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>Status:</strong>
+									</span>
+									<span class="detail-value">
+										{% if reservation.statut|lower == 'en_attente' %}
+											⏳
+											<span style="color: orange;">En attente</span>
+										{% elseif reservation.statut|lower in ['contrat envoyé', 'contrat_envoye'] %}
+											📩
+											<span style="color: #007bff;">Contrat envoyé</span>
+										{% elseif reservation.statut|lower == 'confirmee' or reservation.statut|lower == 'confirmée' %}
+											✅
+											<span style="color: green;">Confirmée</span>
+										{% else %}
+											🔵
+											{{ reservation.statut }}
+										{% endif %}
+									</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>💰 Acompte:</strong>
+									</span>
+									<span class="detail-value">
+										{{ reservation.acompte ? '✅ Versé' : '❌ Non versé' }}
+									</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">
+										<strong>🛡️ Caution:</strong>
+									</span>
+									<span class="detail-value">
+										{{ reservation.caution ? '✅ Reçue' : '❌ Non reçue' }}
+									</span>
+								</div>
 							</div>
 						</div>
-						<div class="reservation-item-actions">
-							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir</a>
+
+						<div class="reservation-item-actions" style="margin-top: 15px;">
+							<a class="btn-principal" href="{{ path('app_reservation_show', {'id': reservation.id}) }}">Voir détails</a>
 
 							{% if is_granted('ROLE_ADMIN') %}
-
-								{# ÉTAPE 1 : Le dossier est neuf, on envoie le contrat #}
-								{% if reservation.statut == 'en_attente' %}
-									<form method="post" action="{{ path('app_reservation_send_contract', {'id': reservation.id}) }}">
+								{% if reservation.statut|lower == 'en_attente' %}
+									<form method="post" action="{{ path('app_reservation_send_contract', {'id': reservation.id}) }}" style="display:inline">
 										<input type="hidden" name="_token" value="{{ csrf_token('sendContract' ~ reservation.id) }}">
-										<button type="submit" class="btn-principal">Envoyer le contrat</button>
+										<button type="submit" class="btn-principal">📧 Envoyer contrat</button>
 									</form>
-								{% endif %}
-
-								{# ÉTAPE 2 : Le contrat a été envoyé, on attend le retour par courrier/mail #}
-								{% if reservation.statut == 'contrat envoyé' or reservation.statut == 'contrat_envoye' %}
-									<form method="post" action="{{ path('app_reservation_validate_return', {'id': reservation.id}) }}">
+								{% elseif reservation.statut|lower in ['contrat envoyé', 'contrat_envoye'] %}
+									<form method="post" action="{{ path('app_reservation_validate_return', {'id': reservation.id}) }}" style="display:inline">
 										<input type="hidden" name="_token" value="{{ csrf_token('validateReturn' ~ reservation.id) }}">
-										<button type="submit" class="btn-principal" style="background-color: #28a745; color: white; border: none; padding: 10px; cursor: pointer;">
-											Valider Réception Contrat
-										</button>
+										<button type="submit" class="btn-principal" style="background-color: #28a745; color: white; border: none; border-radius: 4px; padding: 10px; cursor: pointer;">✍️ Valider Réception</button>
 									</form>
 								{% endif %}
-
-								{# ÉTAPE 3 : Une fois que tu as cliqué sur le bouton ci-dessus, le statut devient 'contrat_signe' #}
-								{% if reservation.statut == 'contrat_signe' %}
-									<form method="post" action="{{ path('app_reservation_confirm', {'id': reservation.id}) }}">
-										<input type="hidden" name="_token" value="{{ csrf_token('confirm' ~ reservation.id) }}">
-										<button type="submit" class="btn-principal">Confirmer la réservation</button>
-									</form>
-								{% endif %}
-
-								{# ÉTAPE 4 : C'est fini, on affiche juste un indicateur #}
-								{% if reservation.statut == 'confirmee' %}
-									<span class="badge-success">✅ Réservation validée</span>
-								{% endif %}
-
 							{% endif %}
 						</div>
 					</li>
 				{% endfor %}
 			</ul>
-			{% if reservations.pageCount > 1 %}
-				<div class="navigation">{{ knp_pagination_render(reservations) }}</div>
-			{% endif %}
+			{# PAGINATION RÉSERVATIONS #}
+			<div class="navigation">{{ knp_pagination_render(reservations) }}</div>
 		</div>
 	</div>
-{% endblock %}
+{% endblock body %}

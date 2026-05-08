@@ -29,14 +29,6 @@ class ReservationType extends AbstractType
                 'label' => 'Date de fin de réservation',
                 'attr' => ['class' => 'js-datepicker'],
             ])
-            ->add('acompte', CheckboxType::class, [
-                'label' => 'Acompte versé ?',
-                'required' => false,
-            ])
-            ->add('caution', CheckboxType::class, [
-                'label' => 'Caution versé ?',
-                'required' => false,
-            ])
             ->add('categorie', EntityType::class, [
                 'class' => Categorie::class,
                 'choice_label' => 'nom',
@@ -51,7 +43,22 @@ class ReservationType extends AbstractType
 
             ])
 
-            ->add('accepterConditions', CheckboxType::class, [
+        ;
+
+        if ($options['include_financial_fields']) {
+            $builder
+                ->add('acompte', CheckboxType::class, [
+                    'label' => 'Acompte versé ?',
+                    'required' => false,
+                ])
+                ->add('caution', CheckboxType::class, [
+                    'label' => 'Caution versée ?',
+                    'required' => false,
+                ]);
+        }
+
+        if ($options['require_accept_conditions']) {
+            $builder->add('accepterConditions', CheckboxType::class, [
                 'label' => 'J\'accepte les conditions',
                 'mapped' => false,
                 'required' => true,
@@ -60,14 +67,19 @@ class ReservationType extends AbstractType
                         'message' => 'Vous devez accepter les conditions générales de location et la politique de confidentialité pour continuer'
                     ]),
                 ],
-            ])
-        ;
+            ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
+            'include_financial_fields' => false,
+            'require_accept_conditions' => true,
         ]);
+
+        $resolver->setAllowedTypes('include_financial_fields', 'bool');
+        $resolver->setAllowedTypes('require_accept_conditions', 'bool');
     }
 }

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ticket Technique | S1 Digital{% endblock %}
+
+{% block body %}
+<div style="max-width: 600px; margin: 50px auto; padding: 30px; border: 2px solid #005088; border-radius: 12px; font-family: sans-serif; background: #fff;">
+    <h1 style="color: #005088; margin-top: 0;">🛠️ Rapport d'anomalie</h1>
+    <p style="color: #666;">Ce message sera envoyé directement au support technique <strong>S1 Digital</strong>.</p>
+
+    <form method="post" style="margin-top: 20px;">
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: bold;">Description du bug ou de l'amélioration :</label>
+            <textarea name="message" required style="width: 100%; height: 150px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;"></textarea>
+        </div>
+
+        <button type="submit" style="background-color: #005088; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; width: 100%;">
+            Envoyer le ticket à S1 Digital
+        </button>
+    </form>
+</div>
+{% endblock %}
