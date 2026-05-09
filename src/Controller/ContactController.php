@@ -14,6 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[IsGranted('ROLE_USER')]
 final class ContactController extends AbstractController
@@ -95,12 +96,17 @@ final class ContactController extends AbstractController
         if ($request->isMethod('POST')) {
             $message = $request->request->get('message');
             $user = $this->getUser();
-
+            $file = $request->files->get('attachment');
             $email = (new Email())
                 ->from(new Address('contact@s1digital.fr', 'Système de gestion de la Thérésière'))
                 ->to('contact@s1digital.fr')
                 ->subject('🛠️ BUG TECHNIQUE - SCI La Thérésière')
                 ->text("Signalement de : " . $user->getUserIdentifier() . "\n\nDescription du problème :\n" . $message);
+
+            // Si un fichier a été téléchargé, on l'attache au mail
+            if ($file instanceof UploadedFile) {
+                $email->attachFromPath($file->getPathname(), $file->getClientOriginalName(), $file->getClientMimeType());
+            }
 
             $mailer->send($email);
 

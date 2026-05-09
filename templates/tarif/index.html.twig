@@ -1,46 +1,62 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tarifs{% endblock %}
+{% block title %}Tarifs
+{% endblock %}
 
 {% block body %}
-    <h1>Nos Tarifs</h1>
+	<h1>Nos Tarifs</h1>
 
-    <div class="tarifs-list-container">
-        <div class="user-table">
-            {% if tarifs is not empty %}
-                <ul class="visit-list" style="padding: 0;"> {# On réutilise visit-list pour le style des lignes #}
-                    {% for tarif in tarifs %}
-                        <li class="visit-item">
-                            <div class="visit-item-content">
-                                <div class="detail-row">
-                                    <span class="detail-label">Prix de la réservation :</span>
-                                    <span class="detail-value">{{ tarif.prixReservation }} €</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Prix des options :</span>
-                                    <span class="detail-value">{{ tarif.prixOption }} €</span>
-                                </div>
-                            </div>
+	<div class="tarifs-list-container">
+		<div class="user-table">
+			{% if tarifs is not empty %}
+				<ul class="visit-list" style="padding: 0;">
+					{% for tarif in tarifs %}
+						<li class="visit-item">
+							<div class="visit-item-content">
+								<div class="detail-row">
+									<span class="detail-label">Libellé :</span>
+									<span class="detail-value">{{ tarif.libelle }}</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">Montant :</span>
+									<span class="detail-value" style="font-weight: bold; color: #005088;">{{ tarif.montant }}
+										€</span>
+								</div>
+								<div class="detail-row">
+									<span class="detail-label">Concerne :</span>
+									<span class="detail-value">
+										{% if tarif.categorie %}
+											<strong style="color: #28a745;">
+												{{ tarif.categorie.nom }}</strong>
+										{% elseif tarif.option %}
+											<strong style="color: #17a2b8;">
+												{{ tarif.option.nom }}</strong>
+										{% else %}
+											<span style="color: #666;">Tarif général</span>
+										{% endif %}
+									</span>
+								</div>
+							</div>
 
-                            {% if is_granted('ROLE_ADMIN') %}
-                                <div class="visit-item-actions">
-                                    <a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
-                                    <a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
-                                </div>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p style="text-align: center; padding: 20px;">Aucun tarif n'est configuré pour le moment.</p>
-            {% endif %}
-        </div>
-    </div>
+							{% if is_granted('ROLE_ADMIN') %}
+								<div class="visit-item-actions">
+									<a class="btn-principal" href="{{ path('app_tarif_show', {'id': tarif.id}) }}">Voir</a>
+									<a class="btn-principal" href="{{ path('app_tarif_edit', {'id': tarif.id}) }}">Modifier</a>
+								</div>
+							{% endif %}
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<p style="text-align: center; padding: 20px;">Aucun tarif n'est configuré pour le moment.</p>
+			{% endif %}
+		</div>
+	</div>
 
-    <div class="actions-container" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-        {% if is_granted('ROLE_ADMIN') %}
-            <a class="btn-principal" href="{{ path('app_tarif_new') }}">Créer un tarif</a>
-        {% endif %}
-        <a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
-    </div>
+	<div class="actions-container" style="text-align: center; margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+		{% if is_granted('ROLE_ADMIN') %}
+			<a class="btn-principal" href="{{ path('app_tarif_new') }}">Créer un tarif</a>
+		{% endif %}
+		<a class="btn-principal" href="{{ path('app_home') }}">Retour à l'accueil</a>
+	</div>
 {% endblock %}

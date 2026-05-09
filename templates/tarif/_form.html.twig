@@ -1,4 +1,71 @@
-{{ form_start(form, {'attr': {'class': 'form-container'}}) }}
-    {{ form_widget(form) }}
-    <button class="btn-principal">{{ button_label|default('Sauvegarder') }}</button>
-{{ form_end(form) }}
+<div class="tarifs-list-container">
+    <div class="user-table" style="background-color: #5d3d5e; padding: 30px; border-radius: 15px; color: white; max-width: 600px; margin: 0 auto;">
+        
+        {{ form_start(form) }}
+            
+            <div style="margin-bottom: 15px;">
+                {{ form_label(form.libelle) }}
+                {# On s'assure que l'input libelle est facile à cibler #}
+                {{ form_widget(form.libelle, {'attr': {'class': 'js-libelle-input', 'style': 'width:100%; padding:8px; border-radius:5px;'}}) }}
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                {{ form_row(form.montant, {'attr': {'style': 'width:100%; padding:8px; border-radius:5px;'}}) }}
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.2); margin: 20px 0;">
+
+            <div style="margin-bottom: 15px;">
+                {{ form_row(form.type_selection, {'attr': {'style': 'width:100%; padding:8px; border-radius:5px;'}}) }}
+            </div>
+
+            {{ form_row(form.categorie, {'attr': {'class': 'js-selector-target', 'style': 'width:100%; padding:8px;'}}) }}
+            {{ form_row(form.option, {'attr': {'class': 'js-selector-target', 'style': 'width:100%; padding:8px;'}}) }}
+
+            <div style="margin-top: 25px; text-align: center;">
+                <button class="btn-principal" style="width: 100%;">{{ button_label|default('Enregistrer le tarif') }}</button>
+            </div>
+        {{ form_end(form) }}
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typeSelector = document.querySelector('.select-type-tarif');
+    const libelleInput = document.querySelector('.js-libelle-input');
+    
+    const rowCat = document.getElementById('row-categorie');
+    const rowOpt = document.getElementById('row-option');
+
+    // On récupère les éléments SELECT eux-mêmes
+    const selectCat = rowCat.querySelector('select');
+    const selectOpt = rowOpt.querySelector('select');
+
+    // Fonction pour afficher/cacher les lignes
+    function toggleFields() {
+        const choice = typeSelector.value;
+        rowCat.style.display = (choice === 'type_categorie') ? 'block' : 'none';
+        rowOpt.style.display = (choice === 'type_option') ? 'block' : 'none';
+    }
+
+    // Fonction pour copier le nom sélectionné dans le champ "Libellé"
+    function updateLibelle(event) {
+        const selectedText = event.target.options[event.target.selectedIndex].text;
+        
+        // On ne copie que si une vraie option est choisie (pas le placeholder)
+        if (event.target.value !== "") {
+            libelleInput.value = selectedText;
+        }
+    }
+
+    // Écouteurs d'événements
+    typeSelector.addEventListener('change', toggleFields);
+    
+    // On écoute le changement sur les deux listes déroulantes
+    selectCat.addEventListener('change', updateLibelle);
+    selectOpt.addEventListener('change', updateLibelle);
+    
+    toggleFields();
+});
+</script>
