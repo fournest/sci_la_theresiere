@@ -52,6 +52,12 @@ class Reservation
     #[ORM\Column(length: 255)]
     private ?string $statut = null;
 
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $prixTotal = null;
+
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2, nullable: true)]
+    private ?string $montantAcompte = null;
+
     public function __construct()
     {
         $this->options = new ArrayCollection();
@@ -183,6 +189,30 @@ class Reservation
     public function setStatut(string $statut): static
     {
         $this->statut = $statut;
+
+        return $this;
+    }
+
+    public function getPrixTotal(): ?string
+    {
+        return $this->prixTotal;
+    }
+
+    public function setPrixTotal(?string $prixTotal): static
+    {
+        $this->prixTotal = $prixTotal;
+
+        return $this;
+    }
+
+    public function getMontantAcompte(): ?string
+    {
+        return $this->montantAcompte;
+    }
+
+    public function setMontantAcompte(?string $montantAcompte): static
+    {
+        $this->montantAcompte = $montantAcompte;
 
         return $this;
     }

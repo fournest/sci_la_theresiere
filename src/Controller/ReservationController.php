@@ -22,6 +22,7 @@ use App\Service\NotificationService;
 use App\Enum\ReservationStatus;
 use DateTime;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Repository\TarifRepository;
 
 #[Route('/reservation')]
 final class ReservationController extends AbstractController
@@ -56,14 +57,21 @@ final class ReservationController extends AbstractController
 
     #[Route('/new', name: 'app_reservation_new', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-    public function new(Request $request, EntityManagerInterface $entityManager, ReservationRepository $reservationRepository, UserRepository $userRepository, NotificationService $notificationService): Response
-    {
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ReservationRepository $reservationRepository,
+        UserRepository $userRepository,
+        NotificationService $notificationService,
+        TarifRepository $tarifRepository
+    ): Response {
 
         $currentUser = $this->getUser();
         if (!$currentUser) {
             $this->addFlash('warning', 'Vous devez être connecté pour effectuer une réservation.');
             return $this->redirectToRoute('app_login');
         }
+
         // Création du formulaire.
         $reservation = new Reservation();
         $isAdmin = $this->isGranted('ROLE_ADMIN');
@@ -75,7 +83,7 @@ final class ReservationController extends AbstractController
 
         // Vérification de la soumission et de la validation du formulaire.
         if ($form->isSubmitted() && $form->isValid()) {
-            // Nouvelle récupération de l'utilisateur, association à la visite créée ou ajout d'un message d'erreur si l'utilisateur est déconnecté.
+            // Association de l'utilisateur connecté à la réservation.
             $reservation->setUser($currentUser);
 
             // Récupération des informations de la réservation pour vérification.
@@ -92,6 +100,35 @@ final class ReservationController extends AbstractController
                     $reservation->setAcompte(false);
                     $reservation->setCaution(false);
                 }
+
+                // =================================================================
+                // 🤖 START : MOTEUR DE CALCUL AUTOMATIQUE DU PRIX ET DE L'ACOMPTE
+                // =================================================================
+                $totalPrice = 0.0;
+
+                // 1. Récupération et ajout du prix de base lié à la Catégorie choisie
+                if ($reservation->getCategorie()) {
+                    $tarifCategorie = $tarifRepository->findOneBy(['categorie' => $reservation->getCategorie()]);
+                    if ($tarifCategorie) {
+                        $totalPrice += (float) $tarifCategorie->getMontant();
+                    }
+                }
+
+                // 2. Boucle sur toutes les Options sélectionnées pour cumuler leurs montants
+                foreach ($reservation->getOptions() as $option) {
+                    $tarifOption = $tarifRepository->findOneBy(['option' => $option]);
+                    if ($tarifOption) {
+                        $totalPrice += (float) $tarifOption->getMontant();
+                    }
+                }
+
+                // 3. Injection des calculs finalisés dans les champs de l'entité (Format DECIMAL)
+                $reservation->setPrixTotal(number_format($totalPrice, 2, '.', ''));
+                $reservation->setMontantAcompte(number_format($totalPrice * 0.30, 2, '.', ''));
+                // =================================================================
+                // 🤖 END : MOTEUR DE CALCUL AUTOMATIQUE
+                // =================================================================
+
                 // Définition du statut, préparation et execution de l'enregistrement en base de données.
                 // Création du numéro de dossier.
                 $reservation->setStatut(ReservationStatus::PENDING->value);
@@ -99,6 +136,7 @@ final class ReservationController extends AbstractController
                 $reservation->setDossierResa($date->format('Ymd'));
                 $entityManager->persist($reservation);
                 $entityManager->flush();
+
                 $reservation->setDossierResa($date->format('Ymd') . $reservation->getId());
                 $entityManager->persist($reservation);
                 $entityManager->flush();
@@ -115,18 +153,18 @@ final class ReservationController extends AbstractController
                 }
 
                 $this->addFlash('success', 'Votre demande de réservation a bien été envoyée. Elle est en attente de confirmation par un administrateur.');
-                // Redirection de  l'utilisateur vers la liste de ses réservations après la création.
                 return $this->redirectToRoute('app_reservation_index', [], Response::HTTP_SEE_OTHER);
             }
         }
 
-        // Récupération des dates indisponibles pour le calendrier (méthode mise à jour précédemment).
+        // Récupération des dates indisponibles pour le calendrier.
         $categorie = $reservation->getCategorie();
-        $datesIndisponibles = []; // Initialisation à un tableau vide
+        $datesIndisponibles = [];
 
         if ($categorie !== null) {
             $datesIndisponibles = $reservationRepository->getUnavailableDates($categorie);
         }
+
         return $this->render('reservation/new.html.twig', [
             'reservation' => $reservation,
             'form' => $form,

@@ -8,18 +8,23 @@
     <h1 style="color: #005088; margin-top: 0;">🛠️ Rapport d'anomalie</h1>
     <p style="color: #666;">Ce message sera envoyé directement au support technique <strong>S1 Digital</strong>.</p>
 
-    {# Ajout de l'enctype ici #}
     <form method="post" enctype="multipart/form-data" style="margin-top: 20px;">
         <div style="margin-bottom: 20px;">
             <label style="display: block; margin-bottom: 8px; font-weight: bold;">Description du bug :</label>
             <textarea name="message" required style="width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;"></textarea>
         </div>
 
-        {# Nouveau champ pour les captures d'écran #}
         <div style="margin-bottom: 20px;">
             <label style="display: block; margin-bottom: 8px; font-weight: bold;">Captures d'écran ou documents (Optionnel) :</label>
-            <input type="file" name="attachment" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9;">
-            <small style="color: #888; display: block; margin-top: 5px;">Formats acceptés : JPG, PNG, PDF (Max 5Mo)</small>
+            {# AJOUT DE L'ID "ticket-attachment" ICI POUR LE SCRIPT #}
+            <input type="file" name="attachment" id="ticket-attachment" accept="image/*,application/pdf" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9;">
+            <small style="color: #888; display: block; margin-top: 5px;">Formats acceptés : JPG, PNG, PDF (Max 5Mo). <strong>Astuce : vous pouvez faire CTRL+V sur la page pour coller une capture d'écran !</strong></small>
+        </div>
+
+        {# ZONE D'APERÇU VISUEL (Cachée par défaut, s'affiche lors du coller) #}
+        <div id="preview-container" style="display: none; margin-bottom: 20px; padding: 15px; border: 2px dashed #005088; border-radius: 8px; text-align: center; background: #f0f7ff;">
+            <p style="color: #005088; margin: 0 0 10px 0; font-weight: bold;">📸 Capture d'écran attachée :</p>
+            <img id="screenshot-preview" src="" alt="Aperçu du bug" style="max-width: 100%; max-height: 180px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
         </div>
 
         <button type="submit" style="background-color: #005088; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem; font-weight: bold; width: 100%;">
@@ -27,4 +32,39 @@
         </button>
     </form>
 </div>
+{% endblock %}
+
+{# LE SCRIPT EN CHARGE DU COPIER / COLLER #}
+{% block javascripts %}
+<script>
+document.addEventListener('paste', function(e) {
+    // Récupération des données du presse-papiers
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    
+    for (let index in items) {
+        const item = items[index];
+        
+        // Si l'élément collé est une image (capture d'écran)
+        if (item.kind === 'file' && item.type.startsWith('image/')) {
+            const blob = item.getAsFile();
+            const fileInput = document.getElementById('ticket-attachment');
+            const previewContainer = document.getElementById('preview-container');
+            const screenshotPreview = document.getElementById('screenshot-preview');
+            
+            // 1. Injection du fichier physique dans l'input HTML
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(new File([blob], "capture-bug.png", {type: item.type}));
+            fileInput.files = dataTransfer.files;
+            
+            // 2. Génération de la miniature visuelle pour l'utilisateur
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                screenshotPreview.src = event.target.result;
+                previewContainer.style.display = 'block'; // On affiche l'aperçu
+            };
+            reader.readAsDataURL(blob);
+        }
+    }
+});
+</script>
 {% endblock %}

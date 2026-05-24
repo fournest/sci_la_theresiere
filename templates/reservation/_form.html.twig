@@ -9,13 +9,19 @@
             {{ form_row(form.dateResaFin) }}
         </div>
 
-        <div class="form-group">
-            {{ form_row(form.acompte) }}
-        </div>
+        {# SÉCURISATION DE L'ACOMPTE : S'affiche uniquement pour l'admin #}
+        {% if form.acompte is defined %}
+            <div class="form-group">
+                {{ form_row(form.acompte) }}
+            </div>
+        {% endif %}
 
-        <div class="form-group">
-            {{ form_row(form.caution) }}
-        </div>
+        {# SÉCURISATION DE LA CAUTION : S'affiche uniquement pour l'admin #}
+        {% if form.caution is defined %}
+            <div class="form-group">
+                {{ form_row(form.caution) }}
+            </div>
+        {% endif %}
 
         <div class="form-group">
             {{ form_row(form.categorie) }}
