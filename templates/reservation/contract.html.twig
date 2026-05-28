@@ -1,27 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block header %}
-	<div class="no-print">
-		{{ parent() }}
-	</div>
+    <div class="no-print">
+        {{ parent() }}
+    </div>
 {% endblock %}
 
 {% block title %}
-	{# Adapte le titre de la page (onglet du navigateur) #}
-	{% if reservation.statut == 'en_attente' %}
-		Conditions Générales de Location
-	{% else %}
-		Contrat de Location (Réservation
-		{{ reservation.dossierResa }})
-	{% endif %}
+    {# Adapte le titre de la page (onglet du navigateur) #}
+    {% if reservation.statut == 'en_attente' %}
+        Conditions Générales de Location
+    {% else %}
+        Contrat de Location (Réservation
+        {{ reservation.dossierResa }})
+    {% endif %}
 {% endblock %}
 
 {% block body %}
 
-	{# ------------------------------------------------------------------ #}
-	{# BLOC DE REMPLACEMENT CENTRALISÉ (Dictionnaire de Placeholders) #}
-	{# Ce bloc définit tous les remplacements Twig une seule fois pour les deux documents. #}
-	{% set placeholders = {
+    {# ------------------------------------------------------------------ #}
+    {# BLOC DE REMPLACEMENT CENTRALISÉ (Dictionnaire de Placeholders) #}
+    {# Ce bloc définit tous les remplacements Twig une seule fois pour les deux documents. #}
+    {% set placeholders = {
         '[[NOM_CLIENT]]': client.nom|upper,
         '[[PRENOM_CLIENT]]': client.prenom,
         '[[PSEUDO_CLIENT]]': client.pseudo,
@@ -32,131 +32,140 @@
         '[[CATEGORIE_RESERVEE]]': reservation.categorie.nom,
         '[[DATE_DU_JOUR]]': "now"|date('d/m/Y'),
         '[[VILLE_CONTRAT]]': 'Talmont-Saint-Hilaire', 
-        '[[CAPACITE_MAX]]': reservation.categorie.capacite|default('Non spécifiée')
+        '[[CAPACITE_MAX]]': reservation.categorie.capacite|default('Non spécifiée'),
+        '[[PRIX_TOTAL]]': reservation.prixTotal ? reservation.prixTotal ~ ' €' : 'Non calculé',
+        '[[MONTANT_ACOMPTE]]': reservation.montantAcompte ? reservation.montantAcompte ~ ' €' : 'Non calculé'
     } %}
-	{# ------------------------------------------------------------------ #}
+    {# ------------------------------------------------------------------ #}
 
 
-		<div class="contract-container"> <header>
-			<h1>{{ legal_page.title }}
-				- Contrat de Location</h1>
-			<div class="logo-container-contract">
-				<img src={{asset('img/logo.png')}} alt="SCI LA THÉRÈSIÈRE">
-			</div>
-		</header>
+    <div class="contract-container"> 
+        <header>
+            <h1>{{ legal_page.title }} - Contrat de Location</h1>
+            <div class="logo-container-contract">
+                <img src="{{ asset('img/logo.png') }}" alt="SCI LA THÉRÈSIÈRE">
+            </div>
+        </header>
 
-		<section class="reservation-summary">
-			<h2>
-				Récapitulatif de la Réservation</h2>
-			<ul class="reservation-details-list">
-				<li class="detail-item">
-					<strong>Dossier n°:</strong>
-					{{ reservation.dossierResa }}</li>
-				<li class="detail-item">
-					<strong>Locataire :
-					</strong>
-					{{ client.nom }}
-					{{ client.prenom }}
-					({{ client.email }})</li>
-				<li class="detail-item">
-					<strong>Période de Location :</strong>
-					Du
-					{{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }}
-					au
-					{{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}
-				</li>
-				<li class="detail-item">
-					<strong>Catégorie Réservée:</strong>
-					{{ reservation.categorie.nom }}</li>
+        <section class="reservation-summary">
+            <h2>Récapitulatif de la Réservation</h2>
+            <ul class="reservation-details-list">
+                <li class="detail-item">
+                    <strong>Dossier n°:</strong>
+                    {{ reservation.dossierResa }}
+                </li>
+                <li class="detail-item">
+                    <strong>Locataire :</strong>
+                    {{ client.nom }} {{ client.prenom }} ({{ client.email }})
+                </li>
+                <li class="detail-item">
+                    <strong>Période de Location :</strong>
+                    Du {{ reservation.dateResaDebut ? reservation.dateResaDebut|date('d/m/Y') : '' }} au {{ reservation.dateResaFin ? reservation.dateResaFin|date('d/m/Y') : '' }}
+                </li>
+                <li class="detail-item">
+                    <strong>Catégorie Réservée:</strong>
+                    {{ reservation.categorie.nom }}
+                </li>
+                
+                {# 💰 NOUVEAU : AJOUT DES TARIFS CALCULÉS DANS LE RÉCAPITULATIF #}
+                <li class="detail-item">
+                    <strong>Prix Total de la Location :</strong>
+                    <span style="font-weight: 600;">{{ reservation.prixTotal ? reservation.prixTotal ~ ' €' : 'Non calculé' }}</span>
+                </li>
+                <li class="detail-item">
+                    <strong>Acompte à régler (30%) :</strong>
+                    <span style="font-weight: 600; color: #b7791f;">{{ reservation.montantAcompte ? reservation.montantAcompte ~ ' €' : 'Non calculé' }}</span>
+                </li>
+            </ul>
+            
+            <div style="margin-top: 15px;">
+                <h2>Option Réservée:</h2>
+                {% if reservation.options is not empty %}
+                    <ul class="option-list">
+                        {% for option in reservation.options %}
+                            <li>
+                                <span>{{ option.nom }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Aucune option supplémentaire n'a été sélectionnée.</p>
+                {% endif %}
+            </div>
+        </section>
 
-			</ul>
-			<p>
-				<h2>Option Réservée:</h2>
-				{% if reservation.options is not empty %}
-					<ul class="option-list">
-						{% for option in reservation.options %}
-							<li>
-								<span>{{ option.nom }}</span>
-							</li>
-						{% endfor %}
-					</ul>
-				{% else %}
-					<p>Aucune option supplémentaire n'a été sélectionnée.</p>
-				{% endif %}
-			</p>
-		</section>
+        {# ------------------------------------------------------------------ #}
+        {# 1. AFFICHAGE DES CONDITIONS GÉNÉRALES DE LOCATION (CGL) #}
+        <section class="contract-content">
+            <h2>Conditions Contractuelles</h2>
 
-		{# ------------------------------------------------------------------ #}
-		{# 1. AFFICHAGE DES CONDITIONS GÉNÉRALES DE LOCATION (CGL) #}
-		<section class="contract-content">
-			<h2>Conditions Contractuelles</h2>
+            {# Application du bloc de remplacement unique aux CGL #}
+            {% set contractContent = legal_page.content|replace(placeholders) %}
 
-			{# Application du bloc de remplacement unique aux CGL #}
-			{% set contractContent = legal_page.content|replace(placeholders) %}
-
-			<div class="content">
-				{{ contractContent|raw }}
-			</div>
-		</section>
-		{# ------------------------------------------------------------------ #}
-
-
-		{# ------------------------------------------------------------------ #}
-		{# 2. AFFICHAGE DU RÈGLEMENT INTÉRIEUR (RI) - ANNEXE #}
-			{% if reglement_interieur is defined and reglement_interieur is not null %}
-			{# 'page-break-before: always;' force le RI à commencer sur une nouvelle page en impression/PDF #}
-				<section class="contract-content reglement-interieur-content" style="page-break-before: always;"> <hr style="margin-top: 50px; margin-bottom: 50px;">
-
-				<h1>{{ reglement_interieur.title }}</h1>
-
-				{# Application du bloc de remplacement unique au RI #}
-				{% set riContent = reglement_interieur.content|replace(placeholders) %}
-
-				<div class="content">
-					{{ riContent|raw }}
-				</div>
-			</section>
-		{% endif %}
-		{# ------------------------------------------------------------------ #}
+            <div class="content">
+                {{ contractContent|raw }}
+            </div>
+        </section>
+        {# ------------------------------------------------------------------ #}
 
 
-		<div class="contract-actions no-print">
-			<button
-				class="btn-principal" onclick="window.print();">
-				{# Adapte le texte du bouton #}
-				{% if reservation.statut == 'en_attente' %}
-					Imprimer les CGL
-				{% else %}
-					Imprimer/Télécharger le Contrat
-				{% endif %}
-			</button>
-			{% if reservation.statut == 'contrat envoyé' or reservation.statut == 'contrat_envoye' %}
-				<div class="signature-consent" style="margin-bottom: 15px; font-size: 0.9em; font-style: italic;">
-					En cliquant sur le bouton ci-dessous, je reconnais avoir pris connaissance des 
-					    Conditions Générales de Location ainsi que du Règlement Intérieur, et je m'engage 
-					    à en respecter toutes les clauses sans réserve.
-				</div>
-				<form method="post" action="{{ path('app_reservation_user_sign', {'id': reservation.id}) }}" style="display: inline-block; margin-left: 10px;">
-					<input type="hidden" name="_token" value="{{ csrf_token('userSign' ~ reservation.id) }}">
-					<button type="submit" class="btn-principal" style="background-color: #28a745; color: white; border: none;">
-						Accepter et Signer le contrat
-					</button>
-				</form>
-			{% endif %}
-			<a href="{{ path('app_reservation_show', {'id': reservation.id}) }}" class="btn-principal">
-				Retour aux détails
-			</a>
-			<small class="no-print" style="display:block; margin-top:10px; color: #4C6576;">
-				(Vous pouvez aussi simplement fermer cet onglet pour revenir au site)
-			</small>
+        {# ------------------------------------------------------------------ #}
+        {# 2. AFFICHAGE DU RÈGLEMENT INTÉRIEUR (RI) - ANNEXE #}
+        {% if reglement_interieur is defined and reglement_interieur is not null %}
+            {# 'page-break-before: always;' force le RI à commencer sur une nouvelle page en impression/PDF #}
+            <section class="contract-content reglement-interieur-content" style="page-break-before: always;"> 
+                <hr style="margin-top: 50px; margin-bottom: 50px;">
 
-		</div>
-	</div>
+                <h1>{{ reglement_interieur.title }}</h1>
+
+                {# Application du bloc de remplacement unique au RI #}
+                {% set riContent = reglement_interieur.content|replace(placeholders) %}
+
+                <div class="content">
+                    {{ riContent|raw }}
+                </div>
+            </section>
+        {% endif %}
+        {# ------------------------------------------------------------------ #}
+
+
+        <div class="contract-actions no-print">
+            <button class="btn-principal" onclick="window.print();">
+                {# Adapte le texte du bouton #}
+                {% if reservation.statut == 'en_attente' %}
+                    Imprimer les CGL
+                {% else %}
+                    Imprimer/Télécharger le Contrat
+                {% endif %}
+            </button>
+            
+            {% if reservation.statut == 'contrat envoyé' or reservation.statut == 'contrat_envoye' %}
+                <div class="signature-consent" style="margin-bottom: 15px; font-size: 0.9em; font-style: italic; margin-top: 15px;">
+                    En cliquant sur le bouton ci-dessous, je reconnais avoir pris connaissance des 
+                    Conditions Générales de Location ainsi que du Règlement Intérieur, et je m'engage 
+                    à en respecter toutes les clauses sans réserve.
+                </div>
+                <form method="post" action="{{ path('app_reservation_user_sign', {'id': reservation.id}) }}" style="display: inline-block; margin-left: 10px;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('userSign' ~ reservation.id) }}">
+                    <button type="submit" class="btn-principal" style="background-color: #28a745; color: white; border: none;">
+                        Accepter et Signer le contrat
+                    </button>
+                </form>
+            {% endif %}
+            
+            <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}" class="btn-principal">
+                Retour aux détails
+            </a>
+            <small class="no-print" style="display:block; margin-top:10px; color: #4C6576;">
+                (Vous pouvez aussi simplement fermer cet onglet pour revenir au site)
+            </small>
+        </div>
+    </div>
 
 {% endblock %}
 
 {% block footer %}
-	<div class="no-print">
-		{{ parent() }}
-	</div>
+    <div class="no-print">
+        {{ parent() }}
+    </div>
 {% endblock %}
