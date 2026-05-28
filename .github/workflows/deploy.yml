@@ -1,0 +1,33 @@
+name: Déploiement Automatique SCI Infomaniak
+
+on:
+  push:
+    branches: [ master ] # Déclenche le déploiement lors d'un push sur la branche master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: ⬇️ Récupérer le code du dépôt
+      uses: actions/checkout@v4
+
+    - name: 🛠️ Installer PHP et Composer
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, intl-icu, pdo_mysql
+
+    - name: 📦 Installer les dépendances Composer (Production)
+      run: |
+        composer install --no-dev --optimize-autoloader --no-scripts
+
+    - name: 🚀 Déploiement des fichiers par SFTP sur Infomaniak
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.INFOMANIAK_HOST }}
+        username: ${{ secrets.INFOMANIAK_USERNAME }}
+        password: ${{ secrets.INFOMANIAK_PASSWORD }}
+        server-dir: ${{ secrets.INFOMANIAK_TARGET_DIR }}
+        protocol: sftp
+        port: 22
