@@ -22,12 +22,12 @@ jobs:
       run: |
         composer install --no-dev --optimize-autoloader --no-scripts
 
-    - name: 🚀 Déploiement des fichiers par SFTP sur Infomaniak
+    - name: 🚀 Déploiement des fichiers sur Infomaniak
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.INFOMANIAK_HOST }}
         username: ${{ secrets.INFOMANIAK_USERNAME }}
         password: ${{ secrets.INFOMANIAK_PASSWORD }}
         server-dir: ${{ secrets.INFOMANIAK_TARGET_DIR }}
-        protocol: sftp
-        port: 22
+        protocol: ftps # 🔐 Sécurisé pour Infomaniak
+        port: 21       # 🔌 Port classique pour le FTPS
